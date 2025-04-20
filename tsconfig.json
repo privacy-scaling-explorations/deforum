@@ -11,7 +11,16 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./apps/*"]
+      "@/*": ["./apps/*"],
+      "@/hooks/*": ["./apps/client/src/hooks/*"],
+      "@/lib/*": ["./apps/client/src/lib/*"],
+      "@/sections/*": ["./apps/client/src/sections/*"],
+      "@/providers": ["./apps/client/src/providers/index.tsx"],
+      "@/providers/*": ["./apps/client/src/providers/*"],
+      "@/components/*": ["./apps/client/src/components/*"],
+      "@/contexts/*": ["./apps/client/src/contexts/*"],
+      "@/shared/*": ["./apps/shared/src/*"],
+      "@/settings": ["./apps/client/src/settings.ts"]
     }
   },
   "exclude": ["node_modules", "dist"]

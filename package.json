@@ -7,11 +7,13 @@
   "scripts": {
     "dev": "docker-compose up --build",
     "build": "turbo run build",
-    "clean": "turbo run clean"
+    "clean": "turbo run clean",
+    "generate": "yarn workspace client generate"
   },
   "devDependencies": {
     "turbo": "^1.13.3",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "vite-tsconfig-paths": "^5.1.4"
   },
   "packageManager": "yarn@1.22.22"
-} 
+}

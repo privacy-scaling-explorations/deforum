@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Signout } from "@/components/Signout";
-import { useMockAuth, useGetUser } from "@/hooks/useAuth";
+import { useGetUser } from "@/hooks/useAuth";
 import {
   Home as HomeIcon,
   LucideIcon,

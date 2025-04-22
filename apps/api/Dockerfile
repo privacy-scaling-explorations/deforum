@@ -2,11 +2,16 @@ FROM node:18 AS builder
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install
-# Install type definitions and dotenv in workspace root
-RUN yarn add -W @types/express @types/node @types/pg dotenv @types/dotenv
+# Install type definitions and dependencies
+RUN yarn add -W @types/express @types/node @types/pg @types/cors dotenv @types/dotenv
+RUN yarn add -W @supabase/supabase-js cors
+
 COPY . .
 WORKDIR /app/apps/api
-RUN yarn build
+
+# Copy our fix-types script and run it
+COPY apps/api/fix-types.sh ./fix-types.sh
+RUN chmod +x fix-types.sh && ./fix-types.sh
 
 FROM node:18 AS runner
 WORKDIR /app

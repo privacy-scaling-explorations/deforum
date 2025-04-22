@@ -22,6 +22,47 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  # Supabase PostgreSQL with required extensions
+  supabase-db:
+    image: supabase/postgres:15.1.0.117
+    platform: linux/amd64
+    hostname: supabase-db
+    container_name: supabase-db
+    ports:
+      - "5434:5432"
+    environment:
+      - POSTGRES_USER=${SUPABASE_DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${SUPABASE_DB_PASSWORD:-postgres}
+      - POSTGRES_DB=${SUPABASE_DB_NAME:-supabase}
+    volumes:
+      - supabase-db-data:/var/lib/postgresql/data
+      - ./apps/db/supabase/init:/docker-entrypoint-initdb.d
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # PostgREST API
+  supabase-rest:
+    image: postgrest/postgrest:v10.1.2
+    platform: linux/amd64
+    container_name: supabase-rest
+    ports:
+      - "3001:3000"
+    depends_on:
+      supabase-db:
+        condition: service_healthy
+    environment:
+      PGRST_DB_URI: postgres://${SUPABASE_DB_USER:-postgres}:${SUPABASE_DB_PASSWORD:-postgres}@supabase-db:5432/${SUPABASE_DB_NAME:-supabase}
+      PGRST_DB_SCHEMA: ${PGRST_DB_SCHEMA:-public}
+      PGRST_DB_ANON_ROLE: ${PGRST_DB_ANON_ROLE:-anon}
+      PGRST_JWT_SECRET: ${PGRST_JWT_SECRET:-your-super-secret-jwt-token-with-at-least-32-characters}
+      PGRST_DB_USE_LEGACY_GUCS: "false"
+    restart: unless-stopped
+
   api:
     build: 
       context: .
@@ -63,9 +104,10 @@ services:
         condition: service_healthy
     environment:
       - VITE_API_URL=${VITE_API_URL:-http://localhost:8000/api}
+      - VITE_SUPABASE_URL=${VITE_SUPABASE_URL:-http://localhost:3001}
+      - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiJ9.ZopqpbRb_sReKnLypwLO9xiHdQvV2iwQeR_PTbWf2J8}
     env_file:
       - .env
-    # Rely on Vite plugin for generation; use workspace command for dev
     command: sh -c "yarn workspace client run dev"
     logging:
       driver: "json-file"
@@ -75,6 +117,7 @@ services:
 
 volumes:
   postgres-data:
+  supabase-db-data:
 
 networks:
   default:

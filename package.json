@@ -11,6 +11,8 @@
     "generate": "yarn workspace client generate"
   },
   "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.14.1",
     "turbo": "^1.13.3",
     "typescript": "^5.4.5",
     "vite-tsconfig-paths": "^5.1.4"

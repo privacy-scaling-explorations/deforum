@@ -1,11 +1,10 @@
-import { RouterProvider as RouterProviderBase, type Router } from "@tanstack/react-router"
-// Import the specific router instance from main.tsx
-import { router as mainRouterInstance } from "../main"
+import { RouterProvider as RouterProviderBase, type Router, AnyRouter } from "@tanstack/react-router"
 
-// Define the expected type using the registered interface
-type AppRouter = Router<typeof mainRouterInstance.routeTree>
+// Define the prop type without importing the actual router instance
+interface RouterProviderProps {
+  router: AnyRouter
+}
 
-// Use the defined AppRouter type for the prop
-export function RouterProvider({ router }: { router: AppRouter }) {
+export function RouterProvider({ router }: RouterProviderProps) {
   return <RouterProviderBase router={router} />
 }

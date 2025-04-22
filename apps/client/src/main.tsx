@@ -7,8 +7,7 @@ import { Providers } from "@/providers";
 import "./index.css";
 
 import { createRouter } from "@tanstack/react-router";
-const router = createRouter({ routeTree });
-export { router };
+export const router = createRouter({ routeTree });
 
 declare module "@tanstack/react-router" {
   interface Register {

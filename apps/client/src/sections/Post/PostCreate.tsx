@@ -2,12 +2,10 @@ import { Select } from "@/components/inputs/Select";
 import { Input } from "@/components/inputs/Input";
 import { Tabs } from "@/components/ui/Tabs";
 import { useForm } from "@tanstack/react-form";
-import { capitalize } from "@/lib/format";
 import type { FormEvent } from "react";
 import { Button } from "@/components/ui/Button";
 import { useSearch } from "@tanstack/react-router";
 import { Textarea } from "@/components/inputs/Textarea";
-import { router } from "@/lib/router";
 import { PageContent } from "@/components/PageContent";
 import {
   useCreateDraftMutation,
@@ -20,8 +18,8 @@ import { Switch } from "@/components/inputs/Switch";
 import { Mail as MailIcon } from "lucide-react";
 import { Tag } from "@/components/ui/Tag";
 import { useMemo, useCallback, useState } from "react";
-import { type CreatePostSchema } from "@/shared/schemas/post.schema";
 import { useGetUser } from "@/hooks/useAuth";
+import { capitalize } from "@/lib/utils";
 
 enum TabName {
   Write = "write",
@@ -70,7 +68,7 @@ export const PostCreate = () => {
     [badgeMap],
   );
 
-  const form = useForm<CreatePostSchema>({
+  const form = useForm({
     defaultValues: {
       title: "",
       content: "",
@@ -95,7 +93,7 @@ export const PostCreate = () => {
       };
      
       try {
-        const res = await createPostMutation.mutateAsync(submissionData);
+        const res = await createPostMutation.mutateAsync(submissionData as any);
         if (res.id) {
           router.navigate({ to: `/posts/${res.id}` });
         }
@@ -121,7 +119,7 @@ export const PostCreate = () => {
 
   const handleRemoveTag = useCallback(
     (tagToRemove: string) => {
-      form.setFieldValue("tags", (prev: string[] | undefined) =>
+      form.setFieldValue("tags" as any, (prev: string[] | undefined) =>
         (prev || []).filter((tag: string) => tag !== tagToRemove),
       );
     },

@@ -1,11 +1,10 @@
 import { PageContent } from "@/components/PageContent";
-import { router } from "@/lib/router";
 import { PencilLine as PencilLineIcon } from "lucide-react";
 import { Tabs } from "@/components/ui/Tabs";
 import { useGetDrafts, useRemoveDraft } from "@/hooks/usePosts";
 import { TimeSince } from "@/components/ui/TimeSince";
 import { Trash2 as TrashIcon } from "lucide-react";
-
+import { router } from "@/lib/router";
 export const PostDrafts = () => {
   const { data: drafts = [], isLoading, refetch: refetchDrafts } = useGetDrafts();
 

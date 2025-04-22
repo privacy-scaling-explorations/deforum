@@ -1,10 +1,9 @@
-import express from 'express';
 import dotenv from 'dotenv';
 import { Pool } from 'pg';
+import app from './app';
 
 dotenv.config();
 
-const app = express();
 const PORT = parseInt(process.env.API_PORT || '5000', 10);
 const HOST = process.env.API_HOST || '0.0.0.0';
 
@@ -26,23 +25,8 @@ pool.connect((err, client, release) => {
   release();
 });
 
-app.use(express.json());
-
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' });
-});
-
-// Example database query endpoint
-app.get('/api/users', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM users');
-    res.json(result.rows);
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    res.status(500).json({ error: 'Error fetching users' });
-  }
-});
+// Make pool available to routes
+app.locals.pool = pool;
 
 app.listen(PORT, HOST, () => {
   console.log(`API Server running on http://${HOST}:${PORT}`);

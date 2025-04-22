@@ -1,40 +1,45 @@
 import { Link } from "@tanstack/react-router";
-import { Signout } from "@/components/Signout";
-import { useGetUser } from "@/hooks/useAuth";
-import {
-  Home as HomeIcon,
-  LucideIcon,
-  SunIcon,
-  MoonIcon,
-  Users,
-} from "lucide-react";
+import { useGetUser, useMockAuth } from "@/hooks/useAuth";
+import { LucideIcon, SunIcon, MoonIcon, Users, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { Avatar } from "@/components/Avatar";
 import { Badge } from "@/components/ui/Badge";
 import { useGlobalContext } from "@/contexts/GlobalContext";
-import { AuthWrapper } from     "@/components/AuthWrapper";
+import { AuthWrapper } from "@/components/AuthWrapper";
 import { Switch } from "@/components/inputs/Switch";
 import { MAIN_NAV_ITEMS } from "@/settings";
 import { Accordion } from "@/components/Accordion";
+import { useSignout } from "@/hooks/useSignout";
 
 const renderNavItems = (
   _items: (typeof MAIN_NAV_ITEMS)[keyof typeof MAIN_NAV_ITEMS],
+  isLoggedIn: boolean
 ) =>
-  _items.map((item) => (
-    <NavItem
-      to={item.to}
-      key={item.title}
-      title={item.title}
-      icon={item.icon}
-      badge={item.badge}
-    />
-  ));
+  _items.map((item) => {
+    const isVisible = item.requiresAuth
+      ? isLoggedIn
+      : item.requiresAuth === false;
 
-const renderStartItems = () => renderNavItems(MAIN_NAV_ITEMS.start);
-const renderEndItems = () => renderNavItems(MAIN_NAV_ITEMS.end);
+    return (
+      isVisible && (
+        <NavItem
+          to={item.to}
+          key={item.title}
+          title={item.title}
+          icon={item.icon}
+          badge={item.badge}
+        />
+      )
+    );
+  });
 
-const NavItem = ({
+const renderStartItems = (isLoggedIn: boolean) =>
+  renderNavItems(MAIN_NAV_ITEMS.start, isLoggedIn);
+const renderEndItems = (isLoggedIn: boolean) =>
+  renderNavItems(MAIN_NAV_ITEMS.end, isLoggedIn);
+
+export const NavItem = ({
   title,
   to,
   icon,
@@ -60,12 +65,14 @@ const NavItem = ({
       className={cn(
         "text-sm font-inter font-medium leading-5 text-base-muted-foreground cursor-pointer outline-none focus:outline-none focus:ring-0 focus:ring-offset-0",
         "duration-200 hover:bg-muted hover:text-base-primary hover:bg-base-muted",
-        "flex items-center gap-2 rounded-md h-9 py-2 w-full p-2",
+        "flex items-center gap-2 rounded-md h-9 py-2 w-full p-2"
       )}
     >
-      <div className="flex items-center gap-2">
-        <Icon className="text-base" size={16} />
-        <span>{title}</span>
+      <div className="flex items-center gap-2 h-5">
+        <Icon className="text-base text-base-foreground" size={16} />
+        <span className="font-sans font-medium text-base-muted-foreground text-sm">
+          {title}
+        </span>
       </div>
       {badge && (
         <div className="ml-auto">
@@ -79,19 +86,21 @@ const NavItem = ({
 };
 
 const SidebarContent = () => {
-  const { data: user, isLoading: userIsLoading, isError: userIsError } = useGetUser();
+  const {
+    data: user,
+    isLoading: userIsLoading,
+    isError: userIsError,
+  } = useGetUser();
   const communityMocks = [] as any[];
   const isLoggedIn = !!user && !userIsLoading && !userIsError;
+  const signout = useSignout();
 
   return (
     <nav
       aria-label="Sidebar Navigation"
       className="flex flex-col divide-y-[1px] divide-sidebar-border"
     >
-      <div className="space-y-1 pb-6">
-        <NavItem title="Home" to="/" icon={HomeIcon} />
-        {isLoggedIn && renderStartItems()}
-      </div>
+      <div className="space-y-1 pb-6">{renderStartItems(isLoggedIn)}</div>
       <Accordion
         className="py-6"
         items={[
@@ -142,17 +151,30 @@ const SidebarContent = () => {
       )}
 
       <div className="space-y-1 py-6">
-        {renderEndItems()}
-        {isLoggedIn && renderEndItems()}
-        <Signout />
+        {renderEndItems(isLoggedIn)}
+        <NavItem
+          title="Logout"
+          to="/"
+          icon={LogOut}
+          onClick={() => {
+            signout();
+          }}
+        />
       </div>
     </nav>
   );
 };
 
 const LeftSidebar = () => {
-  const { data: user, isLoading: userIsLoading, isError: userIsError } = useGetUser();
+  const {
+    data: user,
+    isLoading: userIsLoading,
+    isError: userIsError,
+  } = useGetUser();
   const { isDarkMode, setIsDarkMode } = useGlobalContext();
+  const signout = useSignout();
+  const { mutate: mockAuthMutate, isPending: mockAuthIsPending } =
+    useMockAuth();
   const communityMocks = [] as any[];
 
   const isLoggedIn = !!user && !userIsLoading && !userIsError;
@@ -161,12 +183,7 @@ const LeftSidebar = () => {
     <aside className="h-full w-[264px] p-6 bg-sidebar-background hidden flex-col sticky top-[60px] z-[49] lg:flex ">
       <nav aria-label="Sidebar Navigation" className="flex flex-col h-full">
         <div className="divide-y-[1px] divide-sidebar-border">
-          <div className="space-y-1 pb-6">
-            <NavItem title="Home" to="/" icon={HomeIcon} />
-            <AuthWrapper>
-              {isLoggedIn && renderStartItems()}
-            </AuthWrapper>
-          </div>
+          <div className="space-y-1 pb-6">{renderStartItems(isLoggedIn)}</div>
 
           <AuthWrapper>
             <Accordion
@@ -223,7 +240,7 @@ const LeftSidebar = () => {
         </div>
 
         <div className="space-y-1 mt-auto">
-          <div className="flex gap-2.5 items-center">
+          <div className="flex gap-2.5 items-center px-2 h-5">
             <SunIcon className="size-4 text-base-muted-foreground" />
             <Switch
               checked={isDarkMode}
@@ -231,10 +248,15 @@ const LeftSidebar = () => {
             />
             <MoonIcon className="size-4 text-base-muted-foreground" />
           </div>
-          <AuthWrapper>
-            {isLoggedIn && renderEndItems()}
-          </AuthWrapper>
-          <Signout />
+          {renderEndItems(isLoggedIn)}
+          <NavItem
+            title="Logout"
+            to="/"
+            icon={LogOut}
+            onClick={() => {
+              signout();
+            }}
+          />
         </div>
       </nav>
     </aside>

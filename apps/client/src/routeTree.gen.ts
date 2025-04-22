@@ -14,6 +14,16 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as LeftSidebarImport } from './routes/_left-sidebar'
 import { Route as AppImport } from './routes/_app'
 import { Route as AppIndexImport } from './routes/_app/index'
+import { Route as LeftSidebarSettingsImport } from './routes/_left-sidebar/settings'
+import { Route as LeftSidebarProfileImport } from './routes/_left-sidebar/profile'
+import { Route as LeftSidebarNotificationsImport } from './routes/_left-sidebar/notifications'
+import { Route as LeftSidebarCommunitiesIndexImport } from './routes/_left-sidebar/communities/index'
+import { Route as LeftSidebarBadgesIndexImport } from './routes/_left-sidebar/badges/index'
+import { Route as LeftSidebarUserUsernameImport } from './routes/_left-sidebar/user/$username'
+import { Route as LeftSidebarPostDraftsImport } from './routes/_left-sidebar/post/drafts'
+import { Route as LeftSidebarPostCreateImport } from './routes/_left-sidebar/post/create'
+import { Route as LeftSidebarCommunitiesIdImport } from './routes/_left-sidebar/communities/$id'
+import { Route as LeftSidebarBadgesNewImport } from './routes/_left-sidebar/badges/new'
 import { Route as AppPostsPostIdImport } from './routes/_app/posts/$postId'
 
 // Create/Update Routes
@@ -32,6 +42,67 @@ const AppIndexRoute = AppIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppRoute,
+} as any)
+
+const LeftSidebarSettingsRoute = LeftSidebarSettingsImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => LeftSidebarRoute,
+} as any)
+
+const LeftSidebarProfileRoute = LeftSidebarProfileImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => LeftSidebarRoute,
+} as any)
+
+const LeftSidebarNotificationsRoute = LeftSidebarNotificationsImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => LeftSidebarRoute,
+} as any)
+
+const LeftSidebarCommunitiesIndexRoute =
+  LeftSidebarCommunitiesIndexImport.update({
+    id: '/communities/',
+    path: '/communities/',
+    getParentRoute: () => LeftSidebarRoute,
+  } as any)
+
+const LeftSidebarBadgesIndexRoute = LeftSidebarBadgesIndexImport.update({
+  id: '/badges/',
+  path: '/badges/',
+  getParentRoute: () => LeftSidebarRoute,
+} as any)
+
+const LeftSidebarUserUsernameRoute = LeftSidebarUserUsernameImport.update({
+  id: '/user/$username',
+  path: '/user/$username',
+  getParentRoute: () => LeftSidebarRoute,
+} as any)
+
+const LeftSidebarPostDraftsRoute = LeftSidebarPostDraftsImport.update({
+  id: '/post/drafts',
+  path: '/post/drafts',
+  getParentRoute: () => LeftSidebarRoute,
+} as any)
+
+const LeftSidebarPostCreateRoute = LeftSidebarPostCreateImport.update({
+  id: '/post/create',
+  path: '/post/create',
+  getParentRoute: () => LeftSidebarRoute,
+} as any)
+
+const LeftSidebarCommunitiesIdRoute = LeftSidebarCommunitiesIdImport.update({
+  id: '/communities/$id',
+  path: '/communities/$id',
+  getParentRoute: () => LeftSidebarRoute,
+} as any)
+
+const LeftSidebarBadgesNewRoute = LeftSidebarBadgesNewImport.update({
+  id: '/badges/new',
+  path: '/badges/new',
+  getParentRoute: () => LeftSidebarRoute,
 } as any)
 
 const AppPostsPostIdRoute = AppPostsPostIdImport.update({
@@ -58,6 +129,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LeftSidebarImport
       parentRoute: typeof rootRoute
     }
+    '/_left-sidebar/notifications': {
+      id: '/_left-sidebar/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof LeftSidebarNotificationsImport
+      parentRoute: typeof LeftSidebarImport
+    }
+    '/_left-sidebar/profile': {
+      id: '/_left-sidebar/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof LeftSidebarProfileImport
+      parentRoute: typeof LeftSidebarImport
+    }
+    '/_left-sidebar/settings': {
+      id: '/_left-sidebar/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof LeftSidebarSettingsImport
+      parentRoute: typeof LeftSidebarImport
+    }
     '/_app/': {
       id: '/_app/'
       path: '/'
@@ -71,6 +163,55 @@ declare module '@tanstack/react-router' {
       fullPath: '/posts/$postId'
       preLoaderRoute: typeof AppPostsPostIdImport
       parentRoute: typeof AppImport
+    }
+    '/_left-sidebar/badges/new': {
+      id: '/_left-sidebar/badges/new'
+      path: '/badges/new'
+      fullPath: '/badges/new'
+      preLoaderRoute: typeof LeftSidebarBadgesNewImport
+      parentRoute: typeof LeftSidebarImport
+    }
+    '/_left-sidebar/communities/$id': {
+      id: '/_left-sidebar/communities/$id'
+      path: '/communities/$id'
+      fullPath: '/communities/$id'
+      preLoaderRoute: typeof LeftSidebarCommunitiesIdImport
+      parentRoute: typeof LeftSidebarImport
+    }
+    '/_left-sidebar/post/create': {
+      id: '/_left-sidebar/post/create'
+      path: '/post/create'
+      fullPath: '/post/create'
+      preLoaderRoute: typeof LeftSidebarPostCreateImport
+      parentRoute: typeof LeftSidebarImport
+    }
+    '/_left-sidebar/post/drafts': {
+      id: '/_left-sidebar/post/drafts'
+      path: '/post/drafts'
+      fullPath: '/post/drafts'
+      preLoaderRoute: typeof LeftSidebarPostDraftsImport
+      parentRoute: typeof LeftSidebarImport
+    }
+    '/_left-sidebar/user/$username': {
+      id: '/_left-sidebar/user/$username'
+      path: '/user/$username'
+      fullPath: '/user/$username'
+      preLoaderRoute: typeof LeftSidebarUserUsernameImport
+      parentRoute: typeof LeftSidebarImport
+    }
+    '/_left-sidebar/badges/': {
+      id: '/_left-sidebar/badges/'
+      path: '/badges'
+      fullPath: '/badges'
+      preLoaderRoute: typeof LeftSidebarBadgesIndexImport
+      parentRoute: typeof LeftSidebarImport
+    }
+    '/_left-sidebar/communities/': {
+      id: '/_left-sidebar/communities/'
+      path: '/communities'
+      fullPath: '/communities'
+      preLoaderRoute: typeof LeftSidebarCommunitiesIndexImport
+      parentRoute: typeof LeftSidebarImport
     }
   }
 }
@@ -89,43 +230,144 @@ const AppRouteChildren: AppRouteChildren = {
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
+interface LeftSidebarRouteChildren {
+  LeftSidebarNotificationsRoute: typeof LeftSidebarNotificationsRoute
+  LeftSidebarProfileRoute: typeof LeftSidebarProfileRoute
+  LeftSidebarSettingsRoute: typeof LeftSidebarSettingsRoute
+  LeftSidebarBadgesNewRoute: typeof LeftSidebarBadgesNewRoute
+  LeftSidebarCommunitiesIdRoute: typeof LeftSidebarCommunitiesIdRoute
+  LeftSidebarPostCreateRoute: typeof LeftSidebarPostCreateRoute
+  LeftSidebarPostDraftsRoute: typeof LeftSidebarPostDraftsRoute
+  LeftSidebarUserUsernameRoute: typeof LeftSidebarUserUsernameRoute
+  LeftSidebarBadgesIndexRoute: typeof LeftSidebarBadgesIndexRoute
+  LeftSidebarCommunitiesIndexRoute: typeof LeftSidebarCommunitiesIndexRoute
+}
+
+const LeftSidebarRouteChildren: LeftSidebarRouteChildren = {
+  LeftSidebarNotificationsRoute: LeftSidebarNotificationsRoute,
+  LeftSidebarProfileRoute: LeftSidebarProfileRoute,
+  LeftSidebarSettingsRoute: LeftSidebarSettingsRoute,
+  LeftSidebarBadgesNewRoute: LeftSidebarBadgesNewRoute,
+  LeftSidebarCommunitiesIdRoute: LeftSidebarCommunitiesIdRoute,
+  LeftSidebarPostCreateRoute: LeftSidebarPostCreateRoute,
+  LeftSidebarPostDraftsRoute: LeftSidebarPostDraftsRoute,
+  LeftSidebarUserUsernameRoute: LeftSidebarUserUsernameRoute,
+  LeftSidebarBadgesIndexRoute: LeftSidebarBadgesIndexRoute,
+  LeftSidebarCommunitiesIndexRoute: LeftSidebarCommunitiesIndexRoute,
+}
+
+const LeftSidebarRouteWithChildren = LeftSidebarRoute._addFileChildren(
+  LeftSidebarRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
-  '': typeof LeftSidebarRoute
+  '': typeof LeftSidebarRouteWithChildren
+  '/notifications': typeof LeftSidebarNotificationsRoute
+  '/profile': typeof LeftSidebarProfileRoute
+  '/settings': typeof LeftSidebarSettingsRoute
   '/': typeof AppIndexRoute
   '/posts/$postId': typeof AppPostsPostIdRoute
+  '/badges/new': typeof LeftSidebarBadgesNewRoute
+  '/communities/$id': typeof LeftSidebarCommunitiesIdRoute
+  '/post/create': typeof LeftSidebarPostCreateRoute
+  '/post/drafts': typeof LeftSidebarPostDraftsRoute
+  '/user/$username': typeof LeftSidebarUserUsernameRoute
+  '/badges': typeof LeftSidebarBadgesIndexRoute
+  '/communities': typeof LeftSidebarCommunitiesIndexRoute
 }
 
 export interface FileRoutesByTo {
-  '': typeof LeftSidebarRoute
+  '': typeof LeftSidebarRouteWithChildren
+  '/notifications': typeof LeftSidebarNotificationsRoute
+  '/profile': typeof LeftSidebarProfileRoute
+  '/settings': typeof LeftSidebarSettingsRoute
   '/': typeof AppIndexRoute
   '/posts/$postId': typeof AppPostsPostIdRoute
+  '/badges/new': typeof LeftSidebarBadgesNewRoute
+  '/communities/$id': typeof LeftSidebarCommunitiesIdRoute
+  '/post/create': typeof LeftSidebarPostCreateRoute
+  '/post/drafts': typeof LeftSidebarPostDraftsRoute
+  '/user/$username': typeof LeftSidebarUserUsernameRoute
+  '/badges': typeof LeftSidebarBadgesIndexRoute
+  '/communities': typeof LeftSidebarCommunitiesIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_app': typeof AppRouteWithChildren
-  '/_left-sidebar': typeof LeftSidebarRoute
+  '/_left-sidebar': typeof LeftSidebarRouteWithChildren
+  '/_left-sidebar/notifications': typeof LeftSidebarNotificationsRoute
+  '/_left-sidebar/profile': typeof LeftSidebarProfileRoute
+  '/_left-sidebar/settings': typeof LeftSidebarSettingsRoute
   '/_app/': typeof AppIndexRoute
   '/_app/posts/$postId': typeof AppPostsPostIdRoute
+  '/_left-sidebar/badges/new': typeof LeftSidebarBadgesNewRoute
+  '/_left-sidebar/communities/$id': typeof LeftSidebarCommunitiesIdRoute
+  '/_left-sidebar/post/create': typeof LeftSidebarPostCreateRoute
+  '/_left-sidebar/post/drafts': typeof LeftSidebarPostDraftsRoute
+  '/_left-sidebar/user/$username': typeof LeftSidebarUserUsernameRoute
+  '/_left-sidebar/badges/': typeof LeftSidebarBadgesIndexRoute
+  '/_left-sidebar/communities/': typeof LeftSidebarCommunitiesIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/' | '/posts/$postId'
+  fullPaths:
+    | ''
+    | '/notifications'
+    | '/profile'
+    | '/settings'
+    | '/'
+    | '/posts/$postId'
+    | '/badges/new'
+    | '/communities/$id'
+    | '/post/create'
+    | '/post/drafts'
+    | '/user/$username'
+    | '/badges'
+    | '/communities'
   fileRoutesByTo: FileRoutesByTo
-  to: '' | '/' | '/posts/$postId'
-  id: '__root__' | '/_app' | '/_left-sidebar' | '/_app/' | '/_app/posts/$postId'
+  to:
+    | ''
+    | '/notifications'
+    | '/profile'
+    | '/settings'
+    | '/'
+    | '/posts/$postId'
+    | '/badges/new'
+    | '/communities/$id'
+    | '/post/create'
+    | '/post/drafts'
+    | '/user/$username'
+    | '/badges'
+    | '/communities'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/_left-sidebar'
+    | '/_left-sidebar/notifications'
+    | '/_left-sidebar/profile'
+    | '/_left-sidebar/settings'
+    | '/_app/'
+    | '/_app/posts/$postId'
+    | '/_left-sidebar/badges/new'
+    | '/_left-sidebar/communities/$id'
+    | '/_left-sidebar/post/create'
+    | '/_left-sidebar/post/drafts'
+    | '/_left-sidebar/user/$username'
+    | '/_left-sidebar/badges/'
+    | '/_left-sidebar/communities/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
-  LeftSidebarRoute: typeof LeftSidebarRoute
+  LeftSidebarRoute: typeof LeftSidebarRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
-  LeftSidebarRoute: LeftSidebarRoute,
+  LeftSidebarRoute: LeftSidebarRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -150,7 +392,31 @@ export const routeTree = rootRoute
       ]
     },
     "/_left-sidebar": {
-      "filePath": "_left-sidebar.tsx"
+      "filePath": "_left-sidebar.tsx",
+      "children": [
+        "/_left-sidebar/notifications",
+        "/_left-sidebar/profile",
+        "/_left-sidebar/settings",
+        "/_left-sidebar/badges/new",
+        "/_left-sidebar/communities/$id",
+        "/_left-sidebar/post/create",
+        "/_left-sidebar/post/drafts",
+        "/_left-sidebar/user/$username",
+        "/_left-sidebar/badges/",
+        "/_left-sidebar/communities/"
+      ]
+    },
+    "/_left-sidebar/notifications": {
+      "filePath": "_left-sidebar/notifications.tsx",
+      "parent": "/_left-sidebar"
+    },
+    "/_left-sidebar/profile": {
+      "filePath": "_left-sidebar/profile.tsx",
+      "parent": "/_left-sidebar"
+    },
+    "/_left-sidebar/settings": {
+      "filePath": "_left-sidebar/settings.tsx",
+      "parent": "/_left-sidebar"
     },
     "/_app/": {
       "filePath": "_app/index.tsx",
@@ -159,6 +425,34 @@ export const routeTree = rootRoute
     "/_app/posts/$postId": {
       "filePath": "_app/posts/$postId.tsx",
       "parent": "/_app"
+    },
+    "/_left-sidebar/badges/new": {
+      "filePath": "_left-sidebar/badges/new.tsx",
+      "parent": "/_left-sidebar"
+    },
+    "/_left-sidebar/communities/$id": {
+      "filePath": "_left-sidebar/communities/$id.tsx",
+      "parent": "/_left-sidebar"
+    },
+    "/_left-sidebar/post/create": {
+      "filePath": "_left-sidebar/post/create.tsx",
+      "parent": "/_left-sidebar"
+    },
+    "/_left-sidebar/post/drafts": {
+      "filePath": "_left-sidebar/post/drafts.tsx",
+      "parent": "/_left-sidebar"
+    },
+    "/_left-sidebar/user/$username": {
+      "filePath": "_left-sidebar/user/$username.tsx",
+      "parent": "/_left-sidebar"
+    },
+    "/_left-sidebar/badges/": {
+      "filePath": "_left-sidebar/badges/index.tsx",
+      "parent": "/_left-sidebar"
+    },
+    "/_left-sidebar/communities/": {
+      "filePath": "_left-sidebar/communities/index.tsx",
+      "parent": "/_left-sidebar"
     }
   }
 }

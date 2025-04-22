@@ -11,7 +11,7 @@ export interface InputWrapperProps {
   children?: ReactNode;
   containerClassName?: string;
   error?: string;
-  field?: FieldApi<any, any, any, any>;
+  field?: any; // TODO: fix type FieldApi
   showCounter?: boolean;
   value?: string;
   maxLength?: number;
@@ -22,7 +22,7 @@ interface InputProps
     InputWrapperProps {
   icon?: LucideIcon;
   error?: string;
-  field?: FieldApi<any, any, any, any>;
+  field?: any; // TODO: fix type FieldApi
   showCounter?: boolean;
   value?: string;
   maxLength?: number;

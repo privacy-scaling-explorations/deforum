@@ -24,13 +24,6 @@ export function useGetUser() {
     enabled: isLoggedIn,
     queryKey: ["getUser"],
     queryFn: async () => {
-      return {
-        id: 1,
-        username: "John Doe",
-        email: "john.doe@example.com",
-        avatar: "https://example.com/avatar.png",
-        createdAt: "2021-01-01",
-      }
       const response = await fetch(`${API_URL}/api/me`)
       return response.json()
     },

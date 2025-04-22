@@ -15,7 +15,7 @@ declare namespace Express {
 }
 
 declare module 'express' {
-  import { Server } from 'http';
+  import { Server, IncomingMessage, ServerResponse } from 'http';
   
   export = express;
   
@@ -28,6 +28,7 @@ declare module 'express' {
       put: any;
       delete: any;
       patch: any;
+      all: any;
       listen: (port: number, hostname: string, callback?: () => void) => Server;
       locals: any;
     }
@@ -39,6 +40,7 @@ declare module 'express' {
       put: any;
       delete: any;
       patch: any;
+      all: any;
     }
     
     export interface Request {}
@@ -47,12 +49,23 @@ declare module 'express' {
       json: (body: any) => Response;
       send: (body: any) => Response;
       header: (name: string, value: string) => Response;
+      setHeader: (name: string, value: string) => Response;
     }
     
     export function Router(): Router;
     export function json(): any;
     export function urlencoded(options: { extended: boolean }): any;
   }
+}
+
+// Extend http module types to allow express Application as a parameter to createServer
+declare module 'http' {
+  import { Application } from 'express';
+  
+  interface ServerOptions {}
+  
+  function createServer(app: Application): Server;
+  function createServer(options: ServerOptions, app: Application): Server;
 }
 EOF
 

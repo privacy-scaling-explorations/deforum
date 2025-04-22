@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import exampleRoutes from './modules/example/example.routes';
+import protocolsRoutes from './modules/protocols/protocols.routes';
+import postsRoutes from './modules/posts/posts.routes';
 
 const app = express();
 
@@ -22,5 +24,7 @@ app.get('/api/health', (req, res) => {
 
 // Register routes
 app.use('/api/example', exampleRoutes);
+app.use('/api/protocols', protocolsRoutes);
+app.use('/api/posts', postsRoutes);
 
 export default app; 

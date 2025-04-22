@@ -1355,13 +1355,6 @@
   dependencies:
     undici-types "~6.21.0"
 
-"@types/node@^20.10.4":
-  version "20.17.30"
-  resolved "https://registry.npmjs.org/@types/node/-/node-20.17.30.tgz"
-  integrity sha512-7zf4YyHA+jvBNfVrk2Gtvs6x7E8V+YDW05bNfG2XkWDJfYRXrTiP/DsB2zSYTaHX0bGIujTBQdMVAhb+j7mwpg==
-  dependencies:
-    undici-types "~6.19.2"
-
 "@types/pg@^8.10.9":
   version "8.11.13"
   resolved "https://registry.npmjs.org/@types/pg/-/pg-8.11.13.tgz"
@@ -3866,11 +3859,6 @@ typescript@^5.2.2, typescript@^5.3.3, typescript@^5.4.5:
   version "5.8.3"
   resolved "https://registry.npmjs.org/typescript/-/typescript-5.8.3.tgz"
   integrity sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==
-
-undici-types@~6.19.2:
-  version "6.19.8"
-  resolved "https://registry.npmjs.org/undici-types/-/undici-types-6.19.8.tgz"
-  integrity sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==
 
 undici-types@~6.21.0:
   version "6.21.0"

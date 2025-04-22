@@ -1,27 +1,4 @@
 services:
-  postgres:
-    image: postgres:15
-    platform: linux/amd64
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER:-postgres}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
-      - POSTGRES_DB=${POSTGRES_DB:-pse_forum}
-    ports:
-      - "5433:5432"
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-      - ./apps/db/init-db:/docker-entrypoint-initdb.d
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-
   # Supabase PostgreSQL with required extensions
   supabase-db:
     image: supabase/postgres:15.1.0.117
@@ -29,7 +6,7 @@ services:
     hostname: supabase-db
     container_name: supabase-db
     ports:
-      - "5434:5432"
+      - "5432:5432"
     environment:
       - POSTGRES_USER=${SUPABASE_DB_USER:-postgres}
       - POSTGRES_PASSWORD=${SUPABASE_DB_PASSWORD:-postgres}
@@ -37,6 +14,7 @@ services:
     volumes:
       - supabase-db-data:/var/lib/postgresql/data
       - ./apps/db/supabase/init:/docker-entrypoint-initdb.d
+      - ./apps/db/init-db:/docker-entrypoint-initdb.d/regular
     command: postgres -c config_file=/etc/postgresql/postgresql.conf
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
@@ -58,8 +36,8 @@ services:
     environment:
       PGRST_DB_URI: postgres://${SUPABASE_DB_USER:-postgres}:${SUPABASE_DB_PASSWORD:-postgres}@supabase-db:5432/${SUPABASE_DB_NAME:-supabase}
       PGRST_DB_SCHEMA: ${PGRST_DB_SCHEMA:-public}
-      PGRST_DB_ANON_ROLE: ${PGRST_DB_ANON_ROLE:-anon}
-      PGRST_JWT_SECRET: ${PGRST_JWT_SECRET:-your-super-secret-jwt-token-with-at-least-32-characters}
+      PGRST_DB_ANON_ROLE: postgres
+      PGRST_JWT_SECRET: "your-super-secret-jwt-token-with-at-least-32-characters"
       PGRST_DB_USE_LEGACY_GUCS: "false"
     restart: unless-stopped
 
@@ -71,7 +49,7 @@ services:
     ports:
       - "8000:5000"
     depends_on:
-      postgres:
+      supabase-db:
         condition: service_healthy
     environment:
       - DATABASE_URL=${DATABASE_URL}
@@ -116,7 +94,6 @@ services:
         max-file: "3"
 
 volumes:
-  postgres-data:
   supabase-db-data:
 
 networks:

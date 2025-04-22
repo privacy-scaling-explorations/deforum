@@ -14,8 +14,7 @@
 ### Backend
 - Node.js
 - Express
-- PostgreSQL
-- Supabase
+- Supabase (for database, authentication, and real-time features)
 
 ## Project Structure
 
@@ -25,7 +24,6 @@ The project is structured as a monorepo using Yarn workspaces and Turborepo:
 /apps
   /client - Frontend React application
   /api - Backend Express API service
-  /db - Database migrations and seed data
   /supabase-rest - Supabase REST API configuration
   /shared - Shared types and utilities
 ```
@@ -56,16 +54,22 @@ The project is structured as a monorepo using Yarn workspaces and Turborepo:
    yarn install
    ```
 
-4. Start the development environment
+4. Start the development environment using Docker
    ```bash
-   yarn dev
+   docker compose up
    ```
-   This command uses Docker Compose to set up all required services:
-   - PostgreSQL database
-   - Supabase PostgreSQL with extensions
+   This command sets up all required services:
+   - Supabase (PostgreSQL with extensions)
    - PostgREST API
    - Backend API service
    - Frontend client application
+
+   > **Note:** Initial Docker build can take several minutes (2-3 minutes). For faster development, consider running only specific services or using local development.
+
+   Alternatively, you can use the Yarn script which wraps Docker Compose:
+   ```bash
+   yarn dev
+   ```
 
 5. Your application should now be running at:
    - Frontend: http://localhost:3000
@@ -100,17 +104,11 @@ yarn build
 
 ## Useful Commands
 
+- `docker compose up` - Start all services
+- `docker compose down` - Stop all services
 - `yarn generate` - Generate TanStack Router files
 - `yarn clean` - Clean build artifacts
 - `yarn build` - Build all applications
-
-## Database
-
-The application uses two PostgreSQL databases:
-1. Standard PostgreSQL for application data (port 5433)
-2. Supabase PostgreSQL for auth and realtime features (port 5434)
-
-Initial database migrations and seed data are run automatically when starting the Docker containers.
 
 ## License
 

@@ -1,12 +1,8 @@
 services:
-  # Supabase PostgreSQL with required extensions
   supabase-db:
     image: supabase/postgres:15.1.0.117
     platform: linux/amd64
-    hostname: supabase-db
     container_name: supabase-db
-    ports:
-      - "5432:5432"
     environment:
       - POSTGRES_USER=${SUPABASE_DB_USER:-postgres}
       - POSTGRES_PASSWORD=${SUPABASE_DB_PASSWORD:-postgres}
@@ -22,32 +18,31 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
+    networks:
+      - internal
 
-  # PostgREST API
   supabase-rest:
     image: postgrest/postgrest:v10.1.2
     platform: linux/amd64
     container_name: supabase-rest
-    ports:
-      - "3001:3000"
     depends_on:
       supabase-db:
         condition: service_healthy
     environment:
-      PGRST_DB_URI: postgres://${SUPABASE_DB_USER:-postgres}:${SUPABASE_DB_PASSWORD:-postgres}@supabase-db:5432/${SUPABASE_DB_NAME:-supabase}
-      PGRST_DB_SCHEMA: ${PGRST_DB_SCHEMA:-public}
-      PGRST_DB_ANON_ROLE: postgres
-      PGRST_JWT_SECRET: "your-super-secret-jwt-token-with-at-least-32-characters"
-      PGRST_DB_USE_LEGACY_GUCS: "false"
+      - PGRST_DB_URI=postgres://${SUPABASE_DB_USER:-postgres}:${SUPABASE_DB_PASSWORD:-postgres}@supabase-db:5432/${SUPABASE_DB_NAME:-supabase}
+      - PGRST_DB_SCHEMA=${PGRST_DB_SCHEMA:-public}
+      - PGRST_DB_ANON_ROLE=postgres
+      - PGRST_JWT_SECRET=your-super-secret-jwt-token-with-at-least-32-characters
+      - PGRST_DB_USE_LEGACY_GUCS=false
     restart: unless-stopped
+    networks:
+      - internal
 
   api:
-    build: 
+    build:
       context: .
       dockerfile: apps/api/Dockerfile
     platform: linux/amd64
-    ports:
-      - "8000:5000"
     depends_on:
       supabase-db:
         condition: service_healthy
@@ -69,9 +64,11 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    networks:
+      - internal
 
   client:
-    build: 
+    build:
       context: .
       dockerfile: apps/client/Dockerfile
     platform: linux/amd64
@@ -81,9 +78,9 @@ services:
       api:
         condition: service_healthy
     environment:
-      - VITE_API_URL=${VITE_API_URL:-http://localhost:8000/api}
-      - VITE_SUPABASE_URL=${VITE_SUPABASE_URL:-http://localhost:3001}
-      - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiJ9.ZopqpbRb_sReKnLypwLO9xiHdQvV2iwQeR_PTbWf2J8}
+      - VITE_API_URL=http://api:5000/api
+      - VITE_SUPABASE_URL=http://supabase-rest:3000
+      - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
     env_file:
       - .env
     command: sh -c "yarn workspace client run dev"
@@ -92,10 +89,12 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    networks:
+      - internal
 
 volumes:
   supabase-db-data:
 
 networks:
-  default:
-    driver: bridge 
+  internal:
+    driver: bridge

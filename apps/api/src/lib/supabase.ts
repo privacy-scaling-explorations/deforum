@@ -1,8 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL || 'http://supabase-rest:3000';
-// Use a simple token matching our PostgREST configuration
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoicG9zdGdyZXMifQ.oM0SXF31Vs1nfwCaDxjlOfipxZ4N4RjHRvFgEWJqZ7g';
+if (!process.env.SUPABASE_URL) {
+  throw new Error('SUPABASE_URL is not set');
+}
+const supabaseUrl = process.env.SUPABASE_URL;
+
+// Use a token matching PostgREST's expected format
+if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  throw new Error('SUPABASE_SERVICE_ROLE_KEY is not set');
+}
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 // Log detailed environment information for debugging
 console.log('==== SUPABASE CLIENT CONFIGURATION ====');
@@ -11,13 +18,10 @@ console.log('Using fixed JWT token for postgres role authentication');
 console.log('====================================');
 
 // Create client with proper token for postgres role access
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  db: {
-    schema: 'public',
-  },
+export const supabase = createClient(supabaseUrl, supabaseServiceRoleKey, {
   global: {
     headers: {
-      'x-client-info': `pse-forum-api/1.0.0`,
+      'x-client-info': `deforum-api/1.0.0`,
     },
   },
   auth: {
@@ -25,6 +29,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: false,
   },
 });
+
 
 // Add a helper function to check the connection
 export async function checkSupabaseConnection() {

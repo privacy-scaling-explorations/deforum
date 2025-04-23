@@ -136,18 +136,52 @@ ALTER TABLE community_members ENABLE ROW LEVEL SECURITY;
 ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE post_replies ENABLE ROW LEVEL SECURITY;
 
--- Create policies for each table (basic read access for now)
+-- Create policies for each table with proper security
+-- Users table policies
 CREATE POLICY "Users are viewable by everyone" ON users FOR SELECT USING (true);
+CREATE POLICY "Users can update their own data" ON users FOR UPDATE USING (auth.uid() = id);
+
+-- Protocol attributes policies
 CREATE POLICY "Protocol attributes are viewable by everyone" ON protocol_attributes FOR SELECT USING (true);
+
+-- Protocols policies
 CREATE POLICY "Protocols are viewable by everyone" ON protocols FOR SELECT USING (true);
+
+-- User protocols policies
 CREATE POLICY "User protocols are viewable by everyone" ON user_protocols FOR SELECT USING (true);
+CREATE POLICY "Users can manage their own protocols" ON user_protocols 
+    USING (auth.uid() = user_id);
+
+-- Communities policies
 CREATE POLICY "Communities are viewable by everyone" ON communities FOR SELECT USING (true);
-CREATE POLICY "Community required protocols are viewable by everyone" ON community_required_protocols FOR SELECT USING (true);
-CREATE POLICY "Community members are viewable by everyone" ON community_members FOR SELECT USING (true);
+CREATE POLICY "Community members can update community" ON communities 
+    USING (EXISTS (
+        SELECT 1 FROM community_members 
+        WHERE community_id = id AND user_id = auth.uid()
+    ));
+
+-- Community required protocols policies
+CREATE POLICY "Community required protocols are viewable by everyone" 
+    ON community_required_protocols FOR SELECT USING (true);
+
+-- Community members policies
+CREATE POLICY "Community members are viewable by everyone" 
+    ON community_members FOR SELECT USING (true);
+CREATE POLICY "Users can manage their own community membership" 
+    ON community_members USING (user_id = auth.uid());
+
+-- Posts policies
 CREATE POLICY "Posts are viewable by everyone" ON posts FOR SELECT USING (true);
+CREATE POLICY "Users can manage their own posts" ON posts 
+    USING (author_id = auth.uid());
+
+-- Post replies policies
 CREATE POLICY "Post replies are viewable by everyone" ON post_replies FOR SELECT USING (true);
+CREATE POLICY "Users can manage their own replies" ON post_replies 
+    USING (author_id = auth.uid());
 
 -- Grant appropriate permissions
 GRANT ALL ON ALL TABLES IN SCHEMA public TO postgres, service_role;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon, authenticated;
-GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO authenticated; 
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO authenticated;
+GRANT INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO authenticated; 

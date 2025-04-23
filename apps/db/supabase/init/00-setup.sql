@@ -18,7 +18,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";      -- For UUID generation
 CREATE EXTENSION IF NOT EXISTS "pg_trgm";        -- For text search
 
 -- Enable Row Level Security
-ALTER DATABASE supabase SET "app.settings.jwt_secret" TO 'your-super-secret-jwt-token-with-at-least-32-characters';
+ALTER DATABASE supabase SET "app.settings.jwt_secret" TO 'c3303eb2a0906e67139bb5262beaebadabe5f73848a6cd2af2db419fce2764a6';
 ALTER DATABASE supabase SET "app.settings.anon_role" TO 'anon';
 
 -- Create default permissions

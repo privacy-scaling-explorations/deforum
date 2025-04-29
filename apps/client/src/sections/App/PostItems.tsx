@@ -13,30 +13,62 @@ import { AuthWrapper } from "@/components/AuthWrapper";
 import { useGlobalContext } from "@/contexts/GlobalContext";
 import { useMemo } from "react";
 
-export const PostItems = () => {
-  const { data: posts = [], refetch: refetchPosts } = useGetPosts();
+interface PrismaPost {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: string;
+  isAnon: boolean;
+  author: {
+    id: string;
+    username: string;
+    avatar: string | null;
+    badges: string[];
+  };
+  community: {
+    id: string;
+    name: string;
+    avatar: string | null;
+  };
+  _count: {
+    replies: number;
+  };
+  reactions: Record<string, { count: number; nullifiers: string[] }>;
+}
+
+export const PostItems = ({ communityId }: { communityId?: string }) => {
+  const { data: postsData, refetch: refetchPosts } = useGetPosts(communityId || "");
   const { data: badges } = useGetBadges();
   const { isLoggedIn } = useGlobalContext();
   const togglePostReaction = useTogglePostReaction();
 
-  const onToggleReaction = async (postId: number | string, emoji: string) => {
+  const posts = useMemo(() => 
+    postsData?.items as PrismaPost[] || [], 
+    [postsData]
+  );
+
+  const onToggleReaction = async (postId: string, emoji: string) => {
     await togglePostReaction.mutateAsync({
-      postId: postId.toString(),
+      postId,
       emoji,
       userId: usersMocks?.[0].id.toString(),
     });
     await refetchPosts();
   };
 
-  const getUserBadges = (post: any) => {
+  const getUserBadges = (post: PrismaPost) => {
     return badges?.filter((badge: any) =>
-      post?.author.badges?.includes(+badge.id),
+      post.author.badges.includes(badge.id),
     );
   };
 
+  if (!posts.length) {
+    return <div>No posts found</div>;
+  }
+
   return (
     <div className="flex flex-col gap-4">
-      {posts?.map((post) => {
+      {posts.map((post) => {
         return (
           <div key={post.id} className="flex flex-col gap-14 mx-auto w-full">
             <PostCard
@@ -45,13 +77,13 @@ export const PostItems = () => {
                 <div className="flex items-center gap-2 justify-between">
                   <div className="flex items-center gap-1">
                     <UserGroupIcon className="size-[14px] text-purple" />
-                    <Link to={`/communities/${post.communityData?.id}` as any}>
+                    <Link to={`/communities/${post.community.id}` as any}>
                       <span className="text-purple font-inter font-semibold text-sm">
-                        {post.communityData?.name}
+                        {post.community.name}
                       </span>
                     </Link>
                   </div>
-                  <TimeSince isoDateTime={post?.createdAt ?? ""} />
+                  <TimeSince isoDateTime={post.createdAt} />
                 </div>
               }
               title={post.title}
@@ -69,7 +101,7 @@ export const PostItems = () => {
               <div className=" flex items-center gap-2">
                 <Tag size="sm">
                   <MessageSquareIcon className="size-4" />
-                  <span>{post.replies.length}</span>
+                  <span>{post._count.replies}</span>
                 </Tag>
 
                 <AuthWrapper requireLogin={!isLoggedIn}>
@@ -83,7 +115,7 @@ export const PostItems = () => {
                 </AuthWrapper>
 
                 <PostReactions
-                  reactions={post.reactions ?? {}}
+                  reactions={post.reactions}
                   onToggleReaction={async (emoji) => {
                     await onToggleReaction(post.id, emoji);
                   }}

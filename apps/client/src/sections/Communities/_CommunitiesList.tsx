@@ -12,14 +12,7 @@ export const CommunitiesList = ({ view = "all" }: CommunitiesListProps) => {
   const { data: communities = [] } = useGetCommunities();
   const { data: user } = useGetUser();
 
-  const joinedCommunities =
-    user?.id == undefined
-      ? []
-      : communities?.filter((community: any) =>
-          community?.members?.some((member: any) => member === user?.id),
-        );
-
-  const filteredCommunities = view === "all" ? communities : joinedCommunities;
+  const filteredCommunities = communities;
   if (filteredCommunities.length === 0) {
     return <div>No communities found</div>;
   }

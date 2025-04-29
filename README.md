@@ -39,8 +39,8 @@ The project is structured as a monorepo using Yarn workspaces and Turborepo:
 
 1. Clone the repository
    ```bash
-   git clone https://github.com/yourusername/pse-forum.git
-   cd pse-forum
+   git clone https://github.com/yourusername/deforum.git
+   cd deforum
    ```
 
 2. Copy environment variables
@@ -59,7 +59,7 @@ The project is structured as a monorepo using Yarn workspaces and Turborepo:
    docker compose up
    ```
    This command sets up all required services:
-   - Supabase (PostgreSQL with extensions)
+   - PostgreSQL
    - PostgREST API
    - Backend API service
    - Frontend client application
@@ -74,7 +74,7 @@ The project is structured as a monorepo using Yarn workspaces and Turborepo:
 5. Your application should now be running at:
    - Frontend: http://localhost:3000
    - API: http://localhost:8000/api
-   - Supabase REST API: http://localhost:3001
+   - PostgREST API: http://localhost:3001
 
 ## Development
 

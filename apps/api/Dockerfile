@@ -1,24 +1,37 @@
-FROM node:18 AS builder
-WORKDIR /app
-COPY package.json yarn.lock ./
-RUN yarn install
-# Install type definitions and dependencies
-RUN yarn add -W @types/express @types/node @types/pg @types/cors dotenv @types/dotenv
-RUN yarn add -W @supabase/supabase-js cors
+FROM node:18-alpine
 
+WORKDIR /app
+
+# Install netcat and curl for health checks
+RUN apk add --no-cache netcat-openbsd curl
+
+# Copy root config files
+COPY package.json yarn.lock tsconfig.json ./
+
+# Copy package files with their configs
+COPY apps/shared/package.json apps/shared/tsconfig.json ./apps/shared/
+COPY apps/api/package.json apps/api/tsconfig.json ./apps/api/
+
+# Install dependencies
+RUN yarn install --frozen-lockfile
+
+# Copy and build shared package first
+COPY apps/shared/src ./apps/shared/src
+RUN cd apps/shared && yarn build
+
+# Copy API source and generate Prisma client
+COPY apps/api/src ./apps/api/src
+COPY apps/api/prisma ./apps/api/prisma
+RUN cd apps/api && npx prisma generate
+
+# Copy remaining files
 COPY . .
+
+# Build API
+RUN cd apps/api && yarn build
+
+EXPOSE 5000
+
 WORKDIR /app/apps/api
 
-# Copy our fix-types script and run it
-COPY apps/api/fix-types.sh ./fix-types.sh
-RUN chmod +x fix-types.sh && ./fix-types.sh
-
-FROM node:18 AS runner
-WORKDIR /app
-COPY --from=builder /app/apps/api/package.json ./package.json
-COPY --from=builder /app/apps/api/dist ./dist
-RUN yarn install --production
-
-ENV NODE_ENV production
-EXPOSE 5000
-CMD ["yarn", "start"] 
+CMD ["/app/apps/api/start.sh"] 

@@ -1,59 +1,26 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
-import { API_URL } from "../settings"
+import { trpc } from "../lib/trpc";
+
 export const useGetCommunities = () => {
-  return useQuery({
-    staleTime: 0,
-    queryKey: ["getCommunities"],
-    queryFn: async () => {
-      const res = await fetch(`${API_URL}/api/communities`)
-      return res.json()
-    },
-  })
-}
+  return trpc.communities.all.useQuery();
+};
 
 export const useGetUserCommunities = () => {
-  return useQuery({
-    queryKey: ["getUserCommunities"],
-    queryFn: async () => {
-      const res = await fetch(`${API_URL}/api/communities/user`)
-      return res.json()
-    },
-  })
-}
+  return trpc.communities.listByUser.useQuery();
+};
+
 export const useGetCommunityById = (id: string) => {
-  return useQuery({
-    staleTime: 0,
-    queryKey: ["getCommunityById", id],
-    queryFn: async () => {
-      const res = await fetch(`${API_URL}/api/communities/${id}`)
-      return res.json()
-    },
-  })
-}
+  return trpc.communities.byId.useQuery(id);
+};
 
 export const useGetCommunityPosts = (id: string) => {
-  return useQuery({
-    staleTime: 0,
-    queryKey: ["getCommunityPosts", id],
-    queryFn: async () => {
-      const res = await fetch(`${API_URL}/api/communities/${id}/posts`)
-      return res.json()
-    },
-  })
-}
+  return trpc.communities.posts.useQuery({ id });
+};
 
 export const useJoinCommunity = () => {
-  return useMutation({
-    mutationFn: async ({ id, userId, onSuccess }: { id: string | number; userId: string; onSuccess?: () => void }) => {
-      const res = await fetch(`${API_URL}/api/communities/${id}/join`, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ userId }),
-      })
-      await onSuccess?.();
-      return res.json()
+  return trpc.communities.join.useMutation({
+    onSuccess: () => {
+      // Invalidate relevant queries
+      trpc.communities.all.invalidate();
     },
-  })
-}
+  });
+};

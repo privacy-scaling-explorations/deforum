@@ -2,76 +2,43 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 import { useStorage } from "./useStorage"
 import { LOCAL_STORAGE_KEYS } from "@/settings"
 import { CreatePostSchema, PostSchema } from "@/shared/schemas/post.schema"
-import { API_URL } from "../settings"
+import { trpc } from "../lib/trpc"
 
-export const useGetPosts = () => {
-  return useQuery({
-    staleTime: 0,
-    queryKey: ["getPosts"],
-    queryFn: (): Promise<PostSchema[]> =>
-      fetch(`${API_URL}/api/posts`).then((res) => res.json()),
-  })
+export const useGetPosts = (communityId: string) => {
+  return trpc.posts.all.useQuery({ 
+    communityId,
+    limit: 10 
+  }, {
+    enabled: !!communityId
+  });
 }
 
 export const useGetBadges = () => {
-  return useQuery({
-    staleTime: 0,
-    queryKey: ["getBadges"],
-    queryFn: () => fetch(`${API_URL}/api/badges`).then((res) => res.json()),
-  })
+  return trpc.badges.list.useQuery()
 }
 
 export const useGetPostById = (postId: string | number) => {
-  return useQuery({
-    staleTime: 0,
-    queryKey: ["getPostById", postId],
-    queryFn: () => {
-      const postById = fetch(`${API_URL}/api/posts/${postId}`).then(
-        (res) => res.json(),
-      )
-      if (!postById) {
-        throw new Error("Post not found")
-      }
-      return postById
-    },
-  })
+  return trpc.posts.byId.useQuery(postId.toString())
+}
+
+export const useGetPostsByCommunity = (communityId: string) => {
+  return trpc.posts.byCommunity.useQuery({ communityId });
 }
 
 export const useTogglePostReaction = () => {
-  return useMutation({
-    mutationKey: ["togglePostReaction"],
-    mutationFn: async ({
-      postId,
-      emoji,
-      userId,
-    }: {
-      postId: string | number
-      emoji: string
-      userId: string
-    }): Promise<PostSchema> => {
-      const post = await fetch(`${API_URL}/api/posts/${postId}/reactions`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ emoji, userId }),
-      }).then((res) => res.json())
-
-      if (!post) {
-        throw new Error("Post not found")
-      }
-
-      return post
+  return trpc.posts.toggleReaction.useMutation({
+    onSuccess: () => {
+      // Invalidate relevant queries
+      trpc.posts.all.invalidate()
     },
   })
 }
 
 export const useCreatePostMutation = () => {
-  return useMutation({
-    mutationFn: (post: CreatePostSchema) => {
-      return fetch(`${API_URL}/api/posts`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(post),
-      }).then((res) => res.json())
+  return trpc.posts.create.useMutation({
+    onSuccess: () => {
+      // Invalidate the posts list query
+      trpc.posts.all.invalidate()
     },
   })
 }
@@ -115,13 +82,13 @@ export const useGetDrafts = () => {
   })
 }
 
-export const useRemoveDraft = (): any => {
+export const useRemoveDraft = () => {
   const { getItem, setItem } = useStorage<PostDraft[]>(
     LOCAL_STORAGE_KEYS.POST_DRAFT,
   )
 
   return useMutation({
-    mutationFn: (draftId: string): any => {
+    mutationFn: (draftId: string) => {
       const drafts = getItem() || []
       const filteredDrafts = drafts.filter((draft) => draft.id !== draftId)
       return setItem(filteredDrafts)
@@ -135,7 +102,7 @@ export const useUpdateDraft = () => {
   )
 
   return useMutation({
-    mutationFn: (updatedDraft: PostDraft): any => {
+    mutationFn: (updatedDraft: PostDraft) => {
       const drafts = getItem() || []
       const updatedDrafts = drafts.map((draft) =>
         draft.id === updatedDraft.id ? updatedDraft : draft,

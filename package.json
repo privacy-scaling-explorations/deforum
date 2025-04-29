@@ -17,6 +17,10 @@
     "jsonwebtoken": "^9.0.2",
     "turbo": "^1.13.3",
     "typescript": "^5.4.5",
-    "vite-tsconfig-paths": "^5.1.4",
-  "packageManager": "yarn@1.22.22"
+    "vite-tsconfig-paths": "^5.1.4"
+  },
+  "packageManager": "yarn@1.22.22",
+  "dependencies": {
+    "@trpc/server": "^11.0.0"
+  }
 }

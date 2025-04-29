@@ -1,5 +1,6 @@
 import { createContext, useContext, ReactNode, useState } from 'react';
 import { LoginModal } from '@/sections/Login/LoginModal';
+
 interface GlobalContextType {
   isMenuOpen: boolean;
   setIsMenuOpen: (value: boolean) => void;
@@ -41,6 +42,7 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
   return (
     <GlobalContext.Provider value={value}>
       {children}
+      <LoginModal isOpen={showLoginModal} setIsOpen={setShowLoginModal} />
     </GlobalContext.Provider>
   );
 }

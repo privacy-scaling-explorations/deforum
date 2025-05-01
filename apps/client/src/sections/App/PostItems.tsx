@@ -6,59 +6,76 @@ import { PostCard } from "../Post/PostCard";
 import { User as UserGroupIcon } from "lucide-react";
 import { Tag } from "@/components/ui/Tag";
 import { EmojiButton } from "@/components/ui/EmojiButton";
-import { usersMocks } from "../../../../shared/src/mocks/users.mocks";
 import { PostReactions } from "@/components/ui/PostReactions";
 import { Link } from "@tanstack/react-router";
 import { AuthWrapper } from "@/components/AuthWrapper";
 import { useGlobalContext } from "@/contexts/GlobalContext";
 import { useMemo } from "react";
 
+interface PostReaction {
+  count: number;
+  nullifiers: string[];
+}
+
 interface PrismaPost {
   id: string;
   title: string;
   content: string;
   createdAt: string;
+  updatedAt: string | null;
   isAnon: boolean;
+  authorId: string;
+  communityId: string;
+  anonymousMetadata: Record<string, any> | null;
+  totalViews: number;
   author: {
-    id: string;
-    username: string;
+    id: string | null;
+    username: string | null;
     avatar: string | null;
-    badges: string[];
+    userBadges: Array<{
+      badge: {
+        id: string;
+        name: string;
+      }
+    }>;
   };
   community: {
     id: string;
     name: string;
     avatar: string | null;
+    slug: string;
   };
   _count: {
     replies: number;
   };
-  reactions: Record<string, { count: number; nullifiers: string[] }>;
+  reactions: Record<string, PostReaction>;
 }
 
 export const PostItems = ({ communityId }: { communityId?: string }) => {
   const { data: postsData, refetch: refetchPosts } = useGetPosts(communityId || "");
   const { data: badges } = useGetBadges();
-  const { isLoggedIn } = useGlobalContext();
+  const { isLoggedIn, user } = useGlobalContext();
   const togglePostReaction = useTogglePostReaction();
 
   const posts = useMemo(() => 
-    postsData?.items as PrismaPost[] || [], 
+    (postsData?.items || []) as unknown as PrismaPost[], 
     [postsData]
   );
 
   const onToggleReaction = async (postId: string, emoji: string) => {
+    if (!user) return;
     await togglePostReaction.mutateAsync({
       postId,
       emoji,
-      userId: usersMocks?.[0].id.toString(),
+      userId: user.id,
     });
     await refetchPosts();
   };
 
   const getUserBadges = (post: PrismaPost) => {
-    return badges?.filter((badge: any) =>
-      post.author.badges.includes(badge.id),
+    if (!badges || !post.author.userBadges) return [];
+    return badges.filter((badge: any) =>
+      post.author.userBadges.some(ub => ub.badge.id === badge.id)
     );
   };
 
@@ -77,7 +94,7 @@ export const PostItems = ({ communityId }: { communityId?: string }) => {
                 <div className="flex items-center gap-2 justify-between">
                   <div className="flex items-center gap-1">
                     <UserGroupIcon className="size-[14px] text-purple" />
-                    <Link to={`/communities/${post.community.id}` as any}>
+                    <Link to="/communities/$slug" params={{ slug: post.community.slug }}>
                       <span className="text-purple font-inter font-semibold text-sm">
                         {post.community.name}
                       </span>
@@ -98,28 +115,26 @@ export const PostItems = ({ communityId }: { communityId?: string }) => {
                 }}
                 badges={getUserBadges(post)}
               />
-              <div className=" flex items-center gap-2">
-                <Tag size="sm">
+              <div className="flex items-center gap-2">
+                <Tag tooltip="Comments">
                   <MessageSquareIcon className="size-4" />
                   <span>{post._count.replies}</span>
                 </Tag>
-
-                <AuthWrapper requireLogin={!isLoggedIn}>
+                <PostReactions
+                  size="md"
+                  reactions={post.reactions ?? {}}
+                  onToggleReaction={async (emoji) => {
+                    await onToggleReaction(post.id, emoji);
+                  }}
+                />
+                <AuthWrapper>
                   <EmojiButton
-                    disabled={!isLoggedIn}
-                    size="sm"
+                    size="md"
                     onClick={async (emoji) => {
                       await onToggleReaction(post.id, emoji);
                     }}
                   />
                 </AuthWrapper>
-
-                <PostReactions
-                  reactions={post.reactions}
-                  onToggleReaction={async (emoji) => {
-                    await onToggleReaction(post.id, emoji);
-                  }}
-                />
               </div>
             </PostCard>
           </div>

@@ -21,18 +21,12 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const user = {
-    name: "John Doe",
-    username: "john_doe",
-    avatar: "https://pse.dev/logos/pse-logo-bg.svg",
-  }
 
   const value = {
     isMenuOpen,
     setIsMenuOpen,
     isDarkMode,
     setIsDarkMode,
-    user,
     isLoggedIn,
     setIsLoggedIn,
     showLoginModal,

@@ -1,129 +1,204 @@
 import { z } from 'zod';
-import {
-  BadgeSchema,
-  CreateBadgeSchema,
-  CreateBadgeInput,
-  UpdateBadgeInput,
-} from '@deforum/shared/schemas/badge';
 import { router, publicProcedure, protectedProcedure } from '../trpc';
+import { TRPCError } from '@trpc/server';
+import { 
+  CreateBadgeDefinitionInput,
+  UpdateBadgeDefinitionInput,
+  IssueBadgeCredentialInput,
+  RevokeBadgeCredentialInput
+} from '@deforum/shared/schemas/badge';
+
+const BadgeDefinitionSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(3),
+  slug: z.string(),
+  description: z.string().optional(),
+  protocolId: z.string().uuid(),
+  metadata: z.record(z.string(), z.any()).optional(),
+  privateByDefault: z.boolean().default(true),
+  expiresAfter: z.number().int().min(1).optional(),
+});
+
+const CreateBadgeDefinitionSchema = BadgeDefinitionSchema.omit({ id: true });
 
 const UpdateBadgeInputSchema = z.object({
   id: z.string().uuid(),
-  data: BadgeSchema.partial().omit({ id: true }),
+  data: z.object({
+    name: z.string().min(3).optional(),
+    slug: z.string().optional(),
+    description: z.string().optional(),
+    protocolId: z.string().uuid().optional(),
+    metadata: z.record(z.string(), z.any()).optional(),
+    privateByDefault: z.boolean().optional(),
+    expiresAfter: z.number().int().min(1).optional(),
+  }),
 });
 
 type UpdateBadgeInputType = z.infer<typeof UpdateBadgeInputSchema>;
 
 export const badgesRouter = router({
-  all: publicProcedure
-    .query(async ({ ctx }) => {
-      return ctx.prisma.badge.findMany({
-        include: {
-          protocol: true,
-          _count: {
-            select: {
-              userBadges: true,
-              requiredFor: true
-            }
+  all: publicProcedure.query(async ({ ctx }) => {
+    return ctx.prisma.badgeDefinition.findMany({
+      include: {
+        protocols: {
+          include: {
+            protocol: true
+          }
+        },
+        _count: {
+          select: {
+            issuances: true
           }
         }
-      });
-    }),
+      }
+    });
+  }),
 
   byId: publicProcedure
-    .input(z.object({ id: z.string().uuid() }))
+    .input(z.string().uuid())
     .query(async ({ ctx, input }) => {
-      const badge = await ctx.prisma.badge.findUnique({
-        where: { id: input.id },
+      const badge = await ctx.prisma.badgeDefinition.findUnique({
+        where: { id: input },
         include: {
-          protocol: true,
-          _count: {
-            select: {
-              userBadges: true,
-              requiredFor: true
+          protocols: {
+            include: {
+              protocol: true
+            }
+          },
+          issuances: {
+            include: {
+              user: true
             }
           }
         }
       });
 
       if (!badge) {
-        throw new Error('Badge not found');
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Badge not found',
+        });
       }
 
       return badge;
     }),
 
   bySlug: publicProcedure
-    .input(z.object({ slug: z.string() }))
+    .input(z.string())
     .query(async ({ ctx, input }) => {
-      const badge = await ctx.prisma.badge.findUnique({
-        where: { slug: input.slug },
+      const badge = await ctx.prisma.badgeDefinition.findUnique({
+        where: { slug: input },
         include: {
-          protocol: true,
+          protocols: {
+            include: {
+              protocol: true
+            }
+          },
           _count: {
             select: {
-              userBadges: true,
-              requiredFor: true
-            }
-          }
-        }
+              issuances: true,
+            },
+          },
+        },
       });
 
       if (!badge) {
-        throw new Error('Badge not found');
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Badge not found',
+        });
       }
 
       return badge;
     }),
 
   byProtocol: publicProcedure
-    .input(z.object({ protocolId: z.string().uuid() }))
+    .input(z.string().uuid())
     .query(async ({ ctx, input }) => {
-      return ctx.prisma.badge.findMany({
-        where: { protocolId: input.protocolId },
-        include: {
-          _count: {
-            select: {
-              userBadges: true,
-              requiredFor: true
+      return ctx.prisma.badgeDefinition.findMany({
+        where: {
+          protocols: {
+            some: {
+              protocolId: input
             }
           }
-        }
+        },
+        include: {
+          protocols: {
+            include: {
+              protocol: true
+            }
+          },
+          _count: {
+            select: {
+              issuances: true,
+            },
+          },
+        },
       });
     }),
 
   // Badge Management
   create: protectedProcedure
-    .input(CreateBadgeSchema)
+    .input(CreateBadgeDefinitionInput)
     .mutation(async ({ ctx, input }) => {
-      // TODO: Add permission check for badge creation
-      return ctx.prisma.badge.create({
-        data: input,
+      const badge = await ctx.prisma.badgeDefinition.create({
+        data: {
+          name: input.name,
+          slug: input.slug,
+          description: input.description,
+          metadata: input.metadata,
+          privateByDefault: input.privateByDefault,
+          expiresAfter: input.expiresAfter,
+          protocols: {
+            create: input.protocolIds.map(protocolId => ({
+              protocol: { connect: { id: protocolId } },
+              metadata: input.protocolMetadata
+            }))
+          }
+        },
         include: {
-          protocol: true
+          protocols: {
+            include: {
+              protocol: true
+            }
+          }
         }
       });
+
+      return badge;
     }),
 
   update: protectedProcedure
-    .input(UpdateBadgeInputSchema)
-    .mutation(async ({ ctx, input }: { ctx: any; input: UpdateBadgeInputType }) => {
-      // TODO: Add permission check for badge updates
-      return ctx.prisma.badge.update({
+    .input(UpdateBadgeDefinitionInput)
+    .mutation(async ({ ctx, input }) => {
+      const badge = await ctx.prisma.badgeDefinition.update({
         where: { id: input.id },
         data: {
           name: input.data.name,
           slug: input.data.slug,
           description: input.data.description,
-          protocolId: input.data.protocolId,
           metadata: input.data.metadata,
           privateByDefault: input.data.privateByDefault,
           expiresAfter: input.data.expiresAfter,
+          protocols: {
+            deleteMany: {},
+            create: input.data.protocolIds.map(protocolId => ({
+              protocol: { connect: { id: protocolId } },
+              metadata: input.data.protocolMetadata
+            }))
+          }
         },
         include: {
-          protocol: true
+          protocols: {
+            include: {
+              protocol: true
+            }
+          }
         }
       });
+
+      return badge;
     }),
 
   // Badge Usage Stats
@@ -135,10 +210,10 @@ export const badgesRouter = router({
         activeUsers,
         communities
       ] = await Promise.all([
-        ctx.prisma.userBadge.count({
+        ctx.prisma.badgeCredential.count({
           where: { badgeId: input.id }
         }),
-        ctx.prisma.userBadge.count({
+        ctx.prisma.badgeCredential.count({
           where: {
             badgeId: input.id,
             revokedAt: null,
@@ -176,45 +251,32 @@ export const badgesRouter = router({
     }),
 
   // Issue Badge to User
-  issueBadge: protectedProcedure
-    .input(z.object({
-      userId: z.string().uuid(),
-      badgeId: z.string().uuid(),
-      metadata: z.record(z.string(), z.any()).optional(),
-      expiresAt: z.date().optional(),
-    }))
+  issue: protectedProcedure
+    .input(IssueBadgeCredentialInput)
     .mutation(async ({ ctx, input }) => {
-      // TODO: Add permission check for badge issuance
-      
-      // Get the badge to check its privateByDefault setting and expiration
-      const badge = await ctx.prisma.badge.findUnique({
-        where: { id: input.badgeId }
-      });
-
-      if (!badge) {
-        throw new Error('Badge not found');
-      }
-
-      // Calculate expiration date if badge has expiresAfter set
-      const expiresAt = input.expiresAt || (badge.expiresAfter 
-        ? new Date(Date.now() + badge.expiresAfter * 24 * 60 * 60 * 1000) 
-        : null);
-
-      // Create the user badge using the badge's privateByDefault setting
-      return ctx.prisma.userBadge.create({
+      const credential = await ctx.prisma.badgeCredential.create({
         data: {
-          userId: input.userId,
-          badgeId: input.badgeId,
-          isPublic: !badge.privateByDefault,
+          user: { connect: { id: input.userId } },
+          definition: { connect: { id: input.badgeId } },
+          isPublic: input.isPublic,
           metadata: input.metadata,
           verifiedAt: new Date(),
-          expiresAt,
+          expiresAt: input.expiresAfter ? new Date(Date.now() + input.expiresAfter * 24 * 60 * 60 * 1000) : null
         },
         include: {
-          badge: true,
-          user: true
+          definition: {
+            include: {
+              protocols: {
+                include: {
+                  protocol: true
+                }
+              }
+            }
+          }
         }
       });
+
+      return credential;
     }),
 
   // Badge Requirements
@@ -241,4 +303,15 @@ export const badgesRouter = router({
         }
       });
     }),
+
+  revoke: protectedProcedure
+    .input(RevokeBadgeCredentialInput)
+    .mutation(async ({ ctx, input }) => {
+      return ctx.prisma.badgeCredential.update({
+        where: { id: input.id },
+        data: {
+          revokedAt: new Date()
+        }
+      });
+    })
 }); 

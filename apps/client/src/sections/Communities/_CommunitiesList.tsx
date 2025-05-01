@@ -3,6 +3,7 @@ import { Card } from "@/components/cards/Card";
 import { useGetCommunities } from "@/hooks/useCommunities";
 import { useGetUser } from "@/hooks/useAuth";
 import { Link } from "@tanstack/react-router";
+import { useTranslation } from 'react-i18next';
 
 interface CommunitiesListProps {
   view?: "all" | "joined";
@@ -11,16 +12,17 @@ interface CommunitiesListProps {
 export const CommunitiesList = ({ view = "all" }: CommunitiesListProps) => {
   const { data: communities = [] } = useGetCommunities();
   const { data: user } = useGetUser();
+  const { t } = useTranslation();
 
   const filteredCommunities = communities;
   if (filteredCommunities.length === 0) {
-    return <div>No communities found</div>;
+    return <div>{t('pages.communities.empty')}</div>;
   }
 
   return (
     <div className="flex flex-col gap-4">
       {filteredCommunities?.map((community: any) => (
-        <Link key={community.id} to={`/communities/${community.id}` as any}>
+        <Link key={community.id} to="/communities/$slug" params={{ slug: community.slug }}>
           <Card.Base key={community.id} withHover>
             <div className="flex gap-3 items-center">
               <Avatar className="!size-[50px]" src={community.avatar} />

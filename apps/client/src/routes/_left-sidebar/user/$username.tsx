@@ -5,7 +5,7 @@ export const Route = createFileRoute("/_left-sidebar/user/$username")({
     component: UserPage,
     loader: async ({ params: { username } }) => {
       return {
-        username,
+        username: decodeURIComponent(username),
       };
     },
   });

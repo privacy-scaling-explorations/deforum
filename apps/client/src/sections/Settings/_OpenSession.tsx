@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/cards/Card";
 import { classed } from "@tw-classed/react";
+import { useTranslation } from 'react-i18next';
 
 const SessionTableWrapper = classed.div(
   "h-10 flex items-center lg:grid lg:grid-cols-[1fr_150px_90px] gap-2",
@@ -24,21 +25,23 @@ const sessionMockData = [
 ];
 
 export const OpenSession = () => {
+  const { t } = useTranslation();
+  
   return (
     <Card.Base className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <Card.Title>Open sessions</Card.Title>
+        <Card.Title>{t('pages.settings.sessions.title')}</Card.Title>
         <Card.Description>
-          Update your password to keep your account secure.
+          {t('pages.settings.sessions.description')}
         </Card.Description>
       </div>
       <div className="flex flex-col">
         <SessionTableWrapper className="border-b border-base-border">
           <span className="text-sm font-medium text-base-muted-foreground">
-            Session
+            {t('pages.settings.sessions.headers.session')}
           </span>
           <span className="text-sm font-medium text-base-muted-foreground">
-            Device
+            {t('pages.settings.sessions.headers.device')}
           </span>
           <span></span>
         </SessionTableWrapper>
@@ -53,7 +56,7 @@ export const OpenSession = () => {
             <span className="text-sm text-base-foreground">{session.status}</span>
             <div>
               <Button variant="outline" className="!flex !w-full">
-                Sign Out
+                {t('actions.sign_out')}
               </Button>
             </div>
           </SessionTableWrapper>

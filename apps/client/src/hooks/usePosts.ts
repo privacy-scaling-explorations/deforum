@@ -21,8 +21,10 @@ export const useGetPostById = (postId: string | number) => {
   return trpc.posts.byId.useQuery(postId.toString())
 }
 
-export const useGetPostsByCommunity = (communityId: string) => {
-  return trpc.posts.byCommunity.useQuery({ communityId });
+export const useGetPostsByCommunity = (communityId: string | undefined) => {
+  return trpc.posts.byCommunity.useQuery({ communityId: communityId! }, {
+    enabled: !!communityId
+  });
 }
 
 export const useTogglePostReaction = () => {

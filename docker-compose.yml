@@ -9,7 +9,6 @@ services:
       POSTGRES_DB: ${DB_NAME}
     volumes:
       - db-data:/var/lib/postgresql/data
-      - ./apps/db/migrations/init:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -25,7 +24,7 @@ services:
       dockerfile: apps/api/Dockerfile
     ports:
       - "5000:5000"
-    stop_grace_period: 10s
+    stop_grace_period: 5s
     stop_signal: SIGTERM
     command: /app/apps/api/start.sh
     depends_on:
@@ -36,6 +35,8 @@ services:
       NODE_ENV: ${NODE_ENV}
     env_file:
       - .env
+    volumes:
+      - ./apps/api/prisma/migrations:/app/apps/api/prisma/migrations
     develop:
       watch:
         - action: sync
@@ -54,10 +55,10 @@ services:
           path: ./apps/api/package.json
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"]
-      interval: 10s
+      interval: 15s
       timeout: 5s
       retries: 3
-      start_period: 10s
+      start_period: 30s
     networks:
       - deforum-internal
 
@@ -79,6 +80,12 @@ services:
         - action: sync
           path: ./apps/client/src
           target: /app/apps/client/src
+          ignore:
+            - node_modules/
+            - dist/
+        - action: sync
+          path: ./apps/client/public
+          target: /app/apps/client/public
           ignore:
             - node_modules/
             - dist/

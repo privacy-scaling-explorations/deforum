@@ -1,12 +1,39 @@
 import { z } from "zod"
-import { BadgeSchema } from "./badge"
 import { CommunitySchema } from "./community"
+import { UserPublicKeySchema } from "./user"
 
-export const postReactionSchema = z.object({
-  emoji: z.string(),
-  count: z.number().int().default(0),
-  nullifiers: z.array(z.string()).optional().default([]),
+export const PostType = z.enum(['PROFILE', 'COMMUNITY']);
+export type PostType = z.infer<typeof PostType>;
+
+export const SemaphoreProofMetadataSchema = z.object({
+  id: z.string().uuid(),
+  proof: z.string(),
+  nullifier: z.string(),
+  publicSignals: z.array(z.string()),
+  merkleRootId: z.string().uuid(),
+  createdAt: z.string(),
 })
+
+export type SemaphoreProofMetadata = z.infer<typeof SemaphoreProofMetadataSchema>;
+
+export const ReactionSchema = z.object({
+  id: z.string().uuid(),
+  emoji: z.string(),
+  proofMetadata: SemaphoreProofMetadataSchema.optional(),
+  createdAt: z.string(),
+  postId: z.string().uuid().optional(),
+  replyId: z.string().uuid().optional(),
+});
+
+export type Reaction = z.infer<typeof ReactionSchema>;
+
+export const SignatureMetadataSchema = z.object({
+  signature: z.string(),
+  timestamp: z.number(),
+  nonce: z.string(),
+});
+
+export type SignatureMetadata = z.infer<typeof SignatureMetadataSchema>;
 
 export const postAuthorSchema = z
   .object({
@@ -23,26 +50,23 @@ export const postAuthorSchema = z
     },
   )
 
-export const anonymousMetadataSchema = z.object({
-  nullifier: z.string(),
-  proof: z.string(),
-  publicSignals: z.array(z.string()),
-  // Add any other anonymous post specific metadata fields here
-})
-
 export const postReplySchema = z.object({
   id: z.string().uuid(),
   content: z.string().optional(),
   author: postAuthorSchema,
+  signedBy: UserPublicKeySchema.optional(),
+  signatureMetadata: SignatureMetadataSchema.optional(),
   createdAt: z.string().optional(),
   postMention: z.string().uuid().optional().nullable(),
-  anonymousMetadata: anonymousMetadataSchema.optional(),
+  proofMetadata: SemaphoreProofMetadataSchema.optional(),
+  reactions: z.array(ReactionSchema).optional(),
 })
 
 export const postSchema = z.object({
   id: z.string().uuid(),
   title: z.string(),
   content: z.string(),
+  type: PostType,
   replies: z.array(
     postReplySchema.and(
       z.object({
@@ -51,40 +75,76 @@ export const postSchema = z.object({
     ),
   ),
   author: postAuthorSchema,
+  signedBy: UserPublicKeySchema.optional(),
+  signatureMetadata: SignatureMetadataSchema.optional(),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
   totalViews: z.number().optional(),
   isAnon: z.boolean().optional().default(false),
-  anonymousMetadata: anonymousMetadataSchema.optional(),
-  reactions: z.record(z.string(), postReactionSchema).optional(),
-  communityId: z.string().uuid(),
+  proofMetadata: SemaphoreProofMetadataSchema.optional(),
+  reactions: z.array(ReactionSchema).optional(),
+  communityId: z.string().uuid().optional().nullable(),
   communityData: CommunitySchema.optional(),
   tags: z.array(z.string()).optional(),
 }).refine(
-  (data) => !data.isAnon || (data.isAnon && data.anonymousMetadata),
+  (data) => !data.isAnon || (data.isAnon && data.proofMetadata),
   {
-    message: "Anonymous posts must include anonymous metadata",
-    path: ["anonymousMetadata"],
+    message: "Anonymous posts must include Semaphore proof metadata",
+    path: ["proofMetadata"],
+  }
+).refine(
+  (data) => data.type !== 'COMMUNITY' || (data.type === 'COMMUNITY' && data.communityId),
+  {
+    message: "Community posts must include a communityId",
+    path: ["communityId"],
+  }
+).refine(
+  (data) => data.isAnon || (!data.isAnon && data.signatureMetadata),
+  {
+    message: "Non-anonymous posts must be signed",
+    path: ["signatureMetadata"],
   }
 )
 
 export const createPostSchema = z.object({
   title: z.string().min(10, "A title is required to continue."),
   content: z.string().min(10, "A content is required to continue."),
-  communityId: z.string().uuid(),
+  type: PostType,
+  communityId: z.string().uuid().optional().nullable(),
   isAnon: z.boolean().default(false),
-  anonymousMetadata: anonymousMetadataSchema.optional(),
+  proofMetadata: SemaphoreProofMetadataSchema.optional(),
+  signatureMetadata: SignatureMetadataSchema.optional(),
 }).refine(
-  (data) => !data.isAnon || (data.isAnon && data.anonymousMetadata),
+  (data) => !data.isAnon || (data.isAnon && data.proofMetadata),
   {
-    message: "Anonymous posts must include anonymous metadata",
-    path: ["anonymousMetadata"],
+    message: "Anonymous posts must include Semaphore proof metadata",
+    path: ["proofMetadata"],
+  }
+).refine(
+  (data) => data.type !== 'COMMUNITY' || (data.type === 'COMMUNITY' && data.communityId),
+  {
+    message: "Community posts must include a communityId",
+    path: ["communityId"],
+  }
+).refine(
+  (data) => data.isAnon || (!data.isAnon && data.signatureMetadata),
+  {
+    message: "Non-anonymous posts must be signed",
+    path: ["signatureMetadata"],
   }
 )
+
+export const createReactionSchema = z.object({
+  postId: z.string().uuid(),
+  emoji: z.string(),
+  add: z.boolean(),
+  proofMetadata: SemaphoreProofMetadataSchema,
+});
+
+export type CreateReactionInput = z.infer<typeof createReactionSchema>;
 
 export type Post = z.infer<typeof postSchema>
 export type PostAuthor = z.infer<typeof postAuthorSchema>
 export type PostReply = z.infer<typeof postReplySchema>
-export type PostReaction = z.infer<typeof postReactionSchema>
 export type CreatePost = z.infer<typeof createPostSchema>
-export type AnonymousMetadata = z.infer<typeof anonymousMetadataSchema>
+export type CreateReaction = z.infer<typeof createReactionSchema>

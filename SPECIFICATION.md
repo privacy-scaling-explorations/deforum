@@ -21,6 +21,28 @@ Deforum is a community platform (similar to Reddit) with a unique verification s
     - Country verification badges expire after 5 years
     - Age verification badges never expire
 
+### Badge Definitions
+Badge definitions represent the types of badges that can be issued to users. Each badge definition:
+- Has a unique name and slug
+- Can be associated with multiple protocols
+- Can have custom metadata
+- Can be set as private by default
+- Can have an expiration period
+
+The relationship between protocols and badge definitions is many-to-many, meaning:
+- A protocol can be used to create multiple types of badges
+- A badge definition can use multiple protocols for verification
+- Each protocol-badge relationship can have its own metadata
+
+### Badge Credentials
+Badge credentials are instances of badges issued to users. Each credential:
+- Links a user to a badge definition
+- Has a verification timestamp
+- Can be public or private
+- Can have custom metadata
+- Can have an expiration date
+- Can be revoked
+
 ### Posts and Discussions
 - **Anonymous Posting**:
   - Users can choose to post anonymously (`isAnon: true`)
@@ -225,72 +247,157 @@ sequenceDiagram
 
 ### Database Schema
 The application uses Prisma as its ORM with PostgreSQL. Key models include:
-- User
-- Protocol
-- Badge
-- UserBadge
-- Community
-- CommunityRequiredBadge
-- Post
-- PostReply
 
-### API Structure
-- Type-safe API design using tRPC with separate routers for:
-  - User management
-  - Protocol verification
-  - Badge management
-  - Community management
-  - Posts and replies
+#### Core Models
+- **User**
+  - Basic profile information (username, email, avatar, bio)
+  - Privacy settings (showFollowers, showFollowing)
+  - Following relationships
+  - Public key management
+  - Badge credentials
 
-### Verification Flow
-1. User initiates verification through a protocol
-2. Protocol verifies the claimed attribute
-3. Badge is issued with:
-   - Privacy setting (from badge default)
-   - Expiration (if badge type has `expiresAfter`)
-   - Verification metadata
-4. Regular re-verification for expired badges
+- **Protocol**
+  - Name and description
+  - Active/inactive status
+  - Slug for routing
+  - Associated badge definitions
 
-### Anonymous Posting System
-1. User creates post/reply with `isAnon: true`
-2. System generates:
-   - Nullifier proof for accountability
-   - Anonymous metadata for verification
-3. Original poster can prove ownership using:
-   - Nullifier
-   - Public signals
-   - Zero-knowledge proof
+- **BadgeDefinition**
+  - Name and description
+  - Protocol association
+  - Privacy default setting
+  - Expiration configuration
+  - Metadata schema
+
+- **BadgeCredential**
+  - Links user to badge definition
+  - Verification metadata
+  - Issuance and expiration tracking
+  - Public/private visibility
+  - Protocol reference
+
+#### Community & Membership
+- **Community**
+  - Basic information
+  - Privacy settings
+  - Badge requirements
+  - Member management
+  - Merkle root history
+
+- **CommunityMember**
+  - User-community relationship
+  - Role (ADMIN/MEMBER)
+  - Join timestamp
+
+- **CommunityRequiredBadge**
+  - Badge requirement specification
+  - Requirement metadata (domains, emails)
+  - Public/private visibility
+
+- **CommunityMerkleRoot**
+  - Historical merkle roots for community
+  - Timestamp tracking
+  - Used for anonymous action verification
+  - Links to proof metadata
+
+#### Content & Interactions
+- **Post**
+  - Title and content
+  - Author reference
+  - Community association (optional)
+  - Anonymous posting support
+  - Signature/proof metadata
+  - View tracking
+  - Reaction collection
+
+- **PostReply**
+  - Content and threading
+  - Parent-child relationships
+  - Anonymous reply support
+  - Signature/proof metadata
+  - Reaction collection
+
+- **Reaction**
+  - Emoji-based reactions
+  - Proof metadata for anonymous reactions
+  - Post/reply association
+
+#### Identity & Privacy
+- **UserPublicKey**
+  - Public key storage
+  - Activation status
+  - Creation/deactivation timestamps
+  - Used for post/reply signatures
+
+- **SemaphoreProofMetadata**
+  - Proof verification data
+  - Nullifier tracking
+  - Public signals
+  - Merkle root association
+  - Creation timestamp
+
+- **Follow**
+  - User following relationships
+  - Timestamp tracking
+  - Bidirectional querying support
+
+### Key Management System
+
+The platform implements a robust key management system:
+
+1. **Key Generation**
+   - Keys are generated on client devices
+   - Private keys never leave the device unencrypted
+   - Public keys are registered with the server
+
+2. **Multi-Device Support**
+   - Private keys can be encrypted with device-specific symmetric keys
+   - Encrypted private keys can be stored server-side
+   - New devices can fetch and decrypt keys
+
+3. **Key Rotation**
+   - Users can rotate keys if compromised
+   - Badge re-verification required for rotation
+   - Historical keys marked as deactivated
+   - Signatures remain valid but no new signatures
+
+### Anonymous Actions System
+
+The platform uses a Semaphore-based anonymous action system:
+
+1. **Merkle Tree Management**
+   - Each community maintains its own merkle tree
+   - Trees are updated when membership changes
+   - Historical roots are preserved with timestamps
+   - 5-minute validity window for proofs
+
+2. **Proof Requirements**
+   - All anonymous actions require valid proofs
+   - Proofs must reference recent merkle roots
+   - Nullifiers prevent duplicate actions
+   - Public signals contain merkle root
+
+3. **Supported Actions**
+   - Anonymous posting
+   - Anonymous replies
+   - Anonymous reactions
+   - All tied to community membership
 
 ### Reaction System
-1. User adds/removes reaction with:
-   - Post ID
-   - Emoji type
-   - Nullifier (for uniqueness)
-   - Add/remove flag
-2. System updates reaction count
-3. Stores nullifiers to prevent duplicates
 
-### Community Access Control
-1. Community defines badge requirements:
-   ```json
-   {
-     "type": "domain",
-     "domains": ["company.com"],
-     "subdomains": true,
-     "isPublic": true
-   }
-   // or
-   {
-     "type": "emails",
-     "emails": ["user@domain.com"],
-     "isPublic": false
-   }
-   ```
-2. System checks:
-   - Required badges
-   - Badge validity
-   - Expiration status
-   - Domain/email requirements
+The reaction system implements privacy-preserving emoji reactions:
+
+1. **Structure**
+   - Individual reaction records
+   - Emoji type
+   - Optional proof metadata
+   - Post/reply association
+
+2. **Privacy Features**
+   - Anonymous reactions supported
+   - Nullifier-based duplication prevention
+   - Community membership verification
+   - Proof validation
 
 ## Security Considerations
 
@@ -341,4 +448,88 @@ The application uses Prisma as its ORM with PostgreSQL. Key models include:
 - Document all API endpoints
 - Follow security best practices
 
-This specification serves as a living document and should be updated as the system evolves. 
+This specification serves as a living document and should be updated as the system evolves.
+
+## Protocol System
+
+### Protocols
+Protocols are verification methods that can be used to verify badges. Each protocol:
+- Has a unique name and slug
+- Can be used to verify multiple badge types
+- Has an active/inactive status
+- Can have custom metadata
+
+### Protocol-Badge Relationship
+The relationship between protocols and badge definitions is many-to-many:
+- A protocol can be used to verify multiple badge types
+- A badge definition can be verified using multiple protocols
+- Each protocol-badge relationship can have its own metadata
+- This allows for flexible verification strategies where a badge can be obtained through different protocols
+- The relationship is managed through the `protocol_badge_definitions` join table
+
+For example:
+```json
+{
+  "badge": {
+    "name": "Age Verification",
+    "protocols": [
+      {
+        "protocol": "passport-verification",
+        "metadata": {
+          "minAge": 21,
+          "acceptedCountries": ["US", "CA", "EU"]
+        }
+      },
+      {
+        "protocol": "drivers-license",
+        "metadata": {
+          "minAge": 21,
+          "acceptedStates": ["CA", "NY", "TX"]
+        }
+      }
+    ]
+  }
+}
+```
+
+### Badge Definitions
+Badge definitions represent the types of badges that can be issued to users. Each badge definition:
+- Has a unique name and slug
+- Can be associated with multiple protocols
+- Can have custom metadata
+- Can be set as private by default
+- Can have an expiration period
+
+### Badge Credentials
+Badge credentials are instances of badges issued to users. Each credential:
+- Links a user to a badge definition
+- Has a verification timestamp
+- Can be public or private
+- Can have custom metadata
+- Can have an expiration date
+- Can be revoked
+- Tracks which protocol was used for verification
+
+### Verification Process
+1. User selects a badge type to verify
+2. User chooses one or more protocols to use for verification
+3. Each protocol performs its verification process
+4. Upon successful verification:
+   - A badge credential is issued
+   - Protocol-specific metadata is stored
+   - Expiration is set if applicable
+   - Privacy settings are applied
+
+### Privacy Considerations
+- Badge definitions can be set as private by default
+- Users can override privacy settings for individual badges
+- Protocol-specific metadata can be selectively shared
+- Verification proofs can be generated without revealing raw data
+
+### Implementation Details
+- Uses a join table `protocol_badge_definitions` for many-to-many relationships
+- Stores protocol-specific metadata in the join table
+- Maintains proper indexing for efficient queries
+- Handles cascading deletes appropriately
+- Supports bulk operations for multiple protocols
+ 

@@ -12,10 +12,10 @@ export const CommunityBadgeRequirementSchema = z.object({
 
 export const CommunitySchema = z.object({
   id: z.string().uuid(),
-  name: z.string().min(3).max(50),
-  description: z.string().min(10).max(500),
+  name: z.string(),
+  slug: z.string().regex(/^[a-z0-9-]+$/, "Slug must contain only lowercase letters, numbers, and hyphens"),
+  description: z.string().optional(),
   isPrivate: z.boolean().default(false),
-  slug: z.string(),
   avatar: z.string().url().optional(),
   banner: z.string().url().optional(),
 });

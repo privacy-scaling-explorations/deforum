@@ -6,7 +6,7 @@ export const Route = createFileRoute("/_app/posts/$postId")({
   component: PostPage,
   loader: async ({ params: { postId } }) => {
     return {
-      postId: postId,
+      postId,
     };
   },
 });

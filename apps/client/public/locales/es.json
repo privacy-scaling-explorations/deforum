@@ -1,0 +1,156 @@
+{
+  "actions": {
+    "cancel": "Cancelar",
+    "create": "Crear",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "save": "Guardar",
+    "search": "Buscar...",
+    "submit": "Enviar",
+    "join": "Unirse",
+    "new_post": "Nueva Publicación",
+    "sign_out": "Cerrar Sesión",
+    "edit_profile": "Editar Perfil",
+    "generate_recovery": "Generar código de recuperación",
+    "save_draft": "Guardar como borrador",
+    "post": "Publicar",
+    "add_badge": "Agregar nueva insignia",
+    "run": "Ejecutar"
+  },
+  "auth": {
+    "google_signin": {
+      "title": "Inicio de sesión privado con Google",
+      "description": "Utilizaremos el protocolo Stealth.notes como una forma de iniciar sesión y probar la propiedad de su dominio de correo electrónico de manera privada sin que nuestro servidor sepa quién es usted.",
+      "read_more": "Leer más aquí",
+      "button": "Iniciar sesión con Google"
+    }
+  },
+  "brand": {
+    "name": "forum",
+    "prefix": "de"
+  },
+  "header": {
+    "search_placeholder": "Buscar...",
+    "menu": {
+      "open": "Abrir menú",
+      "close": "Cerrar menú"
+    }
+  },
+  "navigation": {
+    "home": "Inicio",
+    "profile": "Perfil",
+    "settings": "Configuración"
+  },
+  "pages": {
+    "settings": {
+      "title": "Configuración",
+      "complete_profile": "¡Complete su perfil para mejorar su experiencia!",
+      "dark_mode": "Modo oscuro",
+      "avatar": {
+        "title": "Avatar",
+        "description": "La imagen que todos verán al visitar tu perfil."
+      },
+      "basic_info": {
+        "title": "Información básica",
+        "description": "Ver y actualizar tus datos personales",
+        "username": {
+          "label": "Nombre de usuario",
+          "placeholder": "Tu nombre de usuario (ej., JohnDoe123)"
+        },
+        "url": {
+          "label": "URL",
+          "placeholder": "https://"
+        },
+        "about": {
+          "label": "Acerca de",
+          "placeholder": "Cuéntale algo sobre ti a la comunidad."
+        },
+        "home_page": {
+          "label": "Página de inicio predeterminada",
+          "options": {
+            "home": "Inicio",
+            "profile": "Perfil"
+          }
+        },
+        "language": {
+          "label": "Idioma",
+          "options": {
+            "en": "Inglés",
+            "es": "Español"
+          }
+        }
+      },
+      "sessions": {
+        "title": "Sesiones abiertas",
+        "description": "Actualiza tu contraseña para mantener tu cuenta segura.",
+        "headers": {
+          "session": "Sesión",
+          "device": "Dispositivo"
+        }
+      }
+    },
+    "profile": {
+      "title": "Perfil",
+      "recovery_warning": "No has establecido un código de recuperación. Si pierdes tu contraseña, no podrás recuperar tu cuenta.",
+      "user_type": "Estándar",
+      "uid_prefix": "uid:",
+      "created_prefix": "Creado",
+      "stats": {
+        "following": "Siguiendo",
+        "followers": "Seguidores",
+        "posts": "Publicaciones",
+        "solos": "Solos",
+        "feeds": "Feeds",
+        "comments": "Comentarios",
+        "communities": "Comunidades"
+      }
+    },
+    "notifications": {
+      "title": "Notificaciones",
+      "empty": "No hay notificaciones en este momento"
+    },
+    "badges": {
+      "title": "Mis Insignias",
+      "description": "Administra y personaliza tus insignias aquí. Puedes gestionar la visibilidad, agregar nuevas insignias, reverificar o eliminar las que ya no desees.",
+      "headers": {
+        "badge": "Insignia",
+        "protocol": "Protocolo",
+        "visibility": "Visibilidad",
+        "verified": "Verificado"
+      },
+      "add_new": {
+        "title": "Agregar Nueva Insignia",
+        "success": "¡Proceso de verificación iniciado!"
+      }
+    },
+    "communities": {
+      "title": "Explorar Comunidades",
+      "empty": "No se encontraron comunidades"
+    },
+    "post": {
+      "create": {
+        "select_community": "Seleccionar una comunidad",
+        "placeholder": "¿Tienes algo en mente? ¡Escríbelo aquí!",
+        "anonymous": {
+          "label": "¿Publicar como anónimo?",
+          "description_on": "Tu nombre no se mostrará",
+          "description_off": "Estás publicando como {{username}}"
+        }
+      },
+      "loading": "Cargando publicación",
+      "not_found": "Publicación no encontrada",
+      "not_found_message": "La publicación que estás buscando no se pudo encontrar"
+    }
+  },
+  "sidebar": {
+    "my_communities": "Mis comunidades",
+    "theme": {
+      "light": "Claro",
+      "dark": "Oscuro",
+      "toggle": "Cambiar tema"
+    }
+  },
+  "welcome": "Bienvenido a Deforum"
+} 

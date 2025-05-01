@@ -1,0 +1,156 @@
+{
+  "actions": {
+    "cancel": "Cancel",
+    "create": "Create",
+    "delete": "Delete",
+    "edit": "Edit",
+    "login": "Login",
+    "logout": "Logout",
+    "save": "Save",
+    "search": "Search...",
+    "submit": "Submit",
+    "join": "Join",
+    "new_post": "New Post",
+    "sign_out": "Sign Out",
+    "edit_profile": "Edit Profile",
+    "generate_recovery": "Generate recovery code",
+    "save_draft": "Save as draft",
+    "post": "Post",
+    "add_badge": "Add new badge",
+    "run": "Run"
+  },
+  "auth": {
+    "google_signin": {
+      "title": "Private Google Sign In",
+      "description": "We'll use Stealth.notes protocol as a way to log in and prove your email domain ownership in private way without our server knowing who you are.",
+      "read_more": "Read more here",
+      "button": "Sign in with Google"
+    }
+  },
+  "brand": {
+    "name": "forum",
+    "prefix": "de"
+  },
+  "header": {
+    "search_placeholder": "Search...",
+    "menu": {
+      "open": "Open menu",
+      "close": "Close menu"
+    }
+  },
+  "navigation": {
+    "home": "Home",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "pages": {
+    "settings": {
+      "title": "Settings",
+      "complete_profile": "Please complete your profile to enhance your experience!",
+      "dark_mode": "Dark mode",
+      "avatar": {
+        "title": "Avatar",
+        "description": "The image everyone will see when visiting your profile."
+      },
+      "basic_info": {
+        "title": "Basic information",
+        "description": "View and update your personal details",
+        "username": {
+          "label": "Username",
+          "placeholder": "Your username (e.g., JohnDoe123)"
+        },
+        "url": {
+          "label": "URL",
+          "placeholder": "https://"
+        },
+        "about": {
+          "label": "About",
+          "placeholder": "Tell us a little about yourself to the community."
+        },
+        "home_page": {
+          "label": "Default Home Page",
+          "options": {
+            "home": "Home",
+            "profile": "Profile"
+          }
+        },
+        "language": {
+          "label": "Language",
+          "options": {
+            "en": "English",
+            "es": "Spanish"
+          }
+        }
+      },
+      "sessions": {
+        "title": "Open sessions",
+        "description": "Update your password to keep your account secure.",
+        "headers": {
+          "session": "Session",
+          "device": "Device"
+        }
+      }
+    },
+    "profile": {
+      "title": "Profile",
+      "recovery_warning": "You have not set a recovery code. If you lose your password, you will not be able to recover your account.",
+      "user_type": "Standard",
+      "uid_prefix": "uid:",
+      "created_prefix": "Created",
+      "stats": {
+        "following": "Following",
+        "followers": "Followers",
+        "posts": "Posts",
+        "solos": "Solos",
+        "feeds": "Feeds",
+        "comments": "Comments",
+        "communities": "Communities"
+      }
+    },
+    "notifications": {
+      "title": "Notifications",
+      "empty": "No notifications at this time"
+    },
+    "badges": {
+      "title": "My Badges",
+      "description": "Manage and customize your badges here. You can manage visibility, add new badges, reverify or remove ones you no longer want.",
+      "headers": {
+        "badge": "Badge",
+        "protocol": "Protocol",
+        "visibility": "Visibility",
+        "verified": "Verified"
+      },
+      "add_new": {
+        "title": "Add New Badge",
+        "success": "Verification process initiated!"
+      }
+    },
+    "communities": {
+      "title": "Explore Communities",
+      "empty": "No communities found"
+    },
+    "post": {
+      "create": {
+        "select_community": "Select a community",
+        "placeholder": "Have something on your mind? Write it here!",
+        "anonymous": {
+          "label": "Post as anonymous?",
+          "description_on": "Your name will not be displayed",
+          "description_off": "You are posting as {{username}}"
+        }
+      },
+      "loading": "Loading post",
+      "not_found": "Post not found",
+      "not_found_message": "The post you are looking for could not be found"
+    }
+  },
+  "sidebar": {
+    "my_communities": "MY COMMUNITIES",
+    "theme": {
+      "light": "Light mode",
+      "dark": "Dark mode",
+      "toggle": "Toggle theme"
+    }
+  },
+  "welcome": "Welcome to Deforum"
+} 

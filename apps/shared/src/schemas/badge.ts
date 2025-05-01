@@ -1,33 +1,70 @@
 import { z } from "zod";
+import { ProtocolSchema } from "./protocol";
 
-export const BadgeSchema = z.object({
+// Protocol-Badge relationship schema
+export const ProtocolBadgeSchema = z.object({
   id: z.string().uuid(),
-  name: z.string().min(3),
-  slug: z.string(),
-  description: z.string().optional(),
-  protocolId: z.string().uuid(),
-  metadata: z.record(z.string(), z.any()).optional(),
-  privateByDefault: z.boolean().default(true),
-  expiresAfter: z.number().int().min(1).optional(),
+  protocol: ProtocolSchema,
+  metadata: z.record(z.any()).optional(),
+  createdAt: z.string()
 });
 
-export type Badge = z.infer<typeof BadgeSchema>;
+export const BadgeDefinitionSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  slug: z.string(),
+  description: z.string().optional(),
+  protocols: z.array(ProtocolBadgeSchema),
+  metadata: z.record(z.any()).optional(),
+  privateByDefault: z.boolean().default(true),
+  expiresAfter: z.number().optional(),
+  createdAt: z.string(),
+  updatedAt: z.string().optional()
+});
+
+export type BadgeDefinition = z.infer<typeof BadgeDefinitionSchema>;
+export type ProtocolBadge = z.infer<typeof ProtocolBadgeSchema>;
+export type BadgeCredential = z.infer<typeof BadgeCredentialSchema>;
 
 // Input types
-export const CreateBadgeSchema = z.object({
-  name: z.string().min(3),
+export const CreateBadgeDefinitionInput = z.object({
+  name: z.string(),
   slug: z.string(),
   description: z.string().optional(),
-  protocolId: z.string().uuid(),
-  metadata: z.record(z.string(), z.any()).optional(),
+  protocolIds: z.array(z.string().uuid()),
+  metadata: z.record(z.any()).optional(),
+  protocolMetadata: z.record(z.any()).optional(),
   privateByDefault: z.boolean().default(true),
-  expiresAfter: z.number().int().min(1).optional(),
+  expiresAfter: z.number().optional()
 });
 
-export const UpdateBadgeInput = z.object({
+export const UpdateBadgeDefinitionInput = z.object({
   id: z.string().uuid(),
-  data: CreateBadgeSchema,
+  data: CreateBadgeDefinitionInput
 });
 
-export type CreateBadgeInput = z.infer<typeof CreateBadgeSchema>;
-export type UpdateBadgeInput = z.infer<typeof UpdateBadgeInput>;
+export const IssueBadgeCredentialInput = z.object({
+  userId: z.string().uuid(),
+  badgeId: z.string().uuid(),
+  isPublic: z.boolean(),
+  metadata: z.record(z.any()).optional(),
+  expiresAfter: z.number().optional()
+});
+
+export const RevokeBadgeCredentialInput = z.object({
+  id: z.string().uuid()
+});
+
+// Badge Credential (issued badge) schema
+export const BadgeCredentialSchema = z.object({
+  id: z.string().uuid(),
+  userId: z.string().uuid(),
+  badgeId: z.string().uuid(),
+  isPublic: z.boolean(),
+  metadata: z.record(z.any()).optional(),
+  createdAt: z.string(),
+  verifiedAt: z.string(),
+  expiresAt: z.string().optional(),
+  revokedAt: z.string().optional(),
+  definition: BadgeDefinitionSchema
+});

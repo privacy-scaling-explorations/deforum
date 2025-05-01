@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useGetUser, useMockAuth } from "@/hooks/useAuth";
+import { useGetUser } from "@/hooks/useAuth";
 import { LucideIcon, SunIcon, MoonIcon, Users, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -11,12 +11,15 @@ import { Switch } from "@/components/inputs/Switch";
 import { MAIN_NAV_ITEMS } from "@/settings";
 import { Accordion } from "@/components/Accordion";
 import { useSignout } from "@/hooks/useSignout";
+import { useTranslation } from 'react-i18next';
+import { trpc } from "@/lib/trpc";
 
 const renderNavItems = (
   _items: (typeof MAIN_NAV_ITEMS)[keyof typeof MAIN_NAV_ITEMS],
   isLoggedIn: boolean
-) =>
-  _items.map((item) => {
+) => {
+  const { t } = useTranslation();
+  return _items.map((item) => {
     const isVisible = item.requiresAuth
       ? isLoggedIn
       : item.requiresAuth === false;
@@ -26,13 +29,14 @@ const renderNavItems = (
         <NavItem
           to={item.to}
           key={item.title}
-          title={item.title}
+          title={t(item.title)}
           icon={item.icon}
           badge={item.badge}
         />
       )
     );
   });
+};
 
 const renderStartItems = (isLoggedIn: boolean) =>
   renderNavItems(MAIN_NAV_ITEMS.start, isLoggedIn);
@@ -53,7 +57,6 @@ export const NavItem = ({
   onClick?: () => void;
 }) => {
   const Icon = icon;
-  const communityMocks = [] as any[];
 
   return (
     <Link
@@ -91,9 +94,10 @@ const SidebarContent = () => {
     isLoading: userIsLoading,
     isError: userIsError,
   } = useGetUser();
-  const communityMocks = [] as any[];
+  const { data: communities } = trpc.communities.all.useQuery();
   const isLoggedIn = !!user && !userIsLoading && !userIsError;
   const signout = useSignout();
+  const { t } = useTranslation();
 
   return (
     <nav
@@ -105,19 +109,19 @@ const SidebarContent = () => {
         className="py-6"
         items={[
           {
-            label: "MY COMMUNITIES",
+            label: t('sidebar.my_communities'),
             children: (
               <div className="flex flex-col">
-                {communityMocks.map(({ id, name, logo }) => (
+                {communities?.map((community) => (
                   <Link
-                    key={id}
-                    to="/communities/$id"
+                    key={community.id}
+                    to="/communities/$slug"
                     className="flex gap-2 items-center py-2 px-3"
-                    params={{ id: `${id}` }}
+                    params={{ slug: community.slug }}
                   >
-                    <Avatar className="!size-[32px] !rounded-lg" src={logo} />
+                    <Avatar className="!size-[32px] !rounded-lg" src={community.avatar || ""} />
                     <span className="font-semibold font-inter text-sm text-sidebar-foreground line-clamp-1">
-                      {name} ss
+                      {community.name}
                     </span>
                   </Link>
                 ))}
@@ -127,17 +131,17 @@ const SidebarContent = () => {
         ]}
       />
 
-      {isLoggedIn && user?.memberships && (
+      {isLoggedIn && user.communities && (
         <div className="space-y-2 py-6">
           <div className="w-full justify-start flex items-center space-x-3 text-sm">
             <Users className="w-5 h-5" />
-            <span>My Groups</span>
+            <span>{t('sidebar.my_communities')}</span>
           </div>
-          {user.memberships.map(([gid, name]: [string, string]) => (
+          {user.communities.map(([cid, name, slug]) => (
             <Link
-              key={gid}
-              to={"/group/$groupId" as any}
-              params={{ groupId: gid } as any}
+              key={cid}
+              to="/communities/$slug"
+              params={{ slug }}
             >
               <Button
                 className="w-full justify-start flex items-center space-x-2"
@@ -153,12 +157,10 @@ const SidebarContent = () => {
       <div className="space-y-1 py-6">
         {renderEndItems(isLoggedIn)}
         <NavItem
-          title="Logout"
+          title={t('actions.logout')}
           to="/"
           icon={LogOut}
-          onClick={() => {
-            signout();
-          }}
+          onClick={() => signout()}
         />
       </div>
     </nav>
@@ -173,9 +175,8 @@ const LeftSidebar = () => {
   } = useGetUser();
   const { isDarkMode, setIsDarkMode } = useGlobalContext();
   const signout = useSignout();
-  const { mutate: mockAuthMutate, isPending: mockAuthIsPending } =
-    useMockAuth();
-  const communityMocks = [] as any[];
+  const { data: communities } = trpc.communities.all.useQuery();
+  const { t } = useTranslation();
 
   const isLoggedIn = !!user && !userIsLoading && !userIsError;
 
@@ -190,22 +191,22 @@ const LeftSidebar = () => {
               className="py-6"
               items={[
                 {
-                  label: "MY COMMUNITIES",
+                  label: t('sidebar.my_communities'),
                   children: (
                     <div className="flex flex-col">
-                      {communityMocks.map(({ id, name, logo }) => (
+                      {communities?.map((community) => (
                         <Link
-                          key={id}
-                          to="/communities/$id"
+                          key={community.id}
+                          to="/communities/$slug"
                           className="flex gap-2 items-center py-2 px-3"
-                          params={{ id: `${id}` }}
+                          params={{ slug: community.slug }}
                         >
                           <Avatar
                             className="!size-[32px] !rounded-lg"
-                            src={logo}
+                            src={community.avatar || ""}
                           />
                           <span className="font-semibold font-inter text-sm text-sidebar-foreground line-clamp-1">
-                            {name}
+                            {community.name}
                           </span>
                         </Link>
                       ))}
@@ -215,17 +216,17 @@ const LeftSidebar = () => {
               ]}
             />
           </AuthWrapper>
-          {isLoggedIn && user?.memberships && (
+          {isLoggedIn && user.communities && (
             <div className="space-y-2 py-6">
               <div className="w-full justify-start flex items-center space-x-3 text-sm">
                 <Users className="w-5 h-5" />
-                <span>My Groups</span>
+                <span>{t('sidebar.my_communities')}</span>
               </div>
-              {user.memberships.map(([gid, name]: [string, string]) => (
+              {user.communities.map(([cid, name, slug]) => (
                 <Link
-                  key={gid}
-                  to={"/group/$groupId" as any}
-                  params={{ groupId: gid } as any}
+                  key={cid}
+                  to="/communities/$slug"
+                  params={{ slug }}
                 >
                   <Button
                     className="w-full justify-start flex items-center space-x-2"
@@ -241,29 +242,26 @@ const LeftSidebar = () => {
 
         <div className="space-y-1 mt-auto">
           <div className="flex gap-2.5 items-center px-2 h-5">
-            <SunIcon className="size-4 text-base-muted-foreground" />
+            <SunIcon 
+              className="size-4 text-base-muted-foreground" 
+              aria-label={t('sidebar.theme.light')}
+            />
             <Switch
               checked={isDarkMode}
               onChange={() => setIsDarkMode(!isDarkMode)}
+              aria-label={t('sidebar.theme.toggle')}
             />
-            <MoonIcon className="size-4 text-base-muted-foreground" />
+            <MoonIcon 
+              className="size-4 text-base-muted-foreground" 
+              aria-label={t('sidebar.theme.dark')}
+            />
           </div>
-          {renderEndItems(isLoggedIn)}
-          <NavItem
-            title="Logout"
-            to="/"
-            icon={LogOut}
-            onClick={() => {
-              signout();
-            }}
-          />
         </div>
       </nav>
     </aside>
   );
 };
 
-LeftSidebar.displayName = "LeftSidebar";
 LeftSidebar.Content = SidebarContent;
 
 export { LeftSidebar };

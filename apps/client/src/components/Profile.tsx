@@ -4,18 +4,23 @@ import { LoginModal } from "@/sections/Login/LoginModal";
 import { AuthWrapper } from "./AuthWrapper";
 import { Avatar } from "./Avatar";
 import { useGlobalContext } from "@/contexts/GlobalContext";
+import { useTranslation } from 'react-i18next';
 
 export function Profile() {
   //const { auth, setAuth } = useAuth();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const { user } = useGlobalContext();
+  const { t } = useTranslation();
+
   return (
     <>
       <LoginModal isOpen={isLoginModalOpen} setIsOpen={setIsLoginModalOpen} />
       <AuthWrapper
         fallback={
           <div className="flex items-center gap-3">
-            <Button onClick={() => setIsLoginModalOpen(true)}>Login</Button>
+            <Button onClick={() => setIsLoginModalOpen(true)}>
+              {t('actions.login')}
+            </Button>
           </div>
         }
       >

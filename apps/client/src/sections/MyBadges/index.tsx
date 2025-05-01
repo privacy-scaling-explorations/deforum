@@ -4,10 +4,24 @@ import { Button } from "@/components/ui/Button";
 import { Link } from "@tanstack/react-router";
 import { classed } from "@tw-classed/react";
 import { PlusIcon } from "lucide-react";
+import { useGetBadges } from "@/hooks/useBadges";
+import { Badge } from "@/components/ui/Badge";
+import { useGlobalContext } from "@/contexts/GlobalContext";
+import { BadgeDefinition, ProtocolBadge } from "@deforum/shared/schemas/badge";
+
+interface BadgeWithProtocols extends Omit<BadgeDefinition, 'protocols'> {
+  protocols: ProtocolBadge[];
+  _count?: {
+    issuances: number;
+  };
+}
 
 const RowSection = classed.div("grid grid-cols-[1fr_1fr_1fr_130px_1fr] gap-2");
 
 export const MyBadgesPage = () => {
+  const { data: badges } = useGetBadges();
+  const { user } = useGlobalContext();
+
   return (
     <PageContent
       title="My Badges"
@@ -20,7 +34,7 @@ export const MyBadgesPage = () => {
               Badge
             </span>
             <span className="text-sm font-medium text-base-muted-foreground">
-              Protocol
+              Protocols
             </span>
             <span className="text-sm font-medium text-base-muted-foreground">
               Visibility
@@ -30,6 +44,32 @@ export const MyBadgesPage = () => {
             </span>
             <span className="text-sm font-medium text-base-muted-foreground"></span>
           </RowSection>
+          {badges?.map((badge: BadgeWithProtocols) => (
+            <RowSection key={badge.id} className="items-center">
+              <span className="text-sm">{badge.name}</span>
+              <div className="flex gap-2">
+                {badge.protocols.map((protocolBadge) => (
+                  <Badge key={protocolBadge.id} variant="secondary">
+                    {protocolBadge.protocol.name}
+                  </Badge>
+                ))}
+              </div>
+              <span className="text-sm">
+                {badge.privateByDefault ? "Private" : "Public"}
+              </span>
+              <span className="text-sm">
+                {new Date(badge.createdAt).toLocaleDateString()}
+              </span>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm">
+                  Edit
+                </Button>
+                <Button variant="destructive" size="sm">
+                  Delete
+                </Button>
+              </div>
+            </RowSection>
+          ))}
           <Link to="/badges/new">
             <Button icon={PlusIcon} className="w-fit">
               Add new badge

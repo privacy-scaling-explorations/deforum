@@ -8,12 +8,17 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Tag } from "../ui/Tag";
 import { useGetBadges } from "@/hooks/usePosts";
-import { AuthorSchema } from "@/shared/schemas/post";
+import { PostAuthor } from "@/shared/schemas/post";
 
+interface PostReplyFormData {
+  tags: string[];
+  postAsAnonymous: boolean;
+  content: string;
+}
 
 interface PostReplyProps {
   postId?: number | string;
-  author?: AuthorSchema;
+  author?: PostAuthor;
   onFocus?: () => void;
   isVisible?: boolean;
   showFields?: boolean;
@@ -35,8 +40,8 @@ export const PostReplyTextarea = ({
 }: PostReplyProps) => {
   if (!isVisible) return null;
 
-  const [selectedBadges, setSelectedBadges] = useState<any>(null);
-  const form = useForm<any>();
+  const [selectedBadges, setSelectedBadges] = useState<string[]>([]);
+  const form = useForm<PostReplyFormData, any, any, any, any, any, any, any, any, any>();
 
   const { data: badges } = useGetBadges();
 

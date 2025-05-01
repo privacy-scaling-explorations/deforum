@@ -1,14 +1,10 @@
 import { Button } from "@/components/ui/Button";
 import { Modal, ModalProps } from "@/components/ui/Modal";
-import { useMockAuth } from "@/hooks/useAuth";
 import { Link } from "@tanstack/react-router";
+import { useSignIn } from "@/hooks/useAuth";
 
 export const LoginModal = ({ isOpen, setIsOpen }: ModalProps) => {
-  const loginMutation = useMockAuth({
-    onSuccess: () => {
-      setIsOpen(false);
-    },
-  });
+  const loginMutation = useSignIn();
   return (
     <Modal title="Login" isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className="flex flex-col gap-12">
@@ -35,3 +31,4 @@ export const LoginModal = ({ isOpen, setIsOpen }: ModalProps) => {
     </Modal>
   );
 };
+

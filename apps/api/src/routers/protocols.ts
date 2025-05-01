@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { router, publicProcedure } from '../trpc';
+import { TRPCError } from '@trpc/server';
 
 export const protocolsRouter = router({
   // Queries
@@ -7,7 +8,11 @@ export const protocolsRouter = router({
     .query(async ({ ctx }) => {
       return ctx.prisma.protocol.findMany({
         include: {
-          badges: true
+          badges: {
+            include: {
+              badgeDefinition: true
+            }
+          }
         }
       });
     }),
@@ -18,12 +23,19 @@ export const protocolsRouter = router({
       const protocol = await ctx.prisma.protocol.findUnique({
         where: { id: input.id },
         include: {
-          badges: true
+          badges: {
+            include: {
+              badgeDefinition: true
+            }
+          }
         }
       });
 
       if (!protocol) {
-        throw new Error('Protocol not found');
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Protocol not found'
+        });
       }
 
       return protocol;
@@ -35,61 +47,68 @@ export const protocolsRouter = router({
       const protocol = await ctx.prisma.protocol.findUnique({
         where: { slug: input.slug },
         include: {
-          badges: true
+          badges: {
+            include: {
+              badgeDefinition: true
+            }
+          }
         }
       });
 
       if (!protocol) {
-        throw new Error('Protocol not found');
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Protocol not found'
+        });
       }
 
       return protocol;
     }),
 
-  // Get all protocol attributes
-  attributes: publicProcedure
+  // Get all badges
+  badges: publicProcedure
     .query(async ({ ctx }) => {
-      return ctx.prisma.badge.findMany({
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          description: true,
-          metadata: true,
-          protocol: {
-            select: {
-              name: true,
-              slug: true
+      return ctx.prisma.badgeDefinition.findMany({
+        include: {
+          protocols: {
+            include: {
+              protocol: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true
+                }
+              }
             }
           }
         }
       });
     }),
 
-  // Get protocol attributes by type
-  attributesByType: publicProcedure
+  // Get badges by type
+  badgesByType: publicProcedure
     .input(z.object({ type: z.string() }))
     .query(async ({ ctx, input }) => {
-      return ctx.prisma.badge.findMany({
+      return ctx.prisma.badgeDefinition.findMany({
         where: {
           metadata: {
             path: ['type'],
             equals: input.type
           }
         },
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          description: true,
-          metadata: true,
-          protocol: {
-            select: {
-              name: true,
-              slug: true
+        include: {
+          protocols: {
+            include: {
+              protocol: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true
+                }
+              }
             }
           }
         }
       });
-    }),
+    })
 }); 

@@ -5,6 +5,7 @@ import { RouterProvider } from '@tanstack/react-router';
 import { trpc, trpcClient } from './lib/trpc';
 import { routeTree } from "./routeTree.gen";
 import { GlobalProvider } from './contexts/GlobalContext';
+import './lib/i18n'; // Initialize i18n
 import './index.css';
 
 const queryClient = new QueryClient();

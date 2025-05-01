@@ -6,15 +6,18 @@ import { OpenSession } from "./_OpenSession";
 import { AuthWrapper } from "@/components/AuthWrapper";
 import { Switch } from "@/components/inputs/Switch";
 import { useGlobalContext } from "@/contexts/GlobalContext";
+import { useTranslation } from 'react-i18next';
 
 export const SettingsPage = () => {
   const { isDarkMode, setIsDarkMode } = useGlobalContext();
+  const { t } = useTranslation();
+  
   return (
-    <PageContent title="Settings">
+    <PageContent title={t('pages.settings.title')}>
       <AuthWrapper className="flex flex-col gap-6">
         <Banner.Base className="text-center">
           <Banner.Label size="sm">
-            Please complete your profile to enhance your experience!
+            {t('pages.settings.complete_profile')}
           </Banner.Label>
         </Banner.Base>
         <Avatar />
@@ -23,7 +26,7 @@ export const SettingsPage = () => {
       </AuthWrapper>
       <div className="max-w-[200px]">
         <Switch
-          label="Dark mode"
+          label={t('pages.settings.dark_mode')}
           className="my-6"
           checked={isDarkMode}
           onChange={() => setIsDarkMode(!isDarkMode)}

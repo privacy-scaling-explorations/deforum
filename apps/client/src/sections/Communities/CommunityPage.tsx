@@ -14,7 +14,7 @@ import { PostCard } from "../Post/PostCard";
 import { Badge } from "@/components/ui/Badge";
 import { Avatar } from "@/components/Avatar";
 import {
-  useGetCommunityById,
+  useGetCommunityBySlug,
   useJoinCommunity,
 } from "@/hooks/useCommunities";
 import { useGetPostsByCommunity } from "@/hooks/usePosts";
@@ -29,20 +29,18 @@ import { useState } from "react";
 
 export const CommunityPage = () => {
   const [forceReloadTimestamp, setForceReloadTimestamp] = useState(0);
-  const communityParams = useParams({ from: "/_left-sidebar/communities/$id" });
-
-  const communityId = communityParams.id;
+  const { slug } = useParams({ from: "/_left-sidebar/communities/$slug" });
 
   const { isLoggedIn } = useGlobalContext();
 
   const { data: community, refetch: refetchCommunity } =
-    useGetCommunityById(communityId);
+    useGetCommunityBySlug(slug);
   const { data: badges, refetch: refetchBadges } = useGetBadges();
   const { data: user, refetch: refetchUser } = useGetUser();
-  const { data: posts } = useGetPostsByCommunity(communityId);
+  const { data: posts } = useGetPostsByCommunity(community?.id);
   const joinCommunityMutation = useJoinCommunity();
 
-  const joinCommunityFails = joinCommunityMutation.data?.success === false;
+  const joinCommunityFails = joinCommunityMutation.isError;
   const hasRequiredBadges = community?.requiredBadges?.every((badge: any) =>
     user?.badges?.some(
       (userBadge: any) => Number(userBadge.id) === Number(badge),
@@ -54,8 +52,8 @@ export const CommunityPage = () => {
     hasRequiredBadges;
 
   const onJoinCommunity = async () => {
-    if (!isLoggedIn) return;
-    await joinCommunityMutation.mutateAsync(communityId);
+    if (!isLoggedIn || !community) return;
+    await joinCommunityMutation.mutateAsync(community.id);
     refetchCommunity();
     refetchUser();
     refetchBadges();
@@ -63,7 +61,7 @@ export const CommunityPage = () => {
   };
 
   if (!community) {
-    return <div>Community not found {`${communityId}`}</div>;
+    return <div>Community not found: {slug}</div>;
   }
 
   return (
@@ -71,7 +69,7 @@ export const CommunityPage = () => {
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-4">
-            <Avatar className="!size-[80px]" src={community.avatar} />
+            <Avatar className="!size-[80px]" src={community.avatar ?? undefined} />
             <div className="flex flex-col gap-1">
               <h1 className="text-2xl font-semibold text-base-foreground">
                 {community.name}

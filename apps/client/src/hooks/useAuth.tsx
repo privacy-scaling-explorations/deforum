@@ -1,20 +1,26 @@
 import { useGlobalContext } from "@/contexts/GlobalContext";
 import { trpc } from "../lib/trpc";
 
-export function useMockAuth({ onSuccess }: { onSuccess?: () => void } = {}) {
+export function useGetUser() {
+  return trpc.users.me.useQuery();
+}
+
+export function useSignIn() {
   const { setIsLoggedIn } = useGlobalContext();
 
-  return trpc.auth.mock.useMutation({
+  return trpc.auth.signIn.useMutation({
     onSuccess: () => {
       setIsLoggedIn(true);
-      onSuccess?.();
     },
   });
 }
 
-export function useGetUser() {
-  const { isLoggedIn } = useGlobalContext();
-  return trpc.users.me.useQuery(undefined, {
-    enabled: isLoggedIn,
+export function useSignUp() {
+  const { setIsLoggedIn } = useGlobalContext();
+
+  return trpc.auth.signUp.useMutation({
+    onSuccess: () => {
+      setIsLoggedIn(true);
+    },
   });
 }

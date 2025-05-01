@@ -7,6 +7,13 @@ import {
   UpdateCommunityInput 
 } from '@deforum/shared/schemas/community';
 import { BadgeRequirements, CommunityMemberRole } from '../types/prisma';
+import { 
+  GetMerkleTreeInput, 
+  GetRecentMerkleRootsInput,
+  MerkleTreeSchema 
+} from '@deforum/shared/schemas/merkleRoot';
+import { generateMerkleTree } from '../utils/merkleTree';
+import { generateSlug } from '@deforum/shared/utils/slug';
 
 export const communitiesRouter = router({
   all: publicProcedure.query(async ({ ctx }) => {
@@ -66,15 +73,71 @@ export const communitiesRouter = router({
       return community;
     }),
 
+  bySlug: publicProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const community = await ctx.prisma.community.findUnique({
+        where: { slug: input },
+        include: {
+          members: {
+            include: {
+              user: true,
+            },
+          },
+          posts: {
+            include: {
+              author: true,
+            },
+          },
+          requiredBadges: {
+            include: {
+              badge: true,
+            },
+          },
+        },
+      });
+
+      if (!community) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Community not found',
+        });
+      }
+
+      return community;
+    }),
+
   create: protectedProcedure
     .input(CreateCommunityInput)
     .mutation(async ({ ctx, input }) => {
+      // Generate initial slug from name
+      let slug = generateSlug(input.name);
+      
+      // Check if slug exists and append number if needed
+      let slugExists = true;
+      let counter = 1;
+      let finalSlug = slug;
+      
+      while (slugExists) {
+        const existing = await ctx.prisma.community.findUnique({
+          where: { slug: finalSlug },
+        });
+        
+        if (!existing) {
+          slugExists = false;
+        } else {
+          finalSlug = `${slug}-${counter}`;
+          counter++;
+        }
+      }
+
       const community = await ctx.prisma.community.create({
         data: {
           name: input.name,
           description: input.description,
           isPrivate: input.isPrivate,
           avatar: input.avatar,
+          slug: finalSlug,
           members: {
             create: {
               userId: ctx.user.id,
@@ -112,6 +175,32 @@ export const communitiesRouter = router({
         });
       }
 
+      // Generate new slug if name changed
+      let newSlug: string | undefined = undefined;
+      if (input.data.name) {
+        let slug = generateSlug(input.data.name);
+        let slugExists = true;
+        let counter = 1;
+        let finalSlug = slug;
+        
+        while (slugExists) {
+          const existing = await ctx.prisma.community.findUnique({
+            where: { 
+              slug: finalSlug,
+              NOT: { id: input.id }
+            },
+          });
+          
+          if (!existing) {
+            slugExists = false;
+          } else {
+            finalSlug = `${slug}-${counter}`;
+            counter++;
+          }
+        }
+        newSlug = finalSlug;
+      }
+
       const community = await ctx.prisma.community.update({
         where: { id: input.id },
         data: {
@@ -119,6 +208,7 @@ export const communitiesRouter = router({
           description: input.data.description,
           isPrivate: input.data.isPrivate,
           avatar: input.data.avatar,
+          ...(newSlug ? { slug: newSlug } : {}),
           requiredBadges: input.data.badgeRequirements ? {
             deleteMany: {},
             create: input.data.badgeRequirements.map(req => ({
@@ -155,21 +245,26 @@ export const communitiesRouter = router({
 
       // Check if user has required badges
       if (community.requiredBadges.length > 0) {
-        const userBadges = await ctx.prisma.userBadge.findMany({
+        const userBadgeCredentials = await ctx.prisma.badgeCredential.findMany({
           where: {
             userId: ctx.user.id,
+            revokedAt: null,
+            OR: [
+              { expiresAt: null },
+              { expiresAt: { gt: new Date() } }
+            ]
           },
           include: {
-            badge: true,
+            definition: true,
           },
         });
 
         for (const requirement of community.requiredBadges) {
           const requirements = requirement.requirements as BadgeRequirements;
-          const hasBadge = userBadges.some(ub => 
-            ub.badgeId === requirement.badgeId &&
-            (!requirements?.domain || (ctx.user.email && ctx.user.email.endsWith(requirements.domain))) &&
-            (!requirements?.exactEmail || ctx.user.email === requirements.exactEmail)
+          const hasBadge = userBadgeCredentials.some(bc =>
+            requirement.badgeId === bc.definition.id &&
+            (!bc.expiresAt || bc.expiresAt > new Date()) &&
+            !bc.revokedAt
           );
 
           if (!hasBadge) {
@@ -248,5 +343,103 @@ export const communitiesRouter = router({
       });
 
       return members;
+    }),
+
+  getMerkleTree: publicProcedure
+    .input(GetMerkleTreeInput)
+    .query(async ({ ctx, input }) => {
+      // Get community members and their public keys
+      const members = await ctx.prisma.communityMember.findMany({
+        where: { communityId: input.communityId },
+        include: {
+          user: {
+            include: {
+              publicKeys: {
+                where: { isDeactivated: false },
+                orderBy: { createdAt: 'asc' }
+              }
+            }
+          }
+        },
+        orderBy: {
+          user: {
+            createdAt: 'asc'
+          }
+        }
+      });
+
+      // Extract active public keys in order
+      const publicKeys = members
+        .flatMap(member => member.user.publicKeys)
+        .map(key => key.publicKey);
+
+      // Generate merkle tree
+      const tree = generateMerkleTree(publicKeys);
+
+      // Store new merkle root
+      await ctx.prisma.communityMerkleRoot.create({
+        data: {
+          communityId: input.communityId,
+          merkleRoot: tree.root,
+        }
+      });
+
+      return tree;
+    }),
+
+  getRecentMerkleRoots: publicProcedure
+    .input(GetRecentMerkleRootsInput)
+    .query(async ({ ctx, input }) => {
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+
+      return ctx.prisma.communityMerkleRoot.findMany({
+        where: {
+          communityId: input.communityId,
+          createdAt: {
+            gte: fiveMinutesAgo
+          }
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
+      });
+    }),
+
+  // Helper middleware to update merkle root when membership changes
+  $updateMerkleRoot: protectedProcedure
+    .input(z.string().uuid()) // communityId
+    .mutation(async ({ ctx, input }) => {
+      // Similar to getMerkleTree but without returning the tree
+      const members = await ctx.prisma.communityMember.findMany({
+        where: { communityId: input },
+        include: {
+          user: {
+            include: {
+              publicKeys: {
+                where: { isDeactivated: false },
+                orderBy: { createdAt: 'asc' }
+              }
+            }
+          }
+        },
+        orderBy: {
+          user: {
+            createdAt: 'asc'
+          }
+        }
+      });
+
+      const publicKeys = members
+        .flatMap(member => member.user.publicKeys)
+        .map(key => key.publicKey);
+
+      const tree = generateMerkleTree(publicKeys);
+
+      return ctx.prisma.communityMerkleRoot.create({
+        data: {
+          communityId: input,
+          merkleRoot: tree.root,
+        }
+      });
     }),
 }); 

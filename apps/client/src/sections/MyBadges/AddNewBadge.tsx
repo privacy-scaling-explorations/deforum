@@ -2,70 +2,96 @@ import { PageContent } from "@/components/PageContent";
 import { Button } from "@/components/ui/Button";
 import { Mail } from "lucide-react";
 import { useCallback, useState } from "react";
-import {
-  attributesMocks,
-  protocolMocks,
-} from "../../../../shared/src/mocks/attributes.mocks";
-
+import { trpc } from "@/lib/trpc";
 import Stepper, { StepData, StepperRenderProps } from "@/components/Stepper";
+import { Badge } from "@/components/ui/Badge";
 
 export const AddNewBadge = () => {
-  const [selectedAttribute, setSelectedAttribute] = useState<string | null>(
-    null,
-  );
+  const [selectedBadge, setSelectedBadge] = useState<string | null>(null);
+  const [selectedProtocols, setSelectedProtocols] = useState<string[]>([]);
   const [isComplete, setIsComplete] = useState(false);
   const [isStep1Valid, setIsStep1Valid] = useState(false);
   const [isStep2Valid, setIsStep2Valid] = useState(false);
 
-  const handleSelection = (
+  const { data: badges } = trpc.protocols.badges.useQuery();
+  const { data: protocols } = trpc.protocols.all.useQuery();
+  const createBadgeMutation = trpc.badges.create.useMutation();
+
+  const handleBadgeSelection = (
     slug: string,
-    updateValidity: (isValid: boolean) => void,
-    stepNumber: number,
+    updateValidity: (isValid: boolean) => void
   ) => {
-    setSelectedAttribute(slug);
+    setSelectedBadge(slug);
+    setIsStep1Valid(true);
     updateValidity(true);
-    if (stepNumber === 1) {
-      setIsStep1Valid(true);
-    } else if (stepNumber === 2) {
-      setIsStep2Valid(true);
-    }
   };
 
-  const handleComplete = useCallback(() => {
-    setIsComplete(true);
-    setTimeout(() => {
-      alert("Process completed successfully!");
-    }, 100);
-  }, []);
+  const handleProtocolSelection = (
+    protocolId: string,
+    updateValidity: (isValid: boolean) => void
+  ) => {
+    setSelectedProtocols(prev => {
+      const newProtocols = prev.includes(protocolId)
+        ? prev.filter(p => p !== protocolId)
+        : [...prev, protocolId];
+      setIsStep2Valid(newProtocols.length > 0);
+      updateValidity(newProtocols.length > 0);
+      return newProtocols;
+    });
+  };
+
+  const handleComplete = useCallback(async () => {
+    if (!selectedBadge || selectedProtocols.length === 0) return;
+
+    const badge = badges?.find(b => b.slug === selectedBadge);
+    if (!badge) return;
+
+    try {
+      await createBadgeMutation.mutateAsync({
+        name: badge.name,
+        slug: badge.slug,
+        description: badge.description,
+        protocolIds: selectedProtocols,
+        metadata: badge.metadata,
+        privateByDefault: badge.privateByDefault,
+        expiresAfter: badge.expiresAfter
+      });
+
+      setIsComplete(true);
+      setTimeout(() => {
+        alert("Badge created successfully!");
+      }, 100);
+    } catch (error) {
+      console.error("Failed to create badge:", error);
+      alert("Failed to create badge. Please try again.");
+    }
+  }, [selectedBadge, selectedProtocols, badges, createBadgeMutation]);
 
   const steps: StepData[] = [
     {
-      id: "data-source",
-      label: "Data Source",
-      description: "Select the Attribute you want to verify",
+      id: "badge-type",
+      label: "Badge Type",
+      description: "Select the Badge you want to verify",
       isValid: isStep1Valid,
       render: ({ updateValidity }: StepperRenderProps) => {
         return (
           <Stepper.Step>
             <div className="grid grid-cols-4 gap-3.5">
-              {attributesMocks?.map((attribute) => {
-                const isActive = selectedAttribute === attribute.slug;
+              {badges?.map((badge) => {
+                const isActive = selectedBadge === badge.slug;
                 return (
                   <Button
-                    key={attribute.slug}
+                    key={badge.slug}
                     variant="checkbox"
                     size="md"
-                    onClick={() =>
-                      handleSelection(attribute.slug, updateValidity, 1)
-                    }
+                    onClick={() => handleBadgeSelection(badge.slug, updateValidity)}
                     active={isActive}
                     className="!justify-start"
-                    disabled={attribute.disabled}
                   >
                     <div className="size-6 border rounded border-base-border flex items-center justify-center shadow-base">
                       <Mail className="text-base-muted-foreground" />
                     </div>
-                    {attribute.label}
+                    {badge.name}
                   </Button>
                 );
               })}
@@ -75,32 +101,29 @@ export const AddNewBadge = () => {
       },
     },
     {
-      id: "protocol",
-      label: "Protocol",
-      description: "Select a Protocol to verify this attribute",
+      id: "protocols",
+      label: "Protocols",
+      description: "Select one or more protocols to verify this badge",
       isValid: isStep2Valid,
       render: ({ updateValidity }: StepperRenderProps) => {
         return (
           <Stepper.Step>
             <div className="grid grid-cols-4 gap-3.5">
-              {protocolMocks?.map((protocol) => {
-                const isActive = selectedAttribute === protocol.slug;
+              {protocols?.map((protocol) => {
+                const isActive = selectedProtocols.includes(protocol.id);
                 return (
                   <Button
-                    key={protocol.slug}
+                    key={protocol.id}
                     variant="checkbox"
                     size="md"
-                    onClick={() =>
-                      handleSelection(protocol.slug, updateValidity, 2)
-                    }
+                    onClick={() => handleProtocolSelection(protocol.id, updateValidity)}
                     active={isActive}
                     className="!justify-start"
-                    disabled={protocol.disabled}
                   >
                     <div className="size-6 border rounded border-base-border flex items-center justify-center shadow-base">
                       <Mail className="text-base-muted-foreground" />
                     </div>
-                    {protocol.label}
+                    {protocol.name}
                   </Button>
                 );
               })}
@@ -111,12 +134,31 @@ export const AddNewBadge = () => {
     },
     {
       id: "run",
-      label: "Run TLSNotary",
+      label: "Run Verification",
       isValid: true,
       render: ({ updateValidity }: StepperRenderProps) => {
+        const selectedBadgeData = badges?.find(b => b.slug === selectedBadge);
+        const selectedProtocolsData = protocols?.filter(p => selectedProtocols.includes(p.id));
+
         return (
           <Stepper.Step>
-            <></>
+            <div className="flex flex-col gap-4">
+              <h3 className="text-lg font-semibold">Selected Configuration</h3>
+              <div>
+                <p className="font-medium">Badge:</p>
+                <p className="text-base-muted-foreground">{selectedBadgeData?.name}</p>
+              </div>
+              <div>
+                <p className="font-medium">Protocols:</p>
+                <div className="flex gap-2">
+                  {selectedProtocolsData?.map(protocol => (
+                    <Badge key={protocol.id} variant="secondary">
+                      {protocol.name}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            </div>
           </Stepper.Step>
         );
       },
@@ -129,13 +171,13 @@ export const AddNewBadge = () => {
         <Stepper.Base
           steps={steps}
           onComplete={handleComplete}
-          completeLabel="Run"
+          completeLabel="Create Badge"
         />
 
         {isComplete && (
           <div className="mt-8 p-4 bg-green-100 border border-green-300 rounded-md">
             <p className="text-green-800 font-medium">
-              Verification process initiated!
+              Badge created successfully!
             </p>
           </div>
         )}

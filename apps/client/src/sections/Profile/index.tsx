@@ -1,60 +1,65 @@
-import { Labels } from "@/components/ui/Labels";
-import { Avatar } from "@/components/Avatar";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
-import { Pen as PenIcon, LogOut as LogOutIcon } from "lucide-react";
 import { PageContent } from "@/components/PageContent";
-import { Banner } from "@/components/ui/Banner";
-import { useGlobalContext } from "@/contexts/GlobalContext";
-import { useNavigate } from "@tanstack/react-router";
+import { Avatar } from "@/components/Avatar";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 import { InfoCard } from "@/components/ui/InfoCard";
-
-
+import { useNavigate } from "@tanstack/react-router";
+import { useGlobalContext } from "@/contexts/GlobalContext";
+import { useGetUser } from "@/hooks/useAuth";
+import { useTranslation } from 'react-i18next';
+import { PenLine as PenIcon, LogOut as LogOutIcon } from "lucide-react";
+import { formatDate } from "@/lib/utils";
 
 export const ProfilePage = () => {
-  const { user, setIsLoggedIn } = useGlobalContext();
+  const { setIsLoggedIn } = useGlobalContext();
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  const { data: user, isLoading } = useGetUser();
+
+  if (isLoading) {
+    return (
+      <PageContent>
+        <div>Loading...</div>
+      </PageContent>
+    );
+  }
+
+  if (!user) {
+    return (
+      <PageContent>
+        <div>User not found</div>
+      </PageContent>
+    );
+  }
+
   return (
-    <PageContent className="flex flex-col gap-6">
-      <Labels.PageTitle>Profile</Labels.PageTitle>
-      <Banner.Base className="flex flex-col gap-2 text-left">
-        <Banner.Label>
-          You have not set a recovery code. If you lose your password, you will
-          not be able to recover your account.
-        </Banner.Label>
-        <div className="ml-auto">
-          <Button variant="error" className="font-medium">
-            Generate recovery code
-          </Button>
-        </div>
-      </Banner.Base>
+    <PageContent>
       <div className="flex flex-col gap-4">
         <div className="flex gap-3">
-          <Avatar size="xl" src={user?.avatar} />
+          <Avatar size="xl" src={user.avatar || ""} />
           <div className="flex flex-col gap-1">
             <h2 className="text-2xl font-semibold font-inter text-base-foreground">
-              John Doe
+              {user.username}
             </h2>
             <div className="flex items-center gap-1">
               <span className="text-xs font-inter text-black-secondary">
-                Standard
+                {t('pages.profile.user_type')}
               </span>
-              <Badge variant="secondary">uid: 123</Badge>
+              <Badge variant="secondary">
+                {t('pages.profile.uid_prefix')} {user.publicKey?.[0] || 'No public key'}
+              </Badge>
             </div>
             <span className="text-xs font-inter text-black-secondary">
-              Created 2024-01-01
+              {t('pages.profile.created_prefix')} {formatDate(user.createdAt)}
             </span>
           </div>
         </div>
         <span className="text-sm font-inter text-black-secondary">
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus
-          voluptatum quas ut in distinctio dolores dolor saepe quidem. Ullam
-          illum in sint ipsum facilis odit voluptas suscipit, similique pariatur
-          nulla!
+          {user.bio || t('pages.profile.no_bio')}
         </span>
         <div className="flex gap-2">
           <Button icon={PenIcon} variant="outline">
-            Edit Profile
+            {t('actions.edit_profile')}
           </Button>
           <Button
             icon={LogOutIcon}
@@ -64,19 +69,22 @@ export const ProfilePage = () => {
               navigate({ to: "/" });
             }}
           >
-            Sign Out
+            {t('actions.sign_out')}
           </Button>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-5">
-        <InfoCard label="Following" value="1" />
-        <InfoCard label="Followers" value="2.344" />
-        <InfoCard label="Posts" value="123" />
-        <InfoCard label="Solos" value="123" />
+      <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-3">
+        <InfoCard 
+          label={t('pages.profile.stats.posts')} 
+          value={user._count.posts.toString()} 
+        />
+        <InfoCard 
+          label={t('pages.profile.stats.comments')} 
+          value={user._count.replies.toString()} 
+        />
         <InfoCard
-          label="Feeds"
-          value="123"
-          className="col-span-2 lg:col-span-1"
+          label={t('pages.profile.stats.badges')} 
+          value={user._count.userBadges.toString()} 
         />
       </div>
     </PageContent>

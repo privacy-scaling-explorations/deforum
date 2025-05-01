@@ -22,7 +22,7 @@ import { Route as LeftSidebarBadgesIndexImport } from './routes/_left-sidebar/ba
 import { Route as LeftSidebarUserUsernameImport } from './routes/_left-sidebar/user/$username'
 import { Route as LeftSidebarPostDraftsImport } from './routes/_left-sidebar/post/drafts'
 import { Route as LeftSidebarPostCreateImport } from './routes/_left-sidebar/post/create'
-import { Route as LeftSidebarCommunitiesIdImport } from './routes/_left-sidebar/communities/$id'
+import { Route as LeftSidebarCommunitiesSlugImport } from './routes/_left-sidebar/communities/$slug'
 import { Route as LeftSidebarBadgesNewImport } from './routes/_left-sidebar/badges/new'
 import { Route as AppPostsPostIdImport } from './routes/_app/posts/$postId'
 
@@ -93,11 +93,13 @@ const LeftSidebarPostCreateRoute = LeftSidebarPostCreateImport.update({
   getParentRoute: () => LeftSidebarRoute,
 } as any)
 
-const LeftSidebarCommunitiesIdRoute = LeftSidebarCommunitiesIdImport.update({
-  id: '/communities/$id',
-  path: '/communities/$id',
-  getParentRoute: () => LeftSidebarRoute,
-} as any)
+const LeftSidebarCommunitiesSlugRoute = LeftSidebarCommunitiesSlugImport.update(
+  {
+    id: '/communities/$slug',
+    path: '/communities/$slug',
+    getParentRoute: () => LeftSidebarRoute,
+  } as any,
+)
 
 const LeftSidebarBadgesNewRoute = LeftSidebarBadgesNewImport.update({
   id: '/badges/new',
@@ -171,11 +173,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LeftSidebarBadgesNewImport
       parentRoute: typeof LeftSidebarImport
     }
-    '/_left-sidebar/communities/$id': {
-      id: '/_left-sidebar/communities/$id'
-      path: '/communities/$id'
-      fullPath: '/communities/$id'
-      preLoaderRoute: typeof LeftSidebarCommunitiesIdImport
+    '/_left-sidebar/communities/$slug': {
+      id: '/_left-sidebar/communities/$slug'
+      path: '/communities/$slug'
+      fullPath: '/communities/$slug'
+      preLoaderRoute: typeof LeftSidebarCommunitiesSlugImport
       parentRoute: typeof LeftSidebarImport
     }
     '/_left-sidebar/post/create': {
@@ -235,7 +237,7 @@ interface LeftSidebarRouteChildren {
   LeftSidebarProfileRoute: typeof LeftSidebarProfileRoute
   LeftSidebarSettingsRoute: typeof LeftSidebarSettingsRoute
   LeftSidebarBadgesNewRoute: typeof LeftSidebarBadgesNewRoute
-  LeftSidebarCommunitiesIdRoute: typeof LeftSidebarCommunitiesIdRoute
+  LeftSidebarCommunitiesSlugRoute: typeof LeftSidebarCommunitiesSlugRoute
   LeftSidebarPostCreateRoute: typeof LeftSidebarPostCreateRoute
   LeftSidebarPostDraftsRoute: typeof LeftSidebarPostDraftsRoute
   LeftSidebarUserUsernameRoute: typeof LeftSidebarUserUsernameRoute
@@ -248,7 +250,7 @@ const LeftSidebarRouteChildren: LeftSidebarRouteChildren = {
   LeftSidebarProfileRoute: LeftSidebarProfileRoute,
   LeftSidebarSettingsRoute: LeftSidebarSettingsRoute,
   LeftSidebarBadgesNewRoute: LeftSidebarBadgesNewRoute,
-  LeftSidebarCommunitiesIdRoute: LeftSidebarCommunitiesIdRoute,
+  LeftSidebarCommunitiesSlugRoute: LeftSidebarCommunitiesSlugRoute,
   LeftSidebarPostCreateRoute: LeftSidebarPostCreateRoute,
   LeftSidebarPostDraftsRoute: LeftSidebarPostDraftsRoute,
   LeftSidebarUserUsernameRoute: LeftSidebarUserUsernameRoute,
@@ -268,7 +270,7 @@ export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/posts/$postId': typeof AppPostsPostIdRoute
   '/badges/new': typeof LeftSidebarBadgesNewRoute
-  '/communities/$id': typeof LeftSidebarCommunitiesIdRoute
+  '/communities/$slug': typeof LeftSidebarCommunitiesSlugRoute
   '/post/create': typeof LeftSidebarPostCreateRoute
   '/post/drafts': typeof LeftSidebarPostDraftsRoute
   '/user/$username': typeof LeftSidebarUserUsernameRoute
@@ -284,7 +286,7 @@ export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
   '/posts/$postId': typeof AppPostsPostIdRoute
   '/badges/new': typeof LeftSidebarBadgesNewRoute
-  '/communities/$id': typeof LeftSidebarCommunitiesIdRoute
+  '/communities/$slug': typeof LeftSidebarCommunitiesSlugRoute
   '/post/create': typeof LeftSidebarPostCreateRoute
   '/post/drafts': typeof LeftSidebarPostDraftsRoute
   '/user/$username': typeof LeftSidebarUserUsernameRoute
@@ -302,7 +304,7 @@ export interface FileRoutesById {
   '/_app/': typeof AppIndexRoute
   '/_app/posts/$postId': typeof AppPostsPostIdRoute
   '/_left-sidebar/badges/new': typeof LeftSidebarBadgesNewRoute
-  '/_left-sidebar/communities/$id': typeof LeftSidebarCommunitiesIdRoute
+  '/_left-sidebar/communities/$slug': typeof LeftSidebarCommunitiesSlugRoute
   '/_left-sidebar/post/create': typeof LeftSidebarPostCreateRoute
   '/_left-sidebar/post/drafts': typeof LeftSidebarPostDraftsRoute
   '/_left-sidebar/user/$username': typeof LeftSidebarUserUsernameRoute
@@ -320,7 +322,7 @@ export interface FileRouteTypes {
     | '/'
     | '/posts/$postId'
     | '/badges/new'
-    | '/communities/$id'
+    | '/communities/$slug'
     | '/post/create'
     | '/post/drafts'
     | '/user/$username'
@@ -335,7 +337,7 @@ export interface FileRouteTypes {
     | '/'
     | '/posts/$postId'
     | '/badges/new'
-    | '/communities/$id'
+    | '/communities/$slug'
     | '/post/create'
     | '/post/drafts'
     | '/user/$username'
@@ -351,7 +353,7 @@ export interface FileRouteTypes {
     | '/_app/'
     | '/_app/posts/$postId'
     | '/_left-sidebar/badges/new'
-    | '/_left-sidebar/communities/$id'
+    | '/_left-sidebar/communities/$slug'
     | '/_left-sidebar/post/create'
     | '/_left-sidebar/post/drafts'
     | '/_left-sidebar/user/$username'
@@ -398,7 +400,7 @@ export const routeTree = rootRoute
         "/_left-sidebar/profile",
         "/_left-sidebar/settings",
         "/_left-sidebar/badges/new",
-        "/_left-sidebar/communities/$id",
+        "/_left-sidebar/communities/$slug",
         "/_left-sidebar/post/create",
         "/_left-sidebar/post/drafts",
         "/_left-sidebar/user/$username",
@@ -430,8 +432,8 @@ export const routeTree = rootRoute
       "filePath": "_left-sidebar/badges/new.tsx",
       "parent": "/_left-sidebar"
     },
-    "/_left-sidebar/communities/$id": {
-      "filePath": "_left-sidebar/communities/$id.tsx",
+    "/_left-sidebar/communities/$slug": {
+      "filePath": "_left-sidebar/communities/$slug.tsx",
       "parent": "/_left-sidebar"
     },
     "/_left-sidebar/post/create": {

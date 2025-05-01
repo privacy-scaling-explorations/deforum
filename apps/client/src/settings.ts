@@ -11,23 +11,23 @@ export const MAIN_NAV_ITEMS: Record<
   }>
 > = {
   start: [
-    { title: "Home", to: "/", icon: Home, requiresAuth: false },
-    { title: "My Badges", to: "/badges", icon: Settings, requiresAuth: true },
+    { title: "navigation.home", to: "/", icon: Home, requiresAuth: false },
+    { title: "pages.badges.title", to: "/badges", icon: Settings, requiresAuth: true },
     {
-      title: "Notifications",
+      title: "pages.notifications.title",
       to: "/notifications",
       icon: Bell,
       requiresAuth: true,
     },
     {
-      title: "Explore communities",
+      title: "pages.communities.title",
       to: "/communities",
       icon: Users,
       requiresAuth: false,
     },
   ],
   end: [
-    { title: "Settings", to: "/settings", icon: Settings, requiresAuth: true },
+    { title: "navigation.settings", to: "/settings", icon: Settings, requiresAuth: true },
   ],
 };
 

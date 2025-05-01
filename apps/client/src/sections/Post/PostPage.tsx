@@ -21,43 +21,94 @@ import {
 } from "lucide-react";
 import { Tag } from "@/components/ui/Tag";
 import { PostReactions } from "@/components/ui/PostReactions";
-import { usersMocks } from "@/shared/mocks/users.mocks";
+import { Badge } from "@/shared/schemas/badge";
+
+// Types to match the API response structure
+interface UserBadge {
+  badge: Badge;
+  isPublic: boolean;
+  revokedAt?: string;
+  expiresAt?: string;
+}
+
+interface PostReply {
+  id: string;
+  content: string;
+  author: {
+    id: string | null;
+    username: string | null;
+    isAnon: boolean;
+  };
+  createdAt?: string;
+  childReplies?: PostReply[];
+}
+
+interface ApiPost {
+  id: string;
+  title: string;
+  content: string;
+  author: {
+    id: string;
+    username: string;
+    isAnon: boolean;
+    userBadges: UserBadge[];
+  };
+  community: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+  communityId: string;
+  createdAt: string;
+  replies: PostReply[];
+  reactions: Record<string, { count: number; nullifiers: string[] }>;
+  _count: {
+    replies: number;
+  };
+}
 
 export const PostPage = () => {
   const { postId } = useLoaderData({ from: "/_app/posts/$postId" });
   const { user } = useGlobalContext();
-  const [replyTo, setReplyTo] = useState<string | number | null>(null);
+  const [replyTo, setReplyTo] = useState<string | null>(null);
   const [mainReply, setMainReply] = useState<boolean>(false);
   const { data: postData, refetch: refetchPost } = useGetPostById(postId);
   const { data: badges } = useGetBadges();
   const togglePostReaction = useTogglePostReaction();
 
-  const userBadges = useMemo(() => {
-    return badges?.filter((badge: any) =>
-      postData?.author.badges?.includes(badge.id),
-    );
-  }, [badges, postData]);
+  const filteredBadges = useMemo(() => {
+    const post = postData as unknown as ApiPost;
+    if (!post?.author?.userBadges) return [];
+    return post.author.userBadges
+      .filter((ub: UserBadge) => 
+        ub.isPublic && 
+        !ub.revokedAt && 
+        (!ub.expiresAt || new Date(ub.expiresAt) > new Date())
+      )
+      .map((ub: UserBadge) => ub.badge);
+  }, [postData]);
 
-  const onToggleReaction = async (postId: number | string, emoji: string) => {
+  const onToggleReaction = async (postId: string, emoji: string) => {
+    if (!user) return;
     await togglePostReaction.mutateAsync({
-      postId: postId.toString(),
+      postId,
       emoji,
-      userId: usersMocks?.[0].id.toString(),
+      userId: user.id,
     });
     await refetchPost();
   };
-
-  console.log("badge", postData, badges);
 
   if (!postData) {
     return <div>Post not found</div>;
   }
 
+  const post = postData as unknown as ApiPost;
+
   return (
     <PageContent className="flex flex-col gap-10 lg:max-w-[1200px] mx-auto w-full">
       <div className="flex flex-col gap-3">
         <PostCard
-          title={postData?.title ?? "Post not found"}
+          title={post.title ?? "Post not found"}
           size="lg"
           clampTitle={false}
           header={
@@ -65,40 +116,40 @@ export const PostPage = () => {
               <div className="flex items-center gap-2 justify-between">
                 <div className="flex items-center gap-1">
                   <UserGroupIcon className="size-[14px] text-purple" />
-                  <Link to={`/communities/${postData.communityData?.id}` as any}>
+                  <Link to="/communities/$slug" params={{ slug: post.community.slug }}>
                     <span className="text-purple font-inter font-semibold text-sm">
-                      {postData.communityData?.name}
+                      {post.community?.name ?? 'Community'}
                     </span>
                   </Link>
                 </div>
-                <TimeSince isoDateTime={postData.createdAt} />
+                <TimeSince isoDateTime={post.createdAt} />
               </div>
               <PostAuthor
-                author={postData.author}
+                author={post.author}
                 avatarClassName="!size-[30px]"
-                badges={userBadges}
+                badges={filteredBadges}
               />
             </div>
           }
         >
           <div className="flex flex-col gap-6">
-            <div>{postData.content}</div>
+            <div>{post.content}</div>
             <div className="flex items-center gap-2">
               <Tag tooltip="Comments">
                 <MessageSquareIcon className="size-4" />
-                <span>{postData.replies?.length ?? 0}</span>
+                <span>{post._count?.replies ?? 0}</span>
               </Tag>
               <PostReactions
                 size="md"
-                reactions={postData.reactions ?? {}}
+                reactions={post.reactions ?? {}}
                 onToggleReaction={async (emoji) => {
-                  await onToggleReaction(postData.id, emoji);
+                  await onToggleReaction(post.id, emoji);
                 }}
               />
               <EmojiButton
                 size="md"
                 onClick={async (emoji) => {
-                  await onToggleReaction(postData.id, emoji);
+                  await onToggleReaction(post.id, emoji);
                 }}
               />
             </div>
@@ -118,12 +169,12 @@ export const PostPage = () => {
         />
       </div>
       <div className="flex flex-col gap-6">
-        {postData.replies?.map((reply: any, index: number) => {
-          const hasSubReplies = reply.replies?.length > 0;
+        {post.replies?.map((reply: PostReply, index: number) => {
+          const hasSubReplies = reply.childReplies?.length ?? 0 > 0;
 
           return (
             <div className="flex flex-col gap-5" key={index}>
-              <div className=" flex flex-col gap-2" key={index}>
+              <div className="flex flex-col gap-2">
                 <PostAuthor
                   author={reply.author}
                   createdAt={reply.createdAt}
@@ -159,7 +210,7 @@ export const PostPage = () => {
                 </div>
               </div>
               <div className="flex flex-col gap-2 ml-10 relative">
-                {reply?.replies?.map((replyChildren: any, index: number) => {
+                {reply.childReplies?.map((replyChildren: PostReply, index: number) => {
                   return (
                     <div className="flex flex-col gap-2" key={index}>
                       <PostAuthor

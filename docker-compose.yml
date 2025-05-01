@@ -1,17 +1,14 @@
 services:
-  supabase-db:
-    image: supabase/postgres:15.1.0.117
-    platform: linux/amd64
-    container_name: supabase-db
+  db:
+    image: postgres:15-alpine
+    ports:
+      - "54322:5432"
     environment:
-      - POSTGRES_USER=${SUPABASE_DB_USER:-postgres}
-      - POSTGRES_PASSWORD=${SUPABASE_DB_PASSWORD:-postgres}
-      - POSTGRES_DB=${SUPABASE_DB_NAME:-supabase}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
-      - supabase-db-data:/var/lib/postgresql/data
-      - ./apps/db/supabase/init:/docker-entrypoint-initdb.d
-      - ./apps/db/init-db:/docker-entrypoint-initdb.d/regular
-    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+      - db-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -19,82 +16,93 @@ services:
       retries: 5
     restart: unless-stopped
     networks:
-      - internal
+      - deforum-internal
 
-  supabase-rest:
-    image: postgrest/postgrest:v10.1.2
-    platform: linux/amd64
-    container_name: supabase-rest
-    depends_on:
-      supabase-db:
-        condition: service_healthy
-    environment:
-      - PGRST_DB_URI=postgres://${SUPABASE_DB_USER:-postgres}:${SUPABASE_DB_PASSWORD:-postgres}@supabase-db:5432/${SUPABASE_DB_NAME:-supabase}
-      - PGRST_DB_SCHEMA=${PGRST_DB_SCHEMA:-public}
-      - PGRST_DB_ANON_ROLE=postgres
-      - PGRST_JWT_SECRET=your-super-secret-jwt-token-with-at-least-32-characters
-      - PGRST_DB_USE_LEGACY_GUCS=false
-    restart: unless-stopped
-    networks:
-      - internal
-
-  api:
-    build:
+  backend:
+    build: 
       context: .
       dockerfile: apps/api/Dockerfile
-    platform: linux/amd64
+    ports:
+      - "5000:5000"
+    stop_grace_period: 5s
+    stop_signal: SIGTERM
+    command: /app/apps/api/start.sh
     depends_on:
-      supabase-db:
+      db:
         condition: service_healthy
     environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - NODE_ENV=${NODE_ENV:-development}
-      - API_PORT=5000
-      - API_HOST=0.0.0.0
+      DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+      NODE_ENV: ${NODE_ENV}
     env_file:
       - .env
+    volumes:
+      - ./apps/api/prisma/migrations:/app/apps/api/prisma/migrations
+    develop:
+      watch:
+        - action: sync
+          path: ./apps/api/src
+          target: /app/apps/api/src
+          ignore:
+            - node_modules/
+            - dist/
+        - action: sync
+          path: ./apps/shared
+          target: /app/apps/shared
+          ignore:
+            - node_modules/
+            - dist/
+        - action: rebuild
+          path: ./apps/api/package.json
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
-      interval: 10s
-      timeout: 10s
-      retries: 5
+      test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
       start_period: 30s
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
     networks:
-      - internal
+      - deforum-internal
 
-  client:
-    build:
+  frontend:
+    build: 
       context: .
       dockerfile: apps/client/Dockerfile
-    platform: linux/amd64
     ports:
       - "3000:3000"
     depends_on:
-      api:
+      backend:
         condition: service_healthy
     environment:
-      - VITE_API_URL=http://api:5000/api
-      - VITE_SUPABASE_URL=http://supabase-rest:3000
-      - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+      VITE_API_URL: http://backend:5000/api
     env_file:
       - .env
-    command: sh -c "yarn workspace client run dev"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+    develop:
+      watch:
+        - action: sync
+          path: ./apps/client/src
+          target: /app/apps/client/src
+          ignore:
+            - node_modules/
+            - dist/
+        - action: sync
+          path: ./apps/client/public
+          target: /app/apps/client/public
+          ignore:
+            - node_modules/
+            - dist/
+        - action: sync
+          path: ./apps/shared
+          target: /app/apps/shared
+          ignore:
+            - node_modules/
+            - dist/
+        - action: rebuild
+          path: ./apps/client/package.json
     networks:
-      - internal
+      - deforum-internal
 
 volumes:
-  supabase-db-data:
+  db-data:
 
 networks:
-  internal:
-    driver: bridge
+  deforum-internal:
+    driver: bridge 

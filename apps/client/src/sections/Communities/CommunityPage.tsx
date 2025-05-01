@@ -14,10 +14,10 @@ import { PostCard } from "../Post/PostCard";
 import { Badge } from "@/components/ui/Badge";
 import { Avatar } from "@/components/Avatar";
 import {
-  useGetCommunityById,
-  useGetCommunityPosts,
+  useGetCommunityBySlug,
   useJoinCommunity,
 } from "@/hooks/useCommunities";
+import { useGetPostsByCommunity } from "@/hooks/usePosts";
 import { formatDate } from "@/lib/utils";
 import { InfoCard } from "@/components/ui/InfoCard";
 import { useGetBadges } from "@/hooks/useBadges";
@@ -29,20 +29,18 @@ import { useState } from "react";
 
 export const CommunityPage = () => {
   const [forceReloadTimestamp, setForceReloadTimestamp] = useState(0);
-  const communityParams = useParams({ from: "/_left-sidebar/communities/$id" });
-
-  const communityId = communityParams.id;
+  const { slug } = useParams({ from: "/_left-sidebar/communities/$slug" });
 
   const { isLoggedIn } = useGlobalContext();
 
   const { data: community, refetch: refetchCommunity } =
-    useGetCommunityById(communityId);
+    useGetCommunityBySlug(slug);
   const { data: badges, refetch: refetchBadges } = useGetBadges();
   const { data: user, refetch: refetchUser } = useGetUser();
-  const { data: posts } = useGetCommunityPosts(communityId);
+  const { data: posts } = useGetPostsByCommunity(community?.id);
   const joinCommunityMutation = useJoinCommunity();
 
-  const joinCommunityFails = joinCommunityMutation.data?.success === false;
+  const joinCommunityFails = joinCommunityMutation.isError;
   const hasRequiredBadges = community?.requiredBadges?.every((badge: any) =>
     user?.badges?.some(
       (userBadge: any) => Number(userBadge.id) === Number(badge),
@@ -54,187 +52,93 @@ export const CommunityPage = () => {
     hasRequiredBadges;
 
   const onJoinCommunity = async () => {
-    if (!isLoggedIn) return;
-    await joinCommunityMutation.mutateAsync({
-      id: communityId,
-      userId: user?.id,
-      onSuccess: () => {
-        refetchCommunity();
-        refetchUser();
-        refetchBadges();
-        setForceReloadTimestamp(Date.now());
-      },
-    });
+    if (!isLoggedIn || !community) return;
+    await joinCommunityMutation.mutateAsync(community.id);
+    refetchCommunity();
+    refetchUser();
+    refetchBadges();
+    setForceReloadTimestamp(Date.now());
   };
 
   if (!community) {
-    return <div>Community not found {`${communityId}`}</div>;
+    return <div>Community not found: {slug}</div>;
   }
 
-  console.log("userIsMember", userIsMember, hasRequiredBadges);
-
   return (
-    <PageContent className="!pt-0 !px-0 lg:!pb-4 lg:!px-4">
-      <div className="flex flex-col">
-        <div className="h-[200px] w-full bg-base-muted-foreground px-4"></div>
-        <div className="relative flex flex-col bg-base-background gap-6 -mt-4 rounded-t-[24px] p-4 w-full">
-          <div className="flex flex-col gap-4">
-            <div className="flex w-full gap-10">
-              <div className="flex gap-3 w-full items-center">
-                <Avatar src={community.avatar} className="!size-[78px]" />
-                <div className="flex flex-col gap-1">
-                  <span className="text-base-muted-foreground font-inter font-medium text-xs uppercase">
-                    community
-                  </span>
-                  <h1 className="text-card-foreground font-inter font-semibold text-xl leading-5 line-clamp-1">
-                    {community.name}
-                  </h1>
-                </div>
-              </div>
-              <div className="ml-auto flex gap-2.5  align-baseline">
-                {!userIsMember && (
-                  <AuthWrapper
-                    requireLogin={!isLoggedIn}
-                    action={onJoinCommunity}
-                  >
-                    <Button
-                      size="sm"
-                      icon={UserPlusIcon}
-                      variant="outline"
-                      loading={joinCommunityMutation.isPending}
-                      onClick={onJoinCommunity}
-                    >
-                      Join
-                    </Button>
-                  </AuthWrapper>
-                )}
-
-                {userIsMember && (
-                  <AuthWrapper>
-                    <Link
-                      to="/post/create"
-                      search={{ community: community.id }}
-                    >
-                      <Button size="sm" icon={PlusIcon}>
-                        New Post
-                      </Button>
-                    </Link>
-                  </AuthWrapper>
-                )}
-              </div>
-            </div>
-            <div className="flex flex-col gap-5">
-              <div className="flex flex-col gap-3">
+    <PageContent>
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6">
+          <div className="flex items-center gap-4">
+            <Avatar className="!size-[80px]" src={community.avatar ?? undefined} />
+            <div className="flex flex-col gap-1">
+              <h1 className="text-2xl font-semibold text-base-foreground">
+                {community.name}
+              </h1>
+              <div className="flex items-center gap-2">
                 <span className="text-base-muted-foreground font-inter font-normal text-sm">
                   {community.description}
                 </span>
-                <div className="flex items-center gap-2">
-                  <PencilIcon className="size-4 text-base-muted-foreground" />
-                  <span className="text-base-muted-foreground font-inter font-normal text-sm">
-                    Created {formatDate(community.createdAt)}
-                  </span>
-                </div>
-              </div>
-              <div className="flex gap-6">
-                <InfoCard
-                  label="Members"
-                  value={community?.members?.length || 0}
-                  variant="base"
-                  fontSize="lg"
-                />
-                <InfoCard
-                  label="Posts"
-                  value={posts?.length || 0}
-                  variant="base"
-                  fontSize="lg"
-                />
-              </div>
-
-              <div className="flex flex-col gap-5 pb-8 border-b border-base-border">
-                <div className="flex flex-col gap-2.5">
-                  <div className="flex gap-1 items-center">
-                    <FileBadgeIcon className="size-4 text-base-muted-foreground" />
-                    <span className="font-semibold  text-base-muted-foreground text-xs uppercase">
-                      To join this community, you must have ONE OF THE following
-                      badge(s)
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-2.5">
-                    {community?.requiredBadges?.map((id: any) => {
-                      const badge = badges?.find(
-                        (badge: any) => Number(badge?.id) === Number(id),
-                      );
-                      const userHasBadge =
-                        user?.badges
-                          .map((badge: any) => +badge?.id)
-                          ?.includes(+badge?.id) && isLoggedIn;
-
-                      return (
-                        <div
-                          key={badge?.id}
-                          className="flex items-center gap-1"
-                        >
-                          {userHasBadge && (
-                            <CheckIcon className="size-4 text-chart-1" />
-                          )}
-                          {!userHasBadge && joinCommunityFails && (
-                            <XIcon className="size-4 text-error" />
-                          )}
-                          <Badge
-                            variant={
-                              userHasBadge
-                                ? "success"
-                                : joinCommunityFails
-                                  ? "error"
-                                  : "secondary"
-                            }
-                            rounded="md"
-                          >
-                            {badge?.name}
-                          </Badge>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-                {joinCommunityFails && (
-                  <Banner.Base variant="error">
-                    <Banner.Label>
-                      <strong className="font-medium !text-sm !italic">
-                        Access Restricted
-                      </strong>
-                      : You need a verified badge to join this community. Ensure
-                      you have one of the required badges.
-                    </Banner.Label>
-                  </Banner.Base>
-                )}
               </div>
             </div>
-          </div>
-          <div className="flex flex-col gap-4">
-            {posts?.map((post: any, index: any) => {
-              return (
-                <div className="flex flex-col gap-14" key={index}>
-                  <PostCard
-                    className="relative"
-                    title={post.title}
-                    postId={post.id}
-                    withHover
+            <div className="ml-auto flex gap-2.5 align-baseline">
+              {!userIsMember && (
+                <AuthWrapper requireLogin={!isLoggedIn} action={onJoinCommunity}>
+                  <Button
+                    size="sm"
+                    icon={UserPlusIcon}
+                    variant="outline"
+                    loading={joinCommunityMutation.isPending}
+                    onClick={onJoinCommunity}
                   >
-                    <PostAuthor
-                      author={post.author}
-                      createdAt={post.createdAt}
-                    />
-                    <div className=" flex items-center gap-2">
-                      <Badge variant="secondary">
-                        {post.communityData?.name}
-                      </Badge>
-                    </div>
-                  </PostCard>
-                </div>
-              );
-            })}
+                    Join
+                  </Button>
+                </AuthWrapper>
+              )}
+
+              {userIsMember && (
+                <AuthWrapper>
+                  <Link to="/post/create" search={{ community: community.id }}>
+                    <Button size="sm" icon={PlusIcon}>
+                      New Post
+                    </Button>
+                  </Link>
+                </AuthWrapper>
+              )}
+            </div>
           </div>
+
+          <div className="flex gap-6">
+            <InfoCard
+              label="Members"
+              value={community?.members?.length || 0}
+              variant="base"
+              fontSize="lg"
+            />
+            <InfoCard
+              label="Posts"
+              value={posts?.length || 0}
+              variant="base"
+              fontSize="lg"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          {posts?.map((post: any) => (
+            <div key={post.id} className="flex flex-col gap-14">
+              <PostCard
+                className="relative"
+                title={post.title}
+                postId={post.id}
+                withHover
+              >
+                <PostAuthor author={post.author} createdAt={post.createdAt} />
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary">{community.name}</Badge>
+                </div>
+              </PostCard>
+            </div>
+          ))}
         </div>
       </div>
     </PageContent>

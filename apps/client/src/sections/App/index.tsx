@@ -4,8 +4,12 @@ import { Button } from "@/components/ui/Button";
 import { Link } from "@tanstack/react-router";
 import { AuthWrapper } from "@/components/AuthWrapper";
 import { PostItems } from "./PostItems";
+import { useGetCommunities } from "@/hooks/useCommunities";
 
 export const HomePage = () => {
+  const { data: communities } = useGetCommunities();
+  const firstCommunityId = communities?.[0]?.id;
+
   return (
     <PageContent className="flex flex-col gap-6">
       <AuthWrapper>
@@ -19,7 +23,7 @@ export const HomePage = () => {
           </Link>
         </div>
       </AuthWrapper>
-      <PostItems />
+      {firstCommunityId && <PostItems communityId={firstCommunityId} />}
     </PageContent>
   );
 };

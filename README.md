@@ -113,3 +113,16 @@ yarn build
 ## License
 
 [MIT](LICENSE) 
+
+
+
+
+# To change the database 
+1. Change the prisma schema
+2. Make migrations `npx prisma migrate dev --name descriptive_name`
+3. (if the db is up) `npx prisma migrate deploy`
+4. Generate prisma ORM client `npx prisma generate`
+5. Update the `shared/src/schemas`
+6. Update the seed.ts file
+7. Update routers on the backend
+8. Update the front end

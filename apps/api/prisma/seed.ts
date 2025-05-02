@@ -138,7 +138,7 @@ async function main() {
 
   // Create badge definitions
   console.log('Creating badge definitions...')
-  const [pseBadge, msftBadge, age21Badge, trustedEmailsBadge] = await prisma.$transaction([
+  const [pseBadge, msftBadge, age21Badge, trustedEmailsBadge, passkeyBadge] = await prisma.$transaction([
     prisma.badgeDefinition.create({
       data: {
         name: "PSE Email",
@@ -208,6 +208,19 @@ async function main() {
           type: "email",
           domains: ["gmail.com", "outlook.com", "yahoo.com"],
           description: "Verifies email from trusted domains"
+        }
+      }
+    }),
+    prisma.badgeDefinition.create({
+      data: {
+        name: "Passkey",
+        slug: "passkey",
+        description: "WebAuthn Passkey login",
+        protocols: { create: [] },
+        privateByDefault: false,
+        metadata: {
+          type: "passkey",
+          description: "WebAuthn credential for passwordless login"
         }
       }
     })

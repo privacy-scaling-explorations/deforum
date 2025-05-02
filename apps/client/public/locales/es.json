@@ -152,5 +152,19 @@
       "toggle": "Cambiar tema"
     }
   },
-  "welcome": "Bienvenido a Deforum"
+  "welcome": "Bienvenido a Deforum",
+  "login": {
+    "title": "Iniciar sesión",
+    "privateGoogleSignIn": "Inicio de sesión privado con Google",
+    "privateGoogleSignInDesc": "Utilizaremos el protocolo Stealth.notes como una forma de iniciar sesión y probar la propiedad de su dominio de correo electrónico de manera privada sin que nuestro servidor sepa quién es usted.",
+    "readMore": "Leer más aquí",
+    "signInWithGoogle": "Iniciar sesión con Google",
+    "signInWithPasskey": "Iniciar sesión con Passkey",
+    "createNewAccountWithPasskey": "Crear nueva cuenta con Passkey",
+    "recoverOldAccount": "Recuperar cuenta antigua (próximamente)",
+    "passkeyNotFound": "Passkey no encontrado. ¿Crear una nueva cuenta?",
+    "passkeyLoginFailed": "Error al iniciar sesión con Passkey",
+    "registrationCancelled": "Registro cancelado o fallido",
+    "registrationFailed": "Registro fallido"
+  }
 } 

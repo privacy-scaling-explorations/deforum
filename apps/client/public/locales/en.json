@@ -152,5 +152,19 @@
       "toggle": "Toggle theme"
     }
   },
-  "welcome": "Welcome to Deforum"
+  "welcome": "Welcome to Deforum",
+  "login": {
+    "title": "Login",
+    "privateGoogleSignIn": "Private Google Sign In",
+    "privateGoogleSignInDesc": "We'll use Stealth.notes protocol as a way to log in and prove your email domain ownership in private way without our server knowing who you are.",
+    "readMore": "Read more here",
+    "signInWithGoogle": "Sign in with Google",
+    "signInWithPasskey": "Sign in with Passkey",
+    "createNewAccountWithPasskey": "Create New Account with Passkey",
+    "recoverOldAccount": "Recover Old Account (coming soon)",
+    "passkeyNotFound": "Passkey not found. Create a new account?",
+    "passkeyLoginFailed": "Passkey login failed",
+    "registrationCancelled": "Registration cancelled or failed",
+    "registrationFailed": "Registration failed"
+  }
 } 

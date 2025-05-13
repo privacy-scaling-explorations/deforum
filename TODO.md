@@ -8,15 +8,15 @@
 * [ ] Wire up reactions to the frontend (reading from the db)
 
 * [X] Implement sign-in with passkeys
-* [X] Implement EdDSA babyjubjub keys
+* [/] Implement EdDSA babyjubjub keys
   * [X] Key generation on client side
   * [X] Public key submission to the server
-  * [ ] Key signing and verification for authorization functions (posting, replies)
 * [ ] Posts/Replies
   * [X] Create signed posts (to communities)
   * [ ] Create signed replies (to communities)
   * [ ] Create signed profile posts
   * [ ] Create signed profile replies
+  * [ ] Verify Signed Messages
   * [ ] Edit signed posts/replies
 * [ ] Semaphore proofs
   * [ ] Write the merkle root generation mechanisms on the server

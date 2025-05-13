@@ -18,7 +18,7 @@ export type BadgeRequirements = {
 
 export enum CommunityMemberRole {
   ADMIN = 'ADMIN',
-  MEMBER = 'MEMBER',
+  MEMBER = 'MEMBER'
 }
 
 // Extend Prisma types
@@ -41,4 +41,4 @@ declare global {
       role?: CommunityMemberRole;
     }
   }
-} 
+}

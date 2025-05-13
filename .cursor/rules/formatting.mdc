@@ -1,0 +1,6 @@
+---
+description: Typescript Formatting
+globs:
+alwaysApply: true
+---
+When using typescript prefer no semicolons and double quotes for strings. Do not change the formatting of code that already exists unless you are already modifying that line of code.

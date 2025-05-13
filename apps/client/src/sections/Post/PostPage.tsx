@@ -1,108 +1,108 @@
-import { PageContent } from "@/components/PageContent";
-import { PostReplyTextarea } from "@/components/post/PostReplyTextarea";
-import { EmojiButton } from "@/components/ui/EmojiButton";
-import { TimeSince } from "@/components/ui/TimeSince";
-import { useGlobalContext } from "@/contexts/GlobalContext";
+import { PageContent } from "@/components/PageContent"
+import { PostReplyTextarea } from "@/components/post/PostReplyTextarea"
+import { EmojiButton } from "@/components/ui/EmojiButton"
+import { TimeSince } from "@/components/ui/TimeSince"
+import { useGlobalContext } from "@/contexts/GlobalContext"
 import {
   useGetPostById,
-  useGetBadges,
   useTogglePostReaction,
-} from "@/hooks/usePosts";
-import { cn } from "@/lib/utils";
-import { Link, useLoaderData } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { PostAuthor } from "./PostAuthor";
-import { PostCard } from "./PostCard";
+} from "@/hooks/usePosts"
+import { useGetAllBadges } from "@/hooks/useBadges"
+import { cn } from "@/lib/utils"
+import { Link, useLoaderData } from "@tanstack/react-router"
+import { useMemo, useState } from "react"
+import { PostAuthor } from "./PostAuthor"
+import { PostCard } from "./PostCard"
 import {
   MessageSquare as MessageSquareIcon,
   Reply as ReplyIcon,
   Link as LinkIcon,
   User as UserGroupIcon,
-} from "lucide-react";
-import { Tag } from "@/components/ui/Tag";
-import { PostReactions } from "@/components/ui/PostReactions";
-import { Badge } from "@/shared/schemas/badge";
+} from "lucide-react"
+import { Tag } from "@/components/ui/Tag"
+import { PostReactions } from "@/components/ui/PostReactions"
+import { BadgeCredential } from "@/shared/schemas/badge"
 
 // Types to match the API response structure
 interface UserBadge {
-  badge: Badge;
-  isPublic: boolean;
-  revokedAt?: string;
-  expiresAt?: string;
+  badge: BadgeCredential
+  isPublic: boolean
+  revokedAt?: string
+  expiresAt?: string
 }
 
 interface PostReply {
-  id: string;
-  content: string;
+  id: string
+  content: string
   author: {
-    id: string | null;
-    username: string | null;
-    isAnon: boolean;
-  };
-  createdAt?: string;
-  childReplies?: PostReply[];
+    id: string | null
+    username: string | null
+    isAnon: boolean
+  }
+  createdAt?: string
+  childReplies?: PostReply[]
 }
 
 interface ApiPost {
-  id: string;
-  title: string;
-  content: string;
+  id: string
+  title: string
+  content: string
   author: {
-    id: string;
-    username: string;
-    isAnon: boolean;
-    userBadges: UserBadge[];
-  };
+    id: string
+    username: string
+    isAnon: boolean
+    userBadges: UserBadge[]
+  }
   community: {
-    id: string;
-    name: string;
-    slug: string;
-  };
-  communityId: string;
-  createdAt: string;
-  replies: PostReply[];
-  reactions: Record<string, { count: number; nullifiers: string[] }>;
+    id: string
+    name: string
+    slug: string
+  }
+  communityId: string
+  createdAt: string
+  replies: PostReply[]
+  reactions: Record<string, { count: number; nullifiers: string[] }>
   _count: {
-    replies: number;
-  };
+    replies: number
+  }
 }
 
 export const PostPage = () => {
-  const { postId } = useLoaderData({ from: "/_app/posts/$postId" });
-  const { user } = useGlobalContext();
-  const [replyTo, setReplyTo] = useState<string | null>(null);
-  const [mainReply, setMainReply] = useState<boolean>(false);
-  const { data: postData, refetch: refetchPost } = useGetPostById(postId);
-  const { data: badges } = useGetBadges();
-  const togglePostReaction = useTogglePostReaction();
+  const { postId } = useLoaderData({ from: "/_app/posts/$postId" })
+  const { user } = useGlobalContext()
+  const [replyTo, setReplyTo] = useState<string | null>(null)
+  const [mainReply, setMainReply] = useState<boolean>(false)
+  const { data: postData, refetch: refetchPost } = useGetPostById(postId)
+  const { data: badges } = useGetAllBadges()
+  const togglePostReaction = useTogglePostReaction()
 
   const filteredBadges = useMemo(() => {
-    const post = postData as unknown as ApiPost;
-    if (!post?.author?.userBadges) return [];
+    const post = postData as unknown as ApiPost
+    if (!post?.author?.userBadges) return []
     return post.author.userBadges
-      .filter((ub: UserBadge) => 
-        ub.isPublic && 
-        !ub.revokedAt && 
+      .filter((ub: UserBadge) =>
+        ub.isPublic &&
+        !ub.revokedAt &&
         (!ub.expiresAt || new Date(ub.expiresAt) > new Date())
       )
-      .map((ub: UserBadge) => ub.badge);
-  }, [postData]);
+      .map((ub: UserBadge) => ub.badge)
+  }, [postData])
 
   const onToggleReaction = async (postId: string, emoji: string) => {
-    if (!user) return;
+    if (!user) return
     await togglePostReaction.mutateAsync({
       postId,
       emoji,
-      userId: user.id,
-    });
-    await refetchPost();
-  };
-
-  if (!postData) {
-    return <div>Post not found</div>;
+      proof
+    })
+    await refetchPost()
   }
 
-  const post = postData as unknown as ApiPost;
+  if (!postData) {
+    return <div>Post not found</div>
+  }
+
+  const post = postData as unknown as ApiPost
 
   return (
     <PageContent className="flex flex-col gap-10 lg:max-w-[1200px] mx-auto w-full">
@@ -143,13 +143,13 @@ export const PostPage = () => {
                 size="md"
                 reactions={post.reactions ?? {}}
                 onToggleReaction={async (emoji) => {
-                  await onToggleReaction(post.id, emoji);
+                  await onToggleReaction(post.id, emoji)
                 }}
               />
               <EmojiButton
                 size="md"
                 onClick={async (emoji) => {
-                  await onToggleReaction(post.id, emoji);
+                  await onToggleReaction(post.id, emoji)
                 }}
               />
             </div>
@@ -161,16 +161,16 @@ export const PostPage = () => {
           showFields={mainReply}
           isVisible
           onFocus={() => {
-            setMainReply(true);
+            setMainReply(true)
           }}
           onBlur={() => {
-            setMainReply(false);
+            setMainReply(false)
           }}
         />
       </div>
       <div className="flex flex-col gap-6">
         {post.replies?.map((reply: PostReply, index: number) => {
-          const hasSubReplies = reply.childReplies?.length ?? 0 > 0;
+          const hasSubReplies = reply.childReplies?.length ?? 0 > 0
 
           return (
             <div className="flex flex-col gap-5" key={index}>
@@ -192,7 +192,7 @@ export const PostPage = () => {
                     <Tag
                       tooltip="Reply"
                       onClick={() => {
-                        setReplyTo(reply.id);
+                        setReplyTo(reply.id)
                       }}
                     >
                       <ReplyIcon className="size-4 text-black" />
@@ -232,7 +232,7 @@ export const PostPage = () => {
                           <Tag
                             tooltip="Reply"
                             onClick={() => {
-                              setReplyTo(replyChildren.id);
+                              setReplyTo(replyChildren.id)
                             }}
                           >
                             <ReplyIcon className="size-4 text-black" />
@@ -249,13 +249,13 @@ export const PostPage = () => {
                         />
                       </div>
                     </div>
-                  );
+                  )
                 })}
               </div>
             </div>
-          );
+          )
         })}
       </div>
     </PageContent>
-  );
-};
+  )
+}

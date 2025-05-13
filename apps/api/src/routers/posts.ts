@@ -1,44 +1,37 @@
 import { z } from 'zod';
-import { router, publicProcedure, protectedProcedure } from '../trpc';
+import { router, publicProcedure, protectedProcedure } from '../lib/trpc';
 import { TRPCError } from '@trpc/server';
-import { 
-  PostType, 
-  createPostSchema, 
+import {
+  PostType,
+  createPostSchema,
   createReactionSchema,
   SemaphoreProofMetadataSchema
 } from '@deforum/shared/schemas/post';
 import { PrismaClient } from '@prisma/client';
 
-const ReplySchema = z.object({
-  content: z.string().min(1),
-  replyParentId: z.string().uuid().optional(),
-  isAnon: z.boolean().default(false),
-  proofMetadata: SemaphoreProofMetadataSchema.optional(),
-  signatureMetadata: z.object({
-    signature: z.string(),
-    timestamp: z.number(),
-    nonce: z.string(),
-  }).optional(),
-}).refine(
-  (data) => !data.isAnon || (data.isAnon && data.proofMetadata),
-  {
-    message: "Anonymous replies must include Semaphore proof metadata",
-    path: ["proofMetadata"],
-  }
-).refine(
-  (data) => data.isAnon || (!data.isAnon && data.signatureMetadata),
-  {
-    message: "Non-anonymous replies must be signed",
-    path: ["signatureMetadata"],
-  }
-);
+const ReplySchema = z
+  .object({
+    content: z.string().min(1),
+    replyParentId: z.string().uuid().optional(),
+    isAnon: z.boolean().default(false),
+    proofMetadata: SemaphoreProofMetadataSchema.optional(),
+    signatureMetadata: z.string().optional()
+  })
+  .refine((data) => !data.isAnon || (data.isAnon && data.proofMetadata), {
+    message: 'Anonymous replies must include Semaphore proof metadata',
+    path: ['proofMetadata']
+  })
+  .refine((data) => data.isAnon || (!data.isAnon && data.signatureMetadata), {
+    message: 'Non-anonymous replies must be signed',
+    path: ['signatureMetadata']
+  });
 
 type ReplyInput = z.infer<typeof ReplySchema>;
 
 const SignatureMetadataSchema = z.object({
   signature: z.string(),
   timestamp: z.number(),
-  nonce: z.string(),
+  nonce: z.string()
 });
 
 type CreateReplyInputType = {
@@ -48,31 +41,28 @@ type CreateReplyInputType = {
     replyParentId?: string;
     isAnon: boolean;
     proofMetadata?: z.infer<typeof SemaphoreProofMetadataSchema>;
-    signatureMetadata?: z.infer<typeof SignatureMetadataSchema>;
+    signatureMetadata?: string;
   };
 };
 
 const CreateReplyInput = z.object({
   postId: z.string().uuid(),
-  data: z.object({
-    content: z.string().min(1),
-    replyParentId: z.string().uuid().optional(),
-    isAnon: z.boolean().default(false),
-    proofMetadata: SemaphoreProofMetadataSchema.optional(),
-    signatureMetadata: SignatureMetadataSchema.optional(),
-  }).refine(
-    (data) => !data.isAnon || (data.isAnon && data.proofMetadata),
-    {
-      message: "Anonymous replies must include Semaphore proof metadata",
-      path: ["proofMetadata"],
-    }
-  ).refine(
-    (data) => data.isAnon || (!data.isAnon && data.signatureMetadata),
-    {
-      message: "Non-anonymous replies must be signed",
-      path: ["signatureMetadata"],
-    }
-  ),
+  data: z
+    .object({
+      content: z.string().min(1),
+      replyParentId: z.string().uuid().optional(),
+      isAnon: z.boolean().default(false),
+      proofMetadata: SemaphoreProofMetadataSchema.optional(),
+      signatureMetadata: z.string().optional()
+    })
+    .refine((data) => !data.isAnon || (data.isAnon && data.proofMetadata), {
+      message: 'Anonymous replies must include Semaphore proof metadata',
+      path: ['proofMetadata']
+    })
+    .refine((data) => data.isAnon || (!data.isAnon && data.signatureMetadata), {
+      message: 'Non-anonymous replies must be signed',
+      path: ['signatureMetadata']
+    })
 });
 
 type UpdateReplyInputType = {
@@ -82,37 +72,37 @@ type UpdateReplyInputType = {
     replyParentId?: string;
     isAnon: boolean;
     proofMetadata?: z.infer<typeof SemaphoreProofMetadataSchema>;
-    signatureMetadata?: z.infer<typeof SignatureMetadataSchema>;
+    signatureMetadata?: string;
   };
 };
 
 const UpdateReplyInput = z.object({
   id: z.string().uuid(),
-  data: z.object({
-    content: z.string().min(1),
-    replyParentId: z.string().uuid().optional(),
-    isAnon: z.boolean().default(false),
-    proofMetadata: SemaphoreProofMetadataSchema.optional(),
-    signatureMetadata: SignatureMetadataSchema.optional(),
-  }).refine(
-    (data) => !data.isAnon || (data.isAnon && data.proofMetadata),
-    {
-      message: "Anonymous replies must include Semaphore proof metadata",
-      path: ["proofMetadata"],
-    }
-  ).refine(
-    (data) => data.isAnon || (!data.isAnon && data.signatureMetadata),
-    {
-      message: "Non-anonymous replies must be signed",
-      path: ["signatureMetadata"],
-    }
-  ),
+  data: z
+    .object({
+      content: z.string().min(1),
+      replyParentId: z.string().uuid().optional(),
+      isAnon: z.boolean().default(false),
+      proofMetadata: SemaphoreProofMetadataSchema.optional(),
+      signatureMetadata: z.string().optional()
+    })
+    .refine((data) => !data.isAnon || (data.isAnon && data.proofMetadata), {
+      message: 'Anonymous replies must include Semaphore proof metadata',
+      path: ['proofMetadata']
+    })
+    .refine((data) => data.isAnon || (!data.isAnon && data.signatureMetadata), {
+      message: 'Non-anonymous replies must be signed',
+      path: ['signatureMetadata']
+    })
 });
 
-const ReactionsSchema = z.record(z.string(), z.object({
-  count: z.number(),
-  nullifiers: z.array(z.string()),
-}));
+const ReactionsSchema = z.record(
+  z.string(),
+  z.object({
+    count: z.number(),
+    nullifiers: z.array(z.string())
+  })
+);
 
 // Helper function to verify merkle root is recent
 async function verifyMerkleRoot(prisma: PrismaClient, communityId: string, merkleRoot: string) {
@@ -130,7 +120,7 @@ async function verifyMerkleRoot(prisma: PrismaClient, communityId: string, merkl
   if (!root) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
-      message: 'Invalid or expired merkle root',
+      message: 'Invalid or expired merkle root'
     });
   }
 
@@ -139,43 +129,45 @@ async function verifyMerkleRoot(prisma: PrismaClient, communityId: string, merkl
 
 export const postsRouter = router({
   all: publicProcedure
-    .input(z.object({
-      communityId: z.string().uuid().optional(),
-      authorId: z.string().uuid().optional(),
-      postType: z.enum(['PROFILE', 'COMMUNITY']).optional(),
-      cursor: z.string().optional(),
-      limit: z.number().min(1).max(100).default(10),
-    }))
+    .input(
+      z.object({
+        communityId: z.string().uuid().optional(),
+        authorId: z.string().uuid().optional(),
+        postType: z.enum(['PROFILE', 'COMMUNITY']).optional(),
+        cursor: z.string().optional(),
+        limit: z.number().min(1).max(100).default(10)
+      })
+    )
     .query(async ({ ctx, input }) => {
       const items = await ctx.prisma.post.findMany({
         take: input.limit + 1,
         where: {
           communityId: input.communityId,
           authorId: input.authorId,
-          postType: input.postType as PostType | undefined,
+          postType: input.postType as PostType | undefined
         },
         cursor: input.cursor ? { id: input.cursor } : undefined,
         orderBy: {
-          createdAt: 'desc',
+          createdAt: 'desc'
         },
         include: {
           author: {
             include: {
               credentials: {
                 include: {
-                  definition: true,
-                },
-              },
-            },
+                  definition: true
+                }
+              }
+            }
           },
           community: true,
           proofMetadata: true,
           _count: {
             select: {
-              replies: true,
-            },
-          },
-        },
+              replies: true
+            }
+          }
+        }
       });
 
       let nextCursor: typeof input.cursor | undefined = undefined;
@@ -185,50 +177,54 @@ export const postsRouter = router({
       }
 
       return {
-        items: items.map(post => ({
+        items: items.map((post) => ({
           ...post,
-          authorDetails: post.author ? {
-            ...post.author,
-            badges: post.author.credentials.map(c => c.definition.id),
-          } : null,
+          authorDetails: post.author
+            ? {
+                ...post.author,
+                badges: post.author.credentials.map((c) => c.definition.id)
+              }
+            : null
         })),
-        nextCursor,
+        nextCursor
       };
     }),
 
   profilePosts: publicProcedure
-    .input(z.object({
-      userId: z.string().uuid(),
-      cursor: z.string().optional(),
-      limit: z.number().min(1).max(100).default(10),
-    }))
+    .input(
+      z.object({
+        userId: z.string().uuid(),
+        cursor: z.string().optional(),
+        limit: z.number().min(1).max(100).default(10)
+      })
+    )
     .query(async ({ ctx, input }) => {
       const items = await ctx.prisma.post.findMany({
         take: input.limit + 1,
         where: {
           authorId: input.userId,
-          postType: 'PROFILE',
+          postType: 'PROFILE'
         },
         cursor: input.cursor ? { id: input.cursor } : undefined,
         orderBy: {
-          createdAt: 'desc',
+          createdAt: 'desc'
         },
         include: {
           author: {
             include: {
               credentials: {
                 include: {
-                  definition: true,
-                },
-              },
-            },
+                  definition: true
+                }
+              }
+            }
           },
           _count: {
             select: {
-              replies: true,
-            },
-          },
-        },
+              replies: true
+            }
+          }
+        }
       });
 
       let nextCursor: typeof input.cursor | undefined = undefined;
@@ -238,52 +234,50 @@ export const postsRouter = router({
       }
 
       return {
-        items: items.map(post => ({
+        items: items.map((post) => ({
           ...post,
           author: {
             ...post.author,
-            badges: post.author.credentials.map(c => c.definition.id),
-          },
+            badges: post.author.credentials.map((c) => c.definition.id)
+          }
         })),
-        nextCursor,
+        nextCursor
       };
     }),
 
-  byId: publicProcedure
-    .input(z.string().uuid())
-    .query(async ({ ctx, input }) => {
-      const post = await ctx.prisma.post.findUnique({
-        where: { id: input },
-        include: {
-          author: true,
-          community: true,
-          replies: {
-            include: {
-              author: true,
-              childReplies: {
-                include: {
-                  author: true,
-                },
-              },
-            },
-          },
-          _count: {
-            select: {
-              replies: true,
-            },
-          },
+  byId: publicProcedure.input(z.string().uuid()).query(async ({ ctx, input }) => {
+    const post = await ctx.prisma.post.findUnique({
+      where: { id: input },
+      include: {
+        author: true,
+        community: true,
+        replies: {
+          include: {
+            author: true,
+            childReplies: {
+              include: {
+                author: true
+              }
+            }
+          }
         },
-      });
-
-      if (!post) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Post not found',
-        });
+        _count: {
+          select: {
+            replies: true
+          }
+        }
       }
+    });
 
-      return post;
-    }),
+    if (!post) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Post not found'
+      });
+    }
+
+    return post;
+  }),
 
   byCommunity: publicProcedure
     .input(z.object({ communityId: z.string().uuid() }))
@@ -317,78 +311,80 @@ export const postsRouter = router({
       });
     }),
 
-  create: protectedProcedure
-    .input(createPostSchema)
-    .mutation(async ({ ctx, input }) => {
-      // Check community membership if this is a community post
-      if (input.communityId) {
-        const membership = await ctx.prisma.communityMember.findFirst({
-          where: {
-            communityId: input.communityId,
-            userId: ctx.user.id,
-          },
-        });
-
-        if (!membership) {
-          throw new TRPCError({
-            code: 'FORBIDDEN',
-            message: 'You must be a member of the community to post',
-          });
+  create: protectedProcedure.input(createPostSchema).mutation(async ({ ctx, input }) => {
+    // Check community membership if this is a community post
+    if (input.communityId) {
+      const membership = await ctx.prisma.communityMember.findFirst({
+        where: {
+          communityId: input.communityId,
+          userId: ctx.user.userId
         }
-      }
-
-      // If anonymous post, verify merkle root
-      let merkleRootId: string | undefined;
-      if (input.isAnon && input.proofMetadata) {
-        if (!input.communityId) {
-          throw new TRPCError({
-            code: 'BAD_REQUEST',
-            message: 'Anonymous posts must be in a community',
-          });
-        }
-
-        // Extract merkle root from public signals
-        const merkleRoot = input.proofMetadata.publicSignals[0];
-        const root = await verifyMerkleRoot(ctx.prisma, input.communityId, merkleRoot);
-        merkleRootId = root.id;
-      }
-
-      // Create post with proof metadata if anonymous
-      return ctx.prisma.post.create({
-        data: {
-          title: input.title,
-          content: input.content,
-          author: { connect: { id: ctx.user.id } },
-          ...(input.communityId && { community: { connect: { id: input.communityId } } }),
-          postType: input.communityId ? 'COMMUNITY' : 'PROFILE',
-          isAnon: input.isAnon,
-          ...(input.signatureMetadata && {
-            signatureMetadata: input.signatureMetadata,
-          }),
-          ...(input.proofMetadata && {
-            proofMetadata: {
-              create: {
-                proof: input.proofMetadata.proof,
-                nullifier: input.proofMetadata.nullifier,
-                publicSignals: input.proofMetadata.publicSignals,
-                merkleRoot: { connect: { id: merkleRootId! } }
-              }
-            }
-          }),
-        },
-        include: {
-          author: true,
-          community: true,
-          proofMetadata: true,
-        },
       });
-    }),
+
+      if (!membership) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'You must be a member of the community to post'
+        });
+      }
+    } else {
+      // TODO post to user profile
+    }
+
+    // If anonymous post, verify merkle root
+    let merkleRootId: string | undefined;
+    if (input.isAnon && input.proofMetadata) {
+      if (!input.communityId) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Anonymous posts must be in a community'
+        });
+      }
+
+      // Extract merkle root from public signals
+      const merkleRoot = input.proofMetadata.publicSignals[0];
+      const root = await verifyMerkleRoot(ctx.prisma, input.communityId, merkleRoot);
+      merkleRootId = root.id;
+    }
+
+    // Create post with proof metadata if anonymous
+    return ctx.prisma.post.create({
+      data: {
+        title: input.title,
+        content: input.content,
+        author: { connect: { id: ctx.user.userId } },
+        ...(input.communityId && { community: { connect: { id: input.communityId } } }),
+        postType: input.communityId ? 'COMMUNITY' : 'PROFILE',
+        isAnon: input.isAnon,
+        ...(input.signatureMetadata && {
+          signatureMetadata: input.signatureMetadata
+        }),
+        ...(input.proofMetadata && {
+          proofMetadata: {
+            create: {
+              proof: input.proofMetadata.proof,
+              nullifier: input.proofMetadata.nullifier,
+              publicSignals: input.proofMetadata.publicSignals,
+              merkleRoot: { connect: { id: merkleRootId! } }
+            }
+          }
+        })
+      },
+      include: {
+        author: true,
+        community: true,
+        proofMetadata: true
+      }
+    });
+  }),
 
   update: protectedProcedure
-    .input(z.object({
-      id: z.string().uuid(),
-      data: createPostSchema,
-    }))
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        data: createPostSchema
+      })
+    )
     .mutation(async ({ ctx, input }) => {
       const post = await ctx.prisma.post.findUnique({
         where: { id: input.id },
@@ -398,14 +394,14 @@ export const postsRouter = router({
       if (!post) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: 'Post not found',
+          message: 'Post not found'
         });
       }
 
-      if (post.authorId !== ctx.user.id) {
+      if (post.authorId !== ctx.user.userId) {
         throw new TRPCError({
           code: 'FORBIDDEN',
-          message: 'Not authorized to update this post',
+          message: 'Not authorized to update this post'
         });
       }
 
@@ -415,7 +411,7 @@ export const postsRouter = router({
         if (!post.communityId) {
           throw new TRPCError({
             code: 'BAD_REQUEST',
-            message: 'Anonymous posts must be in a community',
+            message: 'Anonymous posts must be in a community'
           });
         }
 
@@ -432,65 +428,65 @@ export const postsRouter = router({
           content: input.data.content,
           isAnon: input.data.isAnon,
           signatureMetadata: input.data.signatureMetadata,
-          proofMetadata: input.data.proofMetadata ? {
-            upsert: {
-              create: {
-                proof: input.data.proofMetadata.proof,
-                nullifier: input.data.proofMetadata.nullifier,
-                publicSignals: input.data.proofMetadata.publicSignals,
-                merkleRoot: { connect: { id: merkleRootId! } }
-              },
-              update: {
-                proof: input.data.proofMetadata.proof,
-                nullifier: input.data.proofMetadata.nullifier,
-                publicSignals: input.data.proofMetadata.publicSignals,
-                merkleRoot: { connect: { id: merkleRootId! } }
+          proofMetadata: input.data.proofMetadata
+            ? {
+                upsert: {
+                  create: {
+                    proof: input.data.proofMetadata.proof,
+                    nullifier: input.data.proofMetadata.nullifier,
+                    publicSignals: input.data.proofMetadata.publicSignals,
+                    merkleRoot: { connect: { id: merkleRootId! } }
+                  },
+                  update: {
+                    proof: input.data.proofMetadata.proof,
+                    nullifier: input.data.proofMetadata.nullifier,
+                    publicSignals: input.data.proofMetadata.publicSignals,
+                    merkleRoot: { connect: { id: merkleRootId! } }
+                  }
+                }
               }
-            }
-          } : undefined
+            : undefined
         },
         include: {
           proofMetadata: true,
           author: true,
-          community: true,
+          community: true
         }
       });
     }),
 
-  delete: protectedProcedure
-    .input(z.string().uuid())
-    .mutation(async ({ ctx, input }) => {
-      const post = await ctx.prisma.post.findUnique({
-        where: { id: input },
-        include: { proofMetadata: true }
+  delete: protectedProcedure.input(z.string().uuid()).mutation(async ({ ctx, input }) => {
+    const post = await ctx.prisma.post.findUnique({
+      where: { id: input },
+      include: { proofMetadata: true }
+    });
+
+    if (!post) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Post not found'
       });
+    }
 
-      if (!post) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Post not found',
-        });
-      }
+    if (post.authorId !== ctx.user.userId) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'Not authorized to delete this post'
+      });
+    }
 
-      if (post.authorId !== ctx.user.id) {
-        throw new TRPCError({
-          code: 'FORBIDDEN',
-          message: 'Not authorized to delete this post',
-        });
-      }
+    // Delete post and associated proof metadata
+    await ctx.prisma.$transaction([
+      ctx.prisma.semaphoreProofMetadata.deleteMany({
+        where: { postId: input }
+      }),
+      ctx.prisma.post.delete({
+        where: { id: input }
+      })
+    ]);
 
-      // Delete post and associated proof metadata
-      await ctx.prisma.$transaction([
-        ctx.prisma.semaphoreProofMetadata.deleteMany({
-          where: { postId: input }
-        }),
-        ctx.prisma.post.delete({
-          where: { id: input },
-        })
-      ]);
-
-      return true;
-    }),
+    return true;
+  }),
 
   // Reply mutations
   createReply: protectedProcedure
@@ -500,7 +496,7 @@ export const postsRouter = router({
         data: {
           content: input.data.content,
           postId: input.postId,
-          authorId: input.data.isAnon ? undefined : ctx.user.id,
+          authorId: input.data.isAnon ? undefined : ctx.user.userId,
           replyParentId: input.data.replyParentId,
           isAnon: input.data.isAnon,
           signatureMetadata: input.data.signatureMetadata,
@@ -509,15 +505,15 @@ export const postsRouter = router({
               create: {
                 proof: input.data.proofMetadata.proof,
                 nullifier: input.data.proofMetadata.nullifier,
-                publicSignals: input.data.proofMetadata.publicSignals,
+                publicSignals: input.data.proofMetadata.publicSignals
               }
             }
-          }),
+          })
         },
         include: {
           author: true,
           replyParent: true,
-          proofMetadata: true,
+          proofMetadata: true
         }
       });
     }),
@@ -534,7 +530,7 @@ export const postsRouter = router({
         throw new Error('Reply not found');
       }
 
-      if (reply.authorId !== ctx.user.id) {
+      if (reply.authorId !== ctx.user.userId) {
         throw new Error('Not authorized to update this reply');
       }
 
@@ -545,25 +541,27 @@ export const postsRouter = router({
           replyParentId: input.data.replyParentId,
           isAnon: input.data.isAnon,
           signatureMetadata: input.data.signatureMetadata,
-          proofMetadata: input.data.proofMetadata ? {
-            upsert: {
-              create: {
-                proof: input.data.proofMetadata.proof,
-                nullifier: input.data.proofMetadata.nullifier,
-                publicSignals: input.data.proofMetadata.publicSignals,
-              },
-              update: {
-                proof: input.data.proofMetadata.proof,
-                nullifier: input.data.proofMetadata.nullifier,
-                publicSignals: input.data.proofMetadata.publicSignals,
+          proofMetadata: input.data.proofMetadata
+            ? {
+                upsert: {
+                  create: {
+                    proof: input.data.proofMetadata.proof,
+                    nullifier: input.data.proofMetadata.nullifier,
+                    publicSignals: input.data.proofMetadata.publicSignals
+                  },
+                  update: {
+                    proof: input.data.proofMetadata.proof,
+                    nullifier: input.data.proofMetadata.nullifier,
+                    publicSignals: input.data.proofMetadata.publicSignals
+                  }
+                }
               }
-            }
-          } : undefined
+            : undefined
         },
         include: {
           author: true,
           replyParent: true,
-          proofMetadata: true,
+          proofMetadata: true
         }
       });
     }),
@@ -580,7 +578,7 @@ export const postsRouter = router({
         throw new Error('Reply not found');
       }
 
-      if (reply.authorId !== ctx.user.id) {
+      if (reply.authorId !== ctx.user.userId) {
         throw new Error('Not authorized to delete this reply');
       }
 
@@ -603,9 +601,9 @@ export const postsRouter = router({
     .mutation(async ({ ctx, input }) => {
       const post = await ctx.prisma.post.findUnique({
         where: { id: input.postId },
-        include: { 
-          reactions: { 
-            include: { proofMetadata: true } 
+        include: {
+          reactions: {
+            include: { proofMetadata: true }
           },
           community: true
         }
@@ -614,7 +612,7 @@ export const postsRouter = router({
       if (!post) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: 'Post not found',
+          message: 'Post not found'
         });
       }
 
@@ -645,7 +643,7 @@ export const postsRouter = router({
       } else {
         // Find and remove reaction by proof metadata nullifier
         const existingReaction = post.reactions.find(
-          r => r.proofMetadata?.nullifier === input.proofMetadata.nullifier
+          (r) => r.proofMetadata?.nullifier === input.proofMetadata.nullifier
         );
 
         if (existingReaction) {
@@ -662,7 +660,7 @@ export const postsRouter = router({
 
       return ctx.prisma.post.findUnique({
         where: { id: input.postId },
-        include: { 
+        include: {
           reactions: {
             include: {
               proofMetadata: true
@@ -670,5 +668,5 @@ export const postsRouter = router({
           }
         }
       });
-    }),
-}); 
+    })
+});

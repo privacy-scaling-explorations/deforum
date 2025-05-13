@@ -1,115 +1,167 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
-import { useStorage } from "./useStorage"
-import { LOCAL_STORAGE_KEYS } from "@/settings"
-import { CreatePostSchema, PostSchema } from "@/shared/schemas/post.schema"
-import { trpc } from "../lib/trpc"
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useStorage } from './useStorage';
+import { LOCAL_STORAGE_KEYS } from '@/settings';
+import { trpc } from '../lib/trpc';
+import { useAuthGuard } from './useAuthGuard';
 
-export const useGetPosts = (communityId: string) => {
-  return trpc.posts.all.useQuery({ 
-    communityId,
-    limit: 10 
-  }, {
-    enabled: !!communityId
-  });
-}
-
-export const useGetBadges = () => {
-  return trpc.badges.list.useQuery()
-}
-
-export const useGetPostById = (postId: string | number) => {
-  return trpc.posts.byId.useQuery(postId.toString())
-}
-
-export const useGetPostsByCommunity = (communityId: string | undefined) => {
-  return trpc.posts.byCommunity.useQuery({ communityId: communityId! }, {
-    enabled: !!communityId
-  });
-}
-
-export const useTogglePostReaction = () => {
-  return trpc.posts.toggleReaction.useMutation({
-    onSuccess: () => {
-      // Invalidate relevant queries
-      trpc.posts.all.invalidate()
+export const useGetPostsByCommunity = (communityId: string) => {
+  console.debug('[useGetPosts] Fetching all posts');
+  return trpc.posts.all.useQuery(
+    {
+      communityId,
+      limit: 10
     },
-  })
-}
+    {
+      enabled: !!communityId
+    }
+  );
+};
+
+export const useGetProfilePosts = (userId: string) => {
+  console.debug('[useGetProfilePosts] Fetching all profile posts');
+  return trpc.posts.profilePosts.useQuery(
+    {
+      userId,
+      limit: 10
+    },
+    {
+      enabled: !!userId
+    }
+  );
+};
+
+export const useGetPostById = (id: string) => {
+  console.debug('[useGetPostById] Fetching post by ID:', id);
+  return trpc.posts.byId.useQuery(id);
+};
+
+// TODO! Make post reactions private by generating semaphore proofs and keeping some local state on which reaction is yours
+export const useTogglePostReaction = () => {
+  const { checkAuth } = useAuthGuard();
+  const utils = trpc.useUtils();
+
+  return trpc.posts.updateReactions.useMutation({
+    onMutate: () => {
+      if (!checkAuth()) {
+        throw new Error('Authentication required');
+      }
+    },
+    onSuccess: () => {
+      utils.posts.all.invalidate();
+    }
+  });
+};
 
 export const useCreatePostMutation = () => {
+  const { checkAuth } = useAuthGuard();
+  const utils = trpc.useUtils();
+
+  console.debug('[useCreatePost] Setting up create post mutation');
   return trpc.posts.create.useMutation({
-    onSuccess: () => {
-      // Invalidate the posts list query
-      trpc.posts.all.invalidate()
+    onMutate: () => {
+      if (!checkAuth()) {
+        throw new Error('Authentication required');
+      }
     },
-  })
-}
+    onSuccess: () => {
+      utils.posts.all.invalidate();
+    }
+  });
+};
+
+export const useUpdatePost = () => {
+  const { checkAuth } = useAuthGuard();
+  const utils = trpc.useUtils();
+
+  console.debug('[useUpdatePost] Setting up update post mutation');
+  return trpc.posts.update.useMutation({
+    onMutate: () => {
+      if (!checkAuth()) {
+        throw new Error('Authentication required');
+      }
+    },
+    onSuccess: () => {
+      utils.posts.all.invalidate();
+    }
+  });
+};
+
+export const useDeletePost = () => {
+  const { checkAuth } = useAuthGuard();
+  const utils = trpc.useUtils();
+
+  console.debug('[useDeletePost] Setting up delete post mutation');
+  return trpc.posts.delete.useMutation({
+    onMutate: () => {
+      if (!checkAuth()) {
+        throw new Error('Authentication required');
+      }
+    },
+    onSuccess: () => {
+      utils.posts.all.invalidate();
+    }
+  });
+};
 
 interface PostDraft {
-  id: string
-  title?: string
-  content?: string
-  communityId?: string
-  createdAt: number
+  id: string;
+  title?: string;
+  content?: string;
+  communityId?: string;
+  createdAt: number;
 }
 
 export const useCreateDraftMutation = () => {
-  const { getItem, setItem } = useStorage<PostDraft[]>(
-    LOCAL_STORAGE_KEYS.POST_DRAFT,
-  )
+  const { getItem, setItem } = useStorage<PostDraft[]>(LOCAL_STORAGE_KEYS.POST_DRAFT);
 
   return useMutation({
-    mutationFn: (draft: Omit<PostDraft, "id" | "createdAt">): any => {
-      const drafts = getItem() || []
+    mutationFn: (draft: Omit<PostDraft, 'id' | 'createdAt'>): any => {
+      const drafts = getItem() || [];
       const newDraft = {
         ...draft,
         id: crypto.randomUUID(),
-        createdAt: Date.now(),
-      }
-      setItem([...drafts, newDraft])
-      return newDraft
-    },
-  })
-}
+        createdAt: Date.now()
+      };
+      setItem([...drafts, newDraft]);
+      return newDraft;
+    }
+  });
+};
 
 export const useGetDrafts = () => {
-  const { getItem } = useStorage<PostDraft[]>(LOCAL_STORAGE_KEYS.POST_DRAFT)
+  const { getItem } = useStorage<PostDraft[]>(LOCAL_STORAGE_KEYS.POST_DRAFT);
 
   return useQuery({
-    queryKey: ["post.drafts"],
+    queryKey: ['post.drafts'],
     queryFn: () => {
-      const drafts = getItem() || []
-      return drafts
-    },
-  })
-}
+      const drafts = getItem() || [];
+      return drafts;
+    }
+  });
+};
 
 export const useRemoveDraft = () => {
-  const { getItem, setItem } = useStorage<PostDraft[]>(
-    LOCAL_STORAGE_KEYS.POST_DRAFT,
-  )
+  const { getItem, setItem } = useStorage<PostDraft[]>(LOCAL_STORAGE_KEYS.POST_DRAFT);
 
   return useMutation({
-    mutationFn: (draftId: string) => {
-      const drafts = getItem() || []
-      const filteredDrafts = drafts.filter((draft) => draft.id !== draftId)
-      return setItem(filteredDrafts)
-    },
-  })
-}
+    mutationFn: async (draftId: string) => {
+      const drafts = getItem() || [];
+      const filteredDrafts = drafts.filter((draft) => draft.id !== draftId);
+      return setItem(filteredDrafts);
+    }
+  });
+};
 
 export const useUpdateDraft = () => {
-  const { getItem, setItem } = useStorage<PostDraft[]>(
-    LOCAL_STORAGE_KEYS.POST_DRAFT,
-  )
+  const { getItem, setItem } = useStorage<PostDraft[]>(LOCAL_STORAGE_KEYS.POST_DRAFT);
 
   return useMutation({
-    mutationFn: (updatedDraft: PostDraft) => {
-      const drafts = getItem() || []
+    mutationFn: async (updatedDraft: PostDraft) => {
+      const drafts = getItem() || [];
       const updatedDrafts = drafts.map((draft) =>
-        draft.id === updatedDraft.id ? updatedDraft : draft,
-      )
-      return setItem(updatedDrafts)
-    },
-  })
-}
+        draft.id === updatedDraft.id ? updatedDraft : draft
+      );
+      return setItem(updatedDrafts);
+    }
+  });
+};

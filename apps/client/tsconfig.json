@@ -2,7 +2,11 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "target": "ES2020",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -14,18 +18,34 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "types": ["vite/client"],
+    "types": [
+      "vite/client"
+    ],
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
-      "@/*": ["apps/client/src/*"],
-      "@/shared/*": ["apps/shared/src/*"],
-      "@/hooks/*": ["apps/client/src/hooks/*"]
+      "@/*": [
+        "apps/client/src/*"
+      ],
+      "@/shared/*": [
+        "apps/shared/src/*"
+      ],
+      "@/hooks/*": [
+        "apps/client/src/hooks/*"
+      ]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "../../shared/src/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "../../shared/src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

@@ -1,0 +1,6 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+When implementing console logs, always use the appropriate log level for log entry, preferring debug, warn, error, and info over generic "log" level.

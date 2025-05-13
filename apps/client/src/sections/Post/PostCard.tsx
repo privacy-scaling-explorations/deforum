@@ -1,22 +1,24 @@
-import { ReactNode } from "react";
-import { classed, VariantProps } from "@tw-classed/react";
-import { Link } from "@tanstack/react-router";
-import { Eye as EyeIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { MessageSquare as MessageSquareIcon } from "lucide-react";
-import { Card } from "@/components/cards/Card";
+import { ReactNode } from "react"
+import { classed, VariantProps } from "@tw-classed/react"
+import { Link } from "@tanstack/react-router"
+import { Eye as EyeIcon } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { MessageSquare as MessageSquareIcon } from "lucide-react"
+import { Card } from "@/components/cards/Card"
+import { Post } from "@/shared/schemas/post"
 
 export interface PostCardProps extends VariantProps<typeof Card.Base> {
-  header?: ReactNode;
-  title?: string;
-  children?: ReactNode;
-  size?: "sm" | "lg";
-  withLink?: boolean;
-  postId?: string | number;
-  className?: string;
-  withHover?: boolean;
-  content?: string;
-  clampTitle?: boolean;
+  header?: ReactNode
+  title?: string
+  children?: ReactNode
+  size?: "sm" | "lg"
+  withLink?: boolean
+  postId?: string | number
+  className?: string
+  withHover?: boolean
+  content?: string
+  clampTitle?: boolean
+  post?: Post
 }
 
 const PostCardBase = classed(Card.Base, {
@@ -24,14 +26,14 @@ const PostCardBase = classed(Card.Base, {
     gap: "2.5",
     spacing: "sm",
   },
-});
+})
 
 const PostCommentCount = ({
   count,
   className,
 }: {
-  count: number;
-  className?: string;
+  count: number
+  className?: string
 }) => {
   return (
     <div
@@ -45,8 +47,9 @@ const PostCommentCount = ({
         {count}
       </span>
     </div>
-  );
-};
+  )
+}
+
 const PostTitle = classed.span(
   "text-card-foreground font-inter  lg:w-full w-[90%]",
   {
@@ -65,7 +68,7 @@ const PostTitle = classed.span(
       clampTitle: true,
     },
   },
-);
+)
 
 const PostCard = ({
   title,
@@ -78,7 +81,13 @@ const PostCard = ({
   className,
   content = "",
   clampTitle = true,
+  post,
 }: PostCardProps) => {
+  // Use post data if available, otherwise use individual props
+  const displayTitle = post?.title || title
+  const displayContent = post?.content || content
+  const displayPostId = post?.id || postId
+
   return (
     <PostCardBase
       withHover={withHover}
@@ -89,32 +98,32 @@ const PostCard = ({
         className,
       )}
     >
-      {(header || title) && (
+      {(header || displayTitle) && (
         <div className="flex flex-col gap-1">
           {header && <div className="flex flex-col gap-1">{header}</div>}
-          {title &&
-            (withLink && postId ? (
-              <Link to="/posts/$postId" params={{ postId: postId.toString() }}>
+          {displayTitle &&
+            (withLink && displayPostId ? (
+              <Link to="/posts/$postId" params={{ postId: displayPostId.toString() }}>
                 <PostTitle size={size} clampTitle={clampTitle}>
-                  {title}
+                  {displayTitle}
                 </PostTitle>
               </Link>
             ) : (
               <PostTitle size={size} clampTitle={clampTitle}>
-                {title}
+                {displayTitle}
               </PostTitle>
             ))}
-          {content?.length > 0 && (
+          {displayContent?.length > 0 && (
             <span className="text-sm font-inter font-normal text-base-foreground line-clamp-3">
-              {content}
+              {displayContent}
             </span>
           )}
         </div>
       )}
       {children}
     </PostCardBase>
-  );
-};
+  )
+}
 
 const PostTotalView = ({ totalViews }: { totalViews: number }) => {
   return (
@@ -124,12 +133,12 @@ const PostTotalView = ({ totalViews }: { totalViews: number }) => {
         {totalViews}
       </span>
     </div>
-  );
-};
+  )
+}
 
-PostCard.displayName = "PostCard";
-PostCard.TotalViews = PostTotalView;
-PostCard.Title = PostTitle;
-PostCard.CommentCount = PostCommentCount;
+PostCard.displayName = "PostCard"
+PostCard.TotalViews = PostTotalView
+PostCard.Title = PostTitle
+PostCard.CommentCount = PostCommentCount
 
-export { PostCard };
+export { PostCard }

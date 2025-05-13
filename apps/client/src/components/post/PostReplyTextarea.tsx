@@ -1,31 +1,31 @@
-import { Button } from "../ui/Button";
-import { Textarea } from "../inputs/Textarea";
-import { Select } from "../inputs/Select";
-import { Switch } from "../inputs/Switch";
-import { useForm } from "@tanstack/react-form";
-import { MailIcon, FileBadge } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useState } from "react";
-import { Tag } from "../ui/Tag";
-import { useGetBadges } from "@/hooks/usePosts";
-import { PostAuthor } from "@/shared/schemas/post";
+import { Button } from "../ui/Button"
+import { Textarea } from "../inputs/Textarea"
+import { Select } from "../inputs/Select"
+import { Switch } from "../inputs/Switch"
+import { useForm } from "@tanstack/react-form"
+import { MailIcon, FileBadge } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { useState } from "react"
+import { Tag } from "../ui/Tag"
+import { useGetAllBadges } from "@/hooks/useBadges"
+import { PostAuthor } from "@/shared/schemas/post"
 
 interface PostReplyFormData {
-  tags: string[];
-  postAsAnonymous: boolean;
-  content: string;
+  tags: string[]
+  postAsAnonymous: boolean
+  content: string
 }
 
 interface PostReplyProps {
-  postId?: number | string;
-  author?: PostAuthor;
-  onFocus?: () => void;
-  isVisible?: boolean;
-  showFields?: boolean;
-  placeholder?: string;
-  rows?: number;
-  onClick?: () => void;
-  onBlur?: () => void;
+  postId?: number | string
+  author?: PostAuthor
+  onFocus?: () => void
+  isVisible?: boolean
+  showFields?: boolean
+  placeholder?: string
+  rows?: number
+  onClick?: () => void
+  onBlur?: () => void
 }
 
 export const PostReplyTextarea = ({
@@ -38,12 +38,17 @@ export const PostReplyTextarea = ({
   onFocus,
   onBlur,
 }: PostReplyProps) => {
-  if (!isVisible) return null;
+  if (!isVisible) return null
 
-  const [selectedBadges, setSelectedBadges] = useState<string[]>([]);
-  const form = useForm<PostReplyFormData, any, any, any, any, any, any, any, any, any>();
+  const [selectedBadges, setSelectedBadges] = useState<string[]>([])
+  const form = useForm<PostReplyFormData, any, any, any, any, any, any, any, any, any>()
 
-  const { data: badges } = useGetBadges();
+  const { data: badges } = useGetAllBadges()
+
+  const handleButtonClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }
 
   return (
     <div
@@ -51,11 +56,12 @@ export const PostReplyTextarea = ({
         "flex flex-col gap-4 border-l-[3px] border-base-border pl-5":
           showFields,
       })}
+      onFocus={onFocus}
     >
       <Textarea
         placeholder={placeholder}
         rows={rows}
-        onFocus={onFocus}
+
         onClick={onClick}
         onBlur={onBlur}
       />
@@ -64,7 +70,7 @@ export const PostReplyTextarea = ({
         <div className="flex flex-col gap-4">
           <div className="flex justify-between">
             <div className="lg:w-1/4">
-              <form.Field
+              {/* <form.Field
                 name="tags"
                 children={(field) => (
                   <Select
@@ -83,24 +89,25 @@ export const PostReplyTextarea = ({
                           <span>{name}</span>
                         </div>
                       ),
-                    }))}
+                    })) || []}
                     onValueChange={(value) => {
-                      const currentTags = field.state.value || [];
-                      console.log("test", currentTags, value);
+                      const currentTags = field.state.value || []
+                      console.log("test", currentTags, value)
                       if (!currentTags.includes(value)) {
-                        setSelectedBadges([...currentTags, value]);
+                        setSelectedBadges([...currentTags, value])
                       }
                     }}
                     field={field}
                   />
                 )}
-              />
+              /> */}
             </div>
-            <div className="ml-auto flex flex-col gap-4 justify-end">
+            <div className="ml-auto flex flex-col gap-4 justify-end" onClick={handleButtonClick}>
               <form.Field
                 name="postAsAnonymous"
                 children={(field) => (
                   <Switch
+                    disabled
                     label="Post as anonymous?"
                     description={
                       field.state.value
@@ -130,21 +137,21 @@ export const PostReplyTextarea = ({
               />
             </div>
           </div>
-          {selectedBadges && selectedBadges.length > 0 && (
+          {/* {selectedBadges && selectedBadges.length > 0 && (
             <div className="flex flex-col gap-2">
               {selectedBadges.map((badge: any) => {
-                const badgeData = badges?.find((b: any) => b.id === badge);
+                const badgeData = badges?.find((b: any) => b.id === badge)
                 return (
                   <Tag key={badge} className="w-fit">
                     <MailIcon className="size-4" />
                     <span>{badgeData?.name}</span>
                   </Tag>
-                );
+                )
               })}
             </div>
-          )}
+          )} */}
         </div>
       )}
     </div>
-  );
-};
+  )
+}

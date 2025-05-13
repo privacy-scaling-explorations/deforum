@@ -97,6 +97,15 @@
       "user_type": "Estándar",
       "uid_prefix": "uid:",
       "created_prefix": "Creado",
+      "no_bio": "Sin biografía",
+      "no_posts": "Aún no hay publicaciones",
+      "posts": {
+        "title": "Publicaciones"
+      },
+      "badges": {
+        "title": "Insignias de {{username}}",
+        "empty": "Aún no hay insignias"
+      },
       "stats": {
         "following": "Siguiendo",
         "followers": "Seguidores",
@@ -104,7 +113,8 @@
         "solos": "Solos",
         "feeds": "Feeds",
         "comments": "Comentarios",
-        "communities": "Comunidades"
+        "communities": "Comunidades",
+        "badges": "Insignias"
       }
     },
     "notifications": {
@@ -137,11 +147,13 @@
           "label": "¿Publicar como anónimo?",
           "description_on": "Tu nombre no se mostrará",
           "description_off": "Estás publicando como {{username}}"
-        }
+        },
+        "personal_page": "Mi Página Personal"
       },
       "loading": "Cargando publicación",
       "not_found": "Publicación no encontrada",
-      "not_found_message": "La publicación que estás buscando no se pudo encontrar"
+      "not_found_message": "La publicación que estás buscando no se pudo encontrar",
+      "drafts": "Borradores"
     }
   },
   "sidebar": {
@@ -154,17 +166,19 @@
   },
   "welcome": "Bienvenido a Deforum",
   "login": {
-    "title": "Iniciar sesión",
-    "privateGoogleSignIn": "Inicio de sesión privado con Google",
-    "privateGoogleSignInDesc": "Utilizaremos el protocolo Stealth.notes como una forma de iniciar sesión y probar la propiedad de su dominio de correo electrónico de manera privada sin que nuestro servidor sepa quién es usted.",
-    "readMore": "Leer más aquí",
-    "signInWithGoogle": "Iniciar sesión con Google",
-    "signInWithPasskey": "Iniciar sesión con Passkey",
-    "createNewAccountWithPasskey": "Crear nueva cuenta con Passkey",
-    "recoverOldAccount": "Recuperar cuenta antigua (próximamente)",
-    "passkeyNotFound": "Passkey no encontrado. ¿Crear una nueva cuenta?",
-    "passkeyLoginFailed": "Error al iniciar sesión con Passkey",
-    "registrationCancelled": "Registro cancelado o fallido",
-    "registrationFailed": "Registro fallido"
+    "title": "Iniciar Sesión",
+    "description": "Elige tu método de inicio de sesión preferido",
+    "username": "Nombre de Usuario",
+    "usernamePlaceholder": "Ingresa tu nombre de usuario",
+    "useExistingPasskey": "Usar Passkey Existente",
+    "createNewAccount": "Crear Nueva Cuenta",
+    "loading": "Cargando...",
+    "continueWithPasskey": "Continuar con Passkey",
+    "usernameTaken": "El nombre de usuario \"{{username}}\" ya está en uso",
+    "usernameRequired": "Por favor elige un nombre de usuario",
+    "passkeyNotFound": "Passkey no encontrada. ¿Crear una nueva cuenta?",
+    "passkeyLoginFailed": "Error al iniciar sesión con passkey",
+    "passkeyCreationCancelled": "Creación de passkey cancelada",
+    "registrationFailed": "Error al registrarse. Por favor intenta de nuevo."
   }
-} 
+}

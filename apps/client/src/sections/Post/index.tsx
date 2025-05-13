@@ -1,13 +1,13 @@
-import { useParams } from "@tanstack/react-router";
-import { useGetPost } from "@/hooks/usePosts";
-import { PostCard } from "@/components/post/PostCard";
-import { PageContent } from "@/components/layouts/PageContent";
-import { useTranslation } from 'react-i18next';
+import { useParams } from "@tanstack/react-router"
+import { useGetPostById } from "@/hooks/usePosts"
+import { PostCard } from "./PostCard"
+import { PageContent } from "@/components/PageContent"
+import { useTranslation } from 'react-i18next'
 
 export const Post = () => {
-  const { postId } = useParams({ from: "/post/$postId" });
-  const { data: post, isLoading } = useGetPost(postId);
-  const { t } = useTranslation();
+  const { postId } = useParams({ from: "/post/$postId" })
+  const { data: post, isLoading } = useGetPostById(postId)
+  const { t } = useTranslation()
 
   if (isLoading) {
     return (
@@ -16,7 +16,7 @@ export const Post = () => {
           {t('pages.post.loading')}...
         </div>
       </PageContent>
-    );
+    )
   }
 
   if (!post) {
@@ -26,12 +26,12 @@ export const Post = () => {
           {t('pages.post.not_found_message')}
         </div>
       </PageContent>
-    );
+    )
   }
 
   return (
     <PageContent title={post.title}>
-      <PostCard post={post} />
+      <PostCard post={post} size="lg" clampTitle={false} />
     </PageContent>
-  );
-}; 
+  )
+}

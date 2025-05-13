@@ -1,25 +1,41 @@
 import { z } from 'zod';
-import { router, publicProcedure, protectedProcedure } from '../trpc';
+import { router, publicProcedure, protectedProcedure } from '../lib/trpc';
 import { TRPCError } from '@trpc/server';
-import { 
-  UpdateUserInput, 
-  AddPublicKeyInput, 
-  DeactivatePublicKeyInput 
+import {
+  UpdateUserInput,
+  AddPublicKeyInput,
+  DeactivatePublicKeyInput
 } from '@deforum/shared/schemas/user';
+import { prisma } from '../lib/db';
+import sharp from 'sharp';
+import { writeFile, unlink } from 'fs/promises';
+import path from 'path';
+import { trpcLogger } from '../lib/logger';
+import { stringify } from 'querystring';
 
 const FollowUserInput = z.object({
-  userId: z.string().uuid(),
+  userId: z.string().uuid()
 });
+
+const AVATAR_MAX_SIZE = 1024 * 1024; // 1MB
+const AVATAR_DIR = path.join(process.cwd(), 'uploads', 'avatars');
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ALLOWED_TYPES = ['image/jpeg', 'image/png'];
+const COMPRESSED_SIZE = 1024; // Max dimension in pixels
 
 export const usersRouter = router({
   me: protectedProcedure.query(async ({ ctx }) => {
+    if (!ctx.user) {
+      throw new Error(`Context doesn't contain user ${ctx}`);
+    }
     const user = await ctx.prisma.user.findUnique({
-      where: { id: ctx.user.id },
+      where: { id: ctx.user.userId },
       include: {
         posts: {
           include: {
-            author: true,
-          },
+            author: true
+          }
         },
         communities: {
           include: {
@@ -28,8 +44,8 @@ export const usersRouter = router({
         },
         credentials: {
           include: {
-            definition: true,
-          },
+            definition: true
+          }
         },
         publicKeys: {
           where: {
@@ -47,26 +63,31 @@ export const usersRouter = router({
             replies: true,
             credentials: true,
             following: true,
-            followers: true,
-          },
-        },
-      },
+            followers: true
+          }
+        }
+      }
     });
 
     if (!user) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: 'User not found',
+        message: 'User not found'
       });
     }
 
     return {
       ...user,
-      communities: user.communities.map(cm => [cm.community.id, cm.community.name, cm.community.slug]),
-      badges: user.credentials.map(c => c.definition),
+      communities: user.communities.map((cm) => [
+        cm.community.id,
+        cm.community.name,
+        cm.community.slug,
+        cm.community.avatar
+      ]),
+      badges: user.credentials.map((c) => c.definition),
       followersCount: user._count.followers,
       followingCount: user._count.following,
-      activePublicKey: user.publicKeys[0], // Most recently created active key
+      activePublicKey: user.publicKeys[0] // Most recently created active key
     };
   }),
 
@@ -80,10 +101,7 @@ export const usersRouter = router({
             where: {
               isPublic: true,
               revokedAt: null,
-              OR: [
-                { expiresAt: null },
-                { expiresAt: { gt: new Date() } }
-              ]
+              OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }]
             },
             include: {
               definition: true
@@ -107,7 +125,7 @@ export const usersRouter = router({
               replies: true,
               credentials: true,
               following: true,
-              followers: true,
+              followers: true
             }
           }
         }
@@ -116,7 +134,7 @@ export const usersRouter = router({
       if (!user) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: 'User not found',
+          message: 'User not found'
         });
       }
 
@@ -125,238 +143,262 @@ export const usersRouter = router({
       let isFollowedBy = false;
       let canViewFollowers = false;
       let canViewFollowing = false;
-      
+
       if (ctx.user) {
         const [followingCheck, followerCheck] = await Promise.all([
           ctx.prisma.follow.findUnique({
             where: {
               followerId_followingId: {
-                followerId: ctx.user.id,
-                followingId: user.id,
-              },
-            },
+                followerId: ctx.user.userId,
+                followingId: user.id
+              }
+            }
           }),
           ctx.prisma.follow.findUnique({
             where: {
               followerId_followingId: {
                 followerId: user.id,
-                followingId: ctx.user.id,
-              },
-            },
-          }),
+                followingId: ctx.user.userId
+              }
+            }
+          })
         ]);
-        
+
         isFollowing = !!followingCheck;
         isFollowedBy = !!followerCheck;
 
         // Check if user can view followers/following based on privacy settings
-        canViewFollowers = user.showFollowers || ctx.user.id === user.id;
-        canViewFollowing = user.showFollowing || ctx.user.id === user.id;
+        canViewFollowers = user.showFollowers || ctx.user.userId === user.id;
+        canViewFollowing = user.showFollowing || ctx.user.userId === user.id;
       }
 
       return {
         ...user,
-        badges: user.credentials.map(c => c.definition),
+        badges: user.credentials.map((c) => c.definition),
         followersCount: canViewFollowers ? user._count.followers : null,
         followingCount: canViewFollowing ? user._count.following : null,
         isFollowing,
         isFollowedBy,
         canViewFollowers,
         canViewFollowing,
-        activePublicKey: user.publicKeys[0], // Most recently created active key
+        activePublicKey: user.publicKeys[0] // Most recently created active key
       };
     }),
 
-  byId: publicProcedure
-    .input(z.string().uuid())
-    .query(async ({ ctx, input }) => {
-      const user = await ctx.prisma.user.findUnique({
-        where: { id: input },
-        include: {
-          posts: {
-            include: {
-              author: true,
-            },
-          },
-          credentials: {
-            include: {
-              definition: true,
-            },
-          },
-          _count: {
-            select: {
-              posts: true,
-              replies: true,
-              credentials: true,
-            },
-          },
+  byId: publicProcedure.input(z.string().uuid()).query(async ({ ctx, input }) => {
+    const user = await ctx.prisma.user.findUnique({
+      where: { id: input },
+      include: {
+        posts: {
+          include: {
+            author: true
+          }
         },
-      });
-
-      if (!user) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'User not found',
-        });
+        credentials: {
+          include: {
+            definition: true
+          }
+        },
+        _count: {
+          select: {
+            posts: true,
+            replies: true,
+            credentials: true
+          }
+        }
       }
+    });
 
-      return user;
-    }),
+    if (!user) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'User not found'
+      });
+    }
 
-  update: protectedProcedure
-    .input(UpdateUserInput)
-    .mutation(async ({ ctx, input }) => {
-      const updateData = {
-        ...(input.data.username !== undefined && { username: input.data.username }),
-        ...(input.data.email !== undefined && { email: input.data.email }),
-        ...(input.data.avatar !== undefined && { avatar: input.data.avatar }),
-        ...(input.data.website !== undefined && { website: input.data.website }),
-        ...(input.data.bio !== undefined && { bio: input.data.bio }),
-      };
+    return user;
+  }),
 
-      return ctx.prisma.user.update({
-        where: { id: ctx.user.id },
-        data: updateData,
-        include: {
-          publicKeys: {
-            where: {
-              isDeactivated: false
-            }
+  updateProfile: protectedProcedure.input(UpdateUserInput).mutation(async ({ ctx, input }) => {
+    // Check if username is taken (case insensitive)
+    if (!ctx.user) {
+      throw new Error(`Context doesn't contain user ${ctx}`);
+    }
+    if (input.username && input.username !== ctx.user.username) {
+      const existingUser = await prisma.user.findFirst({
+        where: {
+          username: {
+            equals: input.username,
+            mode: 'insensitive'
           }
         }
       });
-    }),
 
-  stats: publicProcedure
-    .input(z.string().uuid())
-    .query(async ({ ctx, input }) => {
-      const user = await ctx.prisma.user.findUnique({
-        where: { id: input },
-        include: {
-          _count: {
-            select: {
-              posts: true,
-              replies: true,
-              credentials: true,
-            },
-          },
-        },
-      });
-
-      if (!user) {
+      if (existingUser) {
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'User not found',
+          code: 'CONFLICT',
+          message: 'Username already taken'
         });
       }
+    }
 
-      return {
-        totalPosts: user._count.posts,
-        totalReplies: user._count.replies,
-        totalBadges: user._count.credentials,
-      };
-    }),
-
-  badges: publicProcedure
-    .input(z.string().uuid())
-    .query(async ({ ctx, input }) => {
-      const user = await ctx.prisma.user.findUnique({
-        where: { id: input },
-        include: {
-          credentials: {
-            include: {
-              definition: true,
-            },
-          },
-        },
-      });
-
-      if (!user) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'User not found',
-        });
+    // Update user profile
+    return prisma.user.update({
+      where: { id: ctx.user.userId },
+      data: {
+        ...(input.username && { username: input.username }),
+        ...(input.website !== undefined && { website: input.website }),
+        ...(input.bio !== undefined && { bio: input.bio }),
+        ...(input.showFollowers !== undefined && { showFollowers: input.showFollowers }),
+        ...(input.showFollowing !== undefined && { showFollowing: input.showFollowing })
+      },
+      include: {
+        publicKeys: {
+          where: {
+            isDeactivated: false
+          }
+        }
       }
+    });
+  }),
 
-      return user.credentials;
-    }),
+  stats: publicProcedure.input(z.string().uuid()).query(async ({ ctx, input }) => {
+    const user = await ctx.prisma.user.findUnique({
+      where: { id: input },
+      include: {
+        _count: {
+          select: {
+            posts: true,
+            replies: true,
+            credentials: true
+          }
+        }
+      }
+    });
+
+    if (!user) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'User not found'
+      });
+    }
+
+    return {
+      totalPosts: user._count.posts,
+      totalReplies: user._count.replies,
+      totalBadges: user._count.credentials
+    };
+  }),
+
+  badges: protectedProcedure.input(z.string().uuid()).query(async ({ ctx, input }) => {
+    const credentials = await ctx.prisma.badgeCredential.findMany({
+      where: {
+        userId: input,
+        revokedAt: null,
+        OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }]
+      },
+      include: {
+        definition: {
+          include: {
+            protocols: {
+              include: {
+                protocol: true
+              }
+            }
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    return credentials;
+  }),
 
   // Following-related endpoints
-  follow: protectedProcedure
-    .input(FollowUserInput)
-    .mutation(async ({ ctx, input }) => {
-      if (ctx.user.id === input.userId) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'Cannot follow yourself',
-        });
+  follow: protectedProcedure.input(FollowUserInput).mutation(async ({ ctx, input }) => {
+    if (!ctx.user) {
+      throw new Error(`Context doesn't contain user ${ctx}`);
+    }
+    if (ctx.user.userId === input.userId) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'Cannot follow yourself'
+      });
+    }
+
+    // Check if target user exists
+    const targetUser = await ctx.prisma.user.findUnique({
+      where: { id: input.userId }
+    });
+
+    if (!targetUser) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'User not found'
+      });
+    }
+
+    // Create follow relationship
+    if (!ctx.user) {
+      throw new Error(`Context doesn't contain user ${ctx}`);
+    }
+    const follow = await ctx.prisma.follow.create({
+      data: {
+        followerId: ctx.user.userId,
+        followingId: input.userId
       }
+    });
 
-      // Check if target user exists
-      const targetUser = await ctx.prisma.user.findUnique({
-        where: { id: input.userId },
-      });
+    return follow;
+  }),
 
-      if (!targetUser) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'User not found',
-        });
+  unfollow: protectedProcedure.input(FollowUserInput).mutation(async ({ ctx, input }) => {
+    if (!ctx.user) {
+      throw new Error(`Context doesn't contain user ${ctx}`);
+    }
+    await ctx.prisma.follow.delete({
+      where: {
+        followerId_followingId: {
+          followerId: ctx.user.userId,
+          followingId: input.userId
+        }
       }
+    });
 
-      // Create follow relationship
-      const follow = await ctx.prisma.follow.create({
-        data: {
-          followerId: ctx.user.id,
-          followingId: input.userId,
-        },
-      });
-
-      return follow;
-    }),
-
-  unfollow: protectedProcedure
-    .input(FollowUserInput)
-    .mutation(async ({ ctx, input }) => {
-      await ctx.prisma.follow.delete({
-        where: {
-          followerId_followingId: {
-            followerId: ctx.user.id,
-            followingId: input.userId,
-          },
-        },
-      });
-
-      return true;
-    }),
+    return true;
+  }),
 
   followers: publicProcedure
-    .input(z.object({
-      userId: z.string().uuid(),
-      cursor: z.string().optional(),
-      limit: z.number().min(1).max(100).default(10),
-    }))
+    .input(
+      z.object({
+        userId: z.string().uuid(),
+        cursor: z.string().optional(),
+        limit: z.number().min(1).max(100).default(10)
+      })
+    )
     .query(async ({ ctx, input }) => {
       // Check if followers list is public
       const user = await ctx.prisma.user.findUnique({
         where: { id: input.userId },
-        select: { showFollowers: true },
+        select: { showFollowers: true }
       });
 
       if (!user) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: 'User not found',
+          message: 'User not found'
         });
       }
 
       // Only allow viewing followers if:
       // 1. The list is public, or
       // 2. The viewer is the user themselves
-      if (!user.showFollowers && (!ctx.user || ctx.user.id !== input.userId)) {
+      if (!user.showFollowers && (!ctx.user || ctx.user.userId !== input.userId)) {
         throw new TRPCError({
           code: 'FORBIDDEN',
-          message: 'Followers list is private',
+          message: 'Followers list is private'
         });
       }
 
@@ -366,8 +408,8 @@ export const usersRouter = router({
         cursor: input.cursor ? { id: input.cursor } : undefined,
         orderBy: { createdAt: 'desc' },
         include: {
-          follower: true,
-        },
+          follower: true
+        }
       });
 
       let nextCursor: typeof input.cursor | undefined = undefined;
@@ -377,38 +419,40 @@ export const usersRouter = router({
       }
 
       return {
-        items: followers.map(f => f.follower),
-        nextCursor,
+        items: followers.map((f) => f.follower),
+        nextCursor
       };
     }),
 
   following: publicProcedure
-    .input(z.object({
-      userId: z.string().uuid(),
-      cursor: z.string().optional(),
-      limit: z.number().min(1).max(100).default(10),
-    }))
+    .input(
+      z.object({
+        userId: z.string().uuid(),
+        cursor: z.string().optional(),
+        limit: z.number().min(1).max(100).default(10)
+      })
+    )
     .query(async ({ ctx, input }) => {
       // Check if following list is public
       const user = await ctx.prisma.user.findUnique({
         where: { id: input.userId },
-        select: { showFollowing: true },
+        select: { showFollowing: true }
       });
 
       if (!user) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: 'User not found',
+          message: 'User not found'
         });
       }
 
       // Only allow viewing following if:
       // 1. The list is public, or
       // 2. The viewer is the user themselves
-      if (!user.showFollowing && (!ctx.user || ctx.user.id !== input.userId)) {
+      if (!user.showFollowing && (!ctx.user || ctx.user.userId !== input.userId)) {
         throw new TRPCError({
           code: 'FORBIDDEN',
-          message: 'Following list is private',
+          message: 'Following list is private'
         });
       }
 
@@ -418,8 +462,8 @@ export const usersRouter = router({
         cursor: input.cursor ? { id: input.cursor } : undefined,
         orderBy: { createdAt: 'desc' },
         include: {
-          following: true,
-        },
+          following: true
+        }
       });
 
       let nextCursor: typeof input.cursor | undefined = undefined;
@@ -429,38 +473,23 @@ export const usersRouter = router({
       }
 
       return {
-        items: following.map(f => f.following),
-        nextCursor,
+        items: following.map((f) => f.following),
+        nextCursor
       };
     }),
 
-  // Update user settings including follow privacy
-  updateSettings: protectedProcedure
-    .input(z.object({
-      showFollowers: z.boolean().optional(),
-      showFollowing: z.boolean().optional(),
-    }))
-    .mutation(async ({ ctx, input }) => {
-      return ctx.prisma.user.update({
-        where: { id: ctx.user.id },
-        data: {
-          showFollowers: input.showFollowers,
-          showFollowing: input.showFollowing,
-        },
-      });
-    }),
-
   // Public key management
-  addPublicKey: protectedProcedure
-    .input(AddPublicKeyInput)
-    .mutation(async ({ ctx, input }) => {
-      return ctx.prisma.userPublicKey.create({
-        data: {
-          userId: ctx.user.id,
-          publicKey: input.publicKey,
-        }
-      });
-    }),
+  addPublicKey: protectedProcedure.input(AddPublicKeyInput).mutation(async ({ ctx, input }) => {
+    if (!ctx.user) {
+      throw new Error(`Context doesn't contain user ${ctx}`);
+    }
+    return ctx.prisma.userPublicKey.create({
+      data: {
+        userId: ctx.user.userId,
+        publicKey: input.publicKey
+      }
+    });
+  }),
 
   deactivatePublicKey: protectedProcedure
     .input(DeactivatePublicKeyInput)
@@ -472,14 +501,14 @@ export const usersRouter = router({
       if (!key) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: 'Public key not found',
+          message: 'Public key not found'
         });
       }
 
-      if (key.userId !== ctx.user.id) {
+      if (key.userId !== ctx.user?.userId) {
         throw new TRPCError({
           code: 'FORBIDDEN',
-          message: 'Not authorized to deactivate this key',
+          message: 'Not authorized to deactivate this key'
         });
       }
 
@@ -487,8 +516,132 @@ export const usersRouter = router({
         where: { id: input.keyId },
         data: {
           isDeactivated: true,
-          deactivatedAt: new Date(),
+          deactivatedAt: new Date()
         }
       });
     }),
-}); 
+
+  uploadAvatar: protectedProcedure
+    .input(
+      z.object({
+        file: z.instanceof(File)
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const file = input.file;
+      if (!file) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'No file provided'
+        });
+      }
+
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Only JPEG and PNG images are allowed'
+        });
+      }
+
+      if (file.size > MAX_FILE_SIZE) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'File size must be less than 5MB'
+        });
+      }
+
+      // Compress image if needed
+      let processedBuffer = Buffer.from(await file.arrayBuffer());
+      if (processedBuffer.length > AVATAR_MAX_SIZE) {
+        processedBuffer = await sharp(processedBuffer)
+          .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
+          .png()
+          .toBuffer();
+      }
+      if (!ctx.user) {
+        throw new Error(`Context doesn't contain user ${ctx}`);
+      }
+      // Save to server
+      const filename = `${ctx.user.userId}${path.extname(file.name)}`;
+      const filepath = path.join(process.cwd(), 'uploads', 'avatars', filename);
+      await writeFile(filepath, processedBuffer);
+
+      // Update user's avatar
+      const avatar = `/uploads/avatars/${filename}`;
+      await prisma.user.update({
+        where: { id: ctx.user?.userId },
+        data: { avatar }
+      });
+
+      return { avatar };
+    }),
+
+  removeAvatar: protectedProcedure.mutation(async ({ ctx }) => {
+    if (!ctx.user) {
+      throw new Error(`Context doesn't contain user ${ctx}`);
+    }
+    const user = await prisma.user.findUnique({
+      where: { id: ctx.user.userId },
+      select: { avatar: true }
+    });
+
+    if (user?.avatar) {
+      // Remove avatar file
+      const filepath = path.join(process.cwd(), user.avatar);
+      await unlink(filepath).catch(() => {}); // Ignore if file doesn't exist
+
+      // Remove avatar URL from user
+      await prisma.user.update({
+        where: { id: ctx.user?.userId },
+        data: { avatar: null }
+      });
+    }
+
+    return { success: true };
+  }),
+
+  getPasskeys: protectedProcedure.query(async ({ ctx }) => {
+    if (!ctx.user) {
+      throw new Error(`Context doesn't contain user ${ctx}`);
+    }
+    const passkeys = await prisma.passkey.findMany({
+      where: {
+        userId: ctx.user.userId
+      },
+      select: {
+        id: true,
+        credentialId: true,
+        lastUsedAt: true,
+        createdAt: true
+      }
+    });
+    return passkeys;
+  }),
+
+  removePasskey: protectedProcedure
+    .input(z.object({ passkeyId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.user) {
+        throw new Error(`Context doesn't contain user ${ctx}`);
+      }
+      const passkey = await prisma.passkey.findFirst({
+        where: {
+          id: input.passkeyId,
+          userId: ctx.user.userId
+        }
+      });
+
+      if (!passkey) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Passkey not found'
+        });
+      }
+
+      await prisma.passkey.delete({
+        where: { id: input.passkeyId }
+      });
+
+      return { success: true };
+    })
+});

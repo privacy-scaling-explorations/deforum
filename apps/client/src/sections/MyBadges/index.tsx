@@ -1,35 +1,28 @@
-import { Card } from "@/components/cards/Card";
-import { PageContent } from "@/components/PageContent";
-import { Button } from "@/components/ui/Button";
-import { Link } from "@tanstack/react-router";
-import { classed } from "@tw-classed/react";
-import { PlusIcon } from "lucide-react";
-import { useGetBadges } from "@/hooks/useBadges";
-import { Badge } from "@/components/ui/Badge";
-import { useGlobalContext } from "@/contexts/GlobalContext";
-import { BadgeDefinition, ProtocolBadge } from "@deforum/shared/schemas/badge";
+import { Card } from "@/components/cards/Card"
+import { PageContent } from "@/components/PageContent"
+import { Button } from "@/components/ui/Button"
+import { Link } from "@tanstack/react-router"
+import { classed } from "@tw-classed/react"
+import { PlusIcon } from "lucide-react"
+import { Badge } from "@/components/ui/Badge"
+import { useGlobalContext } from "@/contexts/GlobalContext"
+import { BadgeCredential } from '@/shared/schemas/badge'
+import { Tooltip } from "@/components/ui/Tooltip"
 
-interface BadgeWithProtocols extends Omit<BadgeDefinition, 'protocols'> {
-  protocols: ProtocolBadge[];
-  _count?: {
-    issuances: number;
-  };
-}
-
-const RowSection = classed.div("grid grid-cols-[1fr_1fr_1fr_130px_1fr] gap-2");
+const RowSection = classed.div("grid grid-cols-[1fr_1fr_1fr_130px_1fr] gap-2")
 
 export const MyBadgesPage = () => {
-  const { data: badges } = useGetBadges();
-  const { user } = useGlobalContext();
+  const { user } = useGlobalContext()
+  const userBadges = user?.credentials || []
 
   return (
     <PageContent
       title="My Badges"
       description="Manage and customize your badges here. You can manage visibility, add new badges, reverify or remove ones you no longer want."
     >
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
         <Card.Base spacing="sm">
-          <RowSection className="h-10">
+          <RowSection className="h-2">
             <span className="text-sm font-medium text-base-muted-foreground">
               Badge
             </span>
@@ -44,29 +37,28 @@ export const MyBadgesPage = () => {
             </span>
             <span className="text-sm font-medium text-base-muted-foreground"></span>
           </RowSection>
-          {badges?.map((badge: BadgeWithProtocols) => (
-            <RowSection key={badge.id} className="items-center">
-              <span className="text-sm">{badge.name}</span>
+          {userBadges.map((credential: BadgeCredential) => (
+            <RowSection key={credential.id} className="items-center">
+              <span className="text-sm">{credential.definition.name}</span>
               <div className="flex gap-2">
-                {badge.protocols.map((protocolBadge) => (
+                {credential.definition.protocols?.map((protocolBadge) => (
                   <Badge key={protocolBadge.id} variant="secondary">
                     {protocolBadge.protocol.name}
                   </Badge>
                 ))}
               </div>
               <span className="text-sm">
-                {badge.privateByDefault ? "Private" : "Public"}
+                {credential.isPublic ? "Public" : "Private"}
               </span>
               <span className="text-sm">
-                {new Date(badge.createdAt).toLocaleDateString()}
+                {new Date(credential.verifiedAt || credential.createdAt).toLocaleDateString()}
               </span>
               <div className="flex gap-2">
-                <Button variant="outline" size="sm">
-                  Edit
-                </Button>
-                <Button variant="destructive" size="sm">
-                  Delete
-                </Button>
+                <Tooltip content="Delete functionality will be implemented later">
+                  <Button variant="destructive" size="sm" disabled>
+                    Delete
+                  </Button>
+                </Tooltip>
               </div>
             </RowSection>
           ))}
@@ -78,5 +70,5 @@ export const MyBadgesPage = () => {
         </Card.Base>
       </div>
     </PageContent>
-  );
-};
+  )
+}

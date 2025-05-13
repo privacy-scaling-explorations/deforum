@@ -23,8 +23,7 @@ The project is structured as a monorepo using Yarn workspaces and Turborepo:
 ```
 /apps
   /client - Frontend React application
-  /api - Backend Express API service
-  /supabase-rest - Supabase REST API configuration
+  /server - Backend Express API service
   /shared - Shared types and utilities
 ```
 
@@ -60,8 +59,7 @@ The project is structured as a monorepo using Yarn workspaces and Turborepo:
    ```
    This command sets up all required services:
    - PostgreSQL
-   - PostgREST API
-   - Backend API service
+   - tRPC API service
    - Frontend client application
 
    > **Note:** Initial Docker build can take several minutes (2-3 minutes). For faster development, consider running only specific services or using local development.
@@ -72,9 +70,8 @@ The project is structured as a monorepo using Yarn workspaces and Turborepo:
    ```
 
 5. Your application should now be running at:
-   - Frontend: http://localhost:3000
-   - API: http://localhost:8000/api
-   - PostgREST API: http://localhost:3001
+   - Client (Frontend): http://localhost:3000
+   - Server: http://localhost:3002/trpc
 
 ## Development
 
@@ -87,12 +84,12 @@ cd apps/client
 yarn dev
 ```
 
-### API-only Development
+### Server-only Development
 
-To work only on the backend API:
+To work only on the server:
 
 ```bash
-cd apps/api
+cd apps/server
 yarn dev
 ```
 
@@ -112,17 +109,17 @@ yarn build
 
 ## License
 
-[MIT](LICENSE) 
+[MIT](LICENSE)
 
 
 
 
-# To change the database 
+# To change the database
 1. Change the prisma schema
 2. Make migrations `npx prisma migrate dev --name descriptive_name`
 3. (if the db is up) `npx prisma migrate deploy`
 4. Generate prisma ORM client `npx prisma generate`
 5. Update the `shared/src/schemas`
 6. Update the seed.ts file
-7. Update routers on the backend
+7. Update routers on the server
 8. Update the front end

@@ -1,22 +1,20 @@
-import { Avatar } from "@/components/Avatar";
-import { Card } from "@/components/cards/Card";
-import { useGetCommunities } from "@/hooks/useCommunities";
-import { useGetUser } from "@/hooks/useAuth";
-import { Link } from "@tanstack/react-router";
-import { useTranslation } from 'react-i18next';
+import { Avatar } from "@/components/Avatar"
+import { Card } from "@/components/cards/Card"
+import { useGetAllCommunities } from '@/hooks/useCommunities'
+import { Link } from "@tanstack/react-router"
+import { useTranslation } from 'react-i18next'
 
 interface CommunitiesListProps {
-  view?: "all" | "joined";
+  view?: "all" | "joined"
 }
 
 export const CommunitiesList = ({ view = "all" }: CommunitiesListProps) => {
-  const { data: communities = [] } = useGetCommunities();
-  const { data: user } = useGetUser();
-  const { t } = useTranslation();
+  const { data: communities = [] } = useGetAllCommunities()
+  const { t } = useTranslation()
 
-  const filteredCommunities = communities;
+  const filteredCommunities = communities
   if (filteredCommunities.length === 0) {
-    return <div>{t('pages.communities.empty')}</div>;
+    return <div>{t('pages.communities.empty')}</div>
   }
 
   return (
@@ -39,5 +37,5 @@ export const CommunitiesList = ({ view = "all" }: CommunitiesListProps) => {
         </Link>
       ))}
     </div>
-  );
-};
+  )
+}

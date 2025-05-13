@@ -15,129 +15,162 @@ model User {
   email         String?
   website       String?
   bio           String?
-  isAnon        Boolean          @default(false) @map("is_anon")
-  showFollowers Boolean          @default(true) @map("show_followers")
-  showFollowing Boolean          @default(false) @map("show_following")
-  createdAt     DateTime         @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt     DateTime?        @map("updated_at") @db.Timestamptz
+  language      String            @default("en")
+  isAnon        Boolean           @default(false) @map("is_anon")
+  showFollowers Boolean           @default(true) @map("show_followers")
+  showFollowing Boolean           @default(false) @map("show_following")
+  createdAt     DateTime          @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime?         @map("updated_at") @db.Timestamptz
   posts         Post[]
   replies       PostReply[]
   credentials   BadgeCredential[]
   communities   CommunityMember[]
   // Following relationships
-  following     Follow[]         @relation("UserFollowing")
-  followers     Follow[]         @relation("UserFollowers")
+  following     Follow[]          @relation("UserFollowing")
+  followers     Follow[]          @relation("UserFollowers")
   publicKeys    UserPublicKey[]
+  passkeys      Passkey[] // Add relation to passkeys
 
   @@map("users")
 }
 
 // New model for following relationships
 model Follow {
-  id          String    @id @default(uuid()) @db.Uuid
-  follower    User      @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
-  followerId  String    @map("follower_id") @db.Uuid
-  following   User      @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
-  followingId String    @map("following_id") @db.Uuid
-  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  id          String   @id @default(uuid()) @db.Uuid
+  follower    User     @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
+  followerId  String   @map("follower_id") @db.Uuid
+  following   User     @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
+  followingId String   @map("following_id") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
 
   @@unique([followerId, followingId])
-  @@map("follows")
   @@index([followerId])
   @@index([followingId])
+  @@map("follows")
 }
 
 model Protocol {
-  id          String            @id @default(uuid()) @db.Uuid
+  id          String                    @id @default(uuid()) @db.Uuid
   name        String
-  slug        String            @unique
+  slug        String                    @unique
   description String?
-  isActive    Boolean          @default(true) @map("is_active")
-  createdAt   DateTime         @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt   DateTime?        @map("updated_at") @db.Timestamptz
+  isActive    Boolean                   @default(true) @map("is_active")
+  createdAt   DateTime                  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime?                 @map("updated_at") @db.Timestamptz
   badges      ProtocolBadgeDefinition[]
 
   @@map("protocols")
 }
 
 model BadgeDefinition {
-  id              String                  @id @default(uuid()) @db.Uuid
-  name            String
-  slug            String                  @unique
-  description     String?
-  protocols       ProtocolBadgeDefinition[]
-  metadata        Json?                  // Flexible metadata about what this badge represents
-  privateByDefault Boolean               @default(true) @map("private_by_default")
-  expiresAfter    Int?                  @map("expires_after") // Number of days after which the badge expires
-  createdAt       DateTime               @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt       DateTime?              @map("updated_at") @db.Timestamptz
-  issuances       BadgeCredential[]      // Renamed from userBadges
-  requiredFor     CommunityRequiredBadge[]
+  id               String                    @id @default(uuid()) @db.Uuid
+  name             String
+  slug             String                    @unique
+  description      String?
+  protocols        ProtocolBadgeDefinition[]
+  metadata         Json? // Flexible metadata about what this badge represents
+  privateByDefault Boolean                   @default(true) @map("private_by_default")
+  expiresAfter     Int?                      @map("expires_after") // Number of days after which the badge expires
+  createdAt        DateTime                  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime?                 @map("updated_at") @db.Timestamptz
+  issuances        BadgeCredential[] // Renamed from userBadges
+  requiredFor      CommunityRequiredBadge[]
 
   @@map("badge_definitions")
 }
 
 model ProtocolBadgeDefinition {
-  id              String          @id @default(uuid()) @db.Uuid
-  protocol        Protocol        @relation(fields: [protocolId], references: [id])
-  protocolId      String          @map("protocol_id") @db.Uuid
-  badgeDefinition BadgeDefinition @relation(fields: [badgeDefinitionId], references: [id])
-  badgeDefinitionId String        @map("badge_definition_id") @db.Uuid
-  createdAt       DateTime        @default(now()) @map("created_at") @db.Timestamptz
-  metadata        Json?           // Protocol-specific metadata for this badge definition
+  id                String          @id @default(uuid()) @db.Uuid
+  protocol          Protocol        @relation(fields: [protocolId], references: [id])
+  protocolId        String          @map("protocol_id") @db.Uuid
+  badgeDefinition   BadgeDefinition @relation(fields: [badgeDefinitionId], references: [id])
+  badgeDefinitionId String          @map("badge_definition_id") @db.Uuid
+  createdAt         DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  metadata          Json? // Protocol-specific metadata for this badge definition
 
   @@unique([protocolId, badgeDefinitionId])
-  @@map("protocol_badge_definitions")
   @@index([protocolId])
   @@index([badgeDefinitionId])
+  @@map("protocol_badge_definitions")
 }
 
 model BadgeCredential {
-  id          String          @id @default(uuid()) @db.Uuid
-  user        User            @relation(fields: [userId], references: [id])
-  userId      String          @map("user_id") @db.Uuid
-  definition  BadgeDefinition @relation(fields: [badgeId], references: [id])
-  badgeId     String          @map("badge_id") @db.Uuid
-  isPublic    Boolean         @map("is_public")
-  metadata    Json?           // Stores the actual verified data (like specific age, email, etc.)
-  createdAt   DateTime        @default(now()) @map("created_at") @db.Timestamptz
-  verifiedAt  DateTime        @map("verified_at") @db.Timestamptz
-  expiresAt   DateTime?       @map("expires_at") @db.Timestamptz
-  revokedAt   DateTime?       @map("revoked_at") @db.Timestamptz
+  id         String          @id @default(uuid()) @db.Uuid
+  user       User            @relation(fields: [userId], references: [id])
+  userId     String          @map("user_id") @db.Uuid
+  definition BadgeDefinition @relation(fields: [badgeId], references: [id])
+  badgeId    String          @map("badge_id") @db.Uuid
+  isPublic   Boolean         @map("is_public")
+  metadata   Json? // Stores the actual verified data (like specific age, email, etc.)
+  createdAt  DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  verifiedAt DateTime        @map("verified_at") @db.Timestamptz
+  expiresAt  DateTime?       @map("expires_at") @db.Timestamptz
+  revokedAt  DateTime?       @map("revoked_at") @db.Timestamptz
 
-  @@map("badge_credentials")
   @@index([userId, badgeId])
+  @@map("badge_credentials")
+}
+
+// Model for WebAuthn passkeys
+model Passkey {
+  id           String    @id @default(uuid()) @db.Uuid
+  user         User      @relation(fields: [userId], references: [id])
+  userId       String    @map("user_id") @db.Uuid
+  credentialId String
+  publicKey    String
+  counter      Int
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  lastUsedAt   DateTime? @map("last_used_at") @db.Timestamptz
+  revokedAt    DateTime? @map("revoked_at") @db.Timestamptz
+
+  @@index([userId])
+  @@map("passkeys")
+}
+
+// Model for tracking WebAuthn challenges
+model WebAuthnChallenge {
+  id        String   @id @default(uuid()) @db.Uuid
+  challenge String   @unique // The challenge string
+  userId    String?  @map("user_id") @db.Uuid // Optional, only set for registration
+  username  String? // Optional, only set for registration
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  expiresAt DateTime @map("expires_at") @db.Timestamptz // Challenge expiration time
+
+  @@index([challenge])
+  @@index([createdAt])
+  @@map("webauthn_challenges")
 }
 
 model Community {
-  id                String                 @id @default(uuid()) @db.Uuid
-  name              String
-  slug              String                 @unique
-  description       String?
-  avatar           String?
-  createdAt        DateTime               @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt        DateTime?              @map("updated_at") @db.Timestamptz
-  members          CommunityMember[]
-  posts            Post[]
-  requiredBadges   CommunityRequiredBadge[]
-  isPrivate        Boolean                @default(false) @map("is_private")
-  merkleRoots      CommunityMerkleRoot[]  // Add relation to merkle roots
+  id             String                   @id @default(uuid()) @db.Uuid
+  name           String
+  slug           String                   @unique
+  description    String?
+  avatar         String?
+  createdAt      DateTime                 @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime?                @map("updated_at") @db.Timestamptz
+  members        CommunityMember[]
+  posts          Post[]
+  requiredBadges CommunityRequiredBadge[]
+  isPrivate      Boolean                  @default(false) @map("is_private")
+  merkleRoots    CommunityMerkleRoot[] // Add relation to merkle roots
+
   // Future: could add different badge requirements for different actions
   // actionPermissions Json?  // e.g., {"post": ["badge1", "badge2"], "comment": ["badge1"]}
   @@map("communities")
 }
 
 model CommunityRequiredBadge {
-  id          String          @id @default(uuid()) @db.Uuid
-  community   Community       @relation(fields: [communityId], references: [id])
-  communityId String          @map("community_id") @db.Uuid
-  badge       BadgeDefinition @relation(fields: [badgeId], references: [id])
-  badgeId     String          @map("badge_id") @db.Uuid
-  requirements Json?          // e.g., {"type": "domain", "domains": ["company.com"], "isPublic": true} or {"type": "emails", "emails": ["user@domain.com"], "isPublic": false}
-  createdAt   DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  id           String          @id @default(uuid()) @db.Uuid
+  community    Community       @relation(fields: [communityId], references: [id])
+  communityId  String          @map("community_id") @db.Uuid
+  badge        BadgeDefinition @relation(fields: [badgeId], references: [id])
+  badgeId      String          @map("badge_id") @db.Uuid
+  requirements Json? // e.g., {"type": "domain", "domains": ["company.com"], "isPublic": true} or {"type": "emails", "emails": ["user@domain.com"], "isPublic": false}
+  createdAt    DateTime        @default(now()) @map("created_at") @db.Timestamptz
 
-  @@map("community_required_badges")
   @@index([communityId, badgeId])
+  @@map("community_required_badges")
 }
 
 model CommunityMember {
@@ -149,132 +182,131 @@ model CommunityMember {
   joinedAt    DateTime  @default(now()) @map("joined_at") @db.Timestamptz
   role        String    @default("MEMBER") // Values: "ADMIN" or "MEMBER"
 
-  @@map("community_members")
   @@index([communityId, userId])
+  @@map("community_members")
 }
 
 // Model for post and reply reactions with proof metadata
 model Reaction {
-  id            String    @id @default(uuid()) @db.Uuid
-  emoji         String
-  proofMetadata SemaphoreProofMetadata? @relation("ReactionProof", fields: [proofMetadataId], references: [id])
-  proofMetadataId String? @unique @map("proof_metadata_id") @db.Uuid
-  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  id              String                  @id @default(uuid()) @db.Uuid
+  emoji           String
+  proofMetadata   SemaphoreProofMetadata? @relation("ReactionProof", fields: [proofMetadataId], references: [id])
+  proofMetadataId String?                 @unique @map("proof_metadata_id") @db.Uuid
+  createdAt       DateTime                @default(now()) @map("created_at") @db.Timestamptz
   // Relations
-  post          Post?     @relation(fields: [postId], references: [id])
-  postId        String?   @map("post_id") @db.Uuid
-  reply         PostReply? @relation(fields: [replyId], references: [id])
-  replyId       String?   @map("reply_id") @db.Uuid
+  post            Post?                   @relation(fields: [postId], references: [id])
+  postId          String?                 @map("post_id") @db.Uuid
+  reply           PostReply?              @relation(fields: [replyId], references: [id])
+  replyId         String?                 @map("reply_id") @db.Uuid
 
-  @@map("reactions")
   @@index([postId])
   @@index([replyId])
+  @@map("reactions")
 }
 
 // New model for tracking community merkle roots
 model CommunityMerkleRoot {
-  id          String    @id @default(uuid()) @db.Uuid
-  community   Community @relation(fields: [communityId], references: [id])
-  communityId String    @map("community_id") @db.Uuid
-  merkleRoot  String    // The actual merkle root hash
-  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  id          String                   @id @default(uuid()) @db.Uuid
+  community   Community                @relation(fields: [communityId], references: [id])
+  communityId String                   @map("community_id") @db.Uuid
+  merkleRoot  String // The actual merkle root hash
+  createdAt   DateTime                 @default(now()) @map("created_at") @db.Timestamptz
   proofs      SemaphoreProofMetadata[] // Proofs that used this merkle root
 
-  @@map("community_merkle_roots")
   @@index([communityId, createdAt])
+  @@map("community_merkle_roots")
 }
 
 // Update SemaphoreProofMetadata to include merkle root relation
 model SemaphoreProofMetadata {
-  id             String    @id @default(uuid()) @db.Uuid
-  proof          String
-  nullifier      String    @unique
-  publicSignals  String[]
-  merkleRoot     CommunityMerkleRoot @relation(fields: [merkleRootId], references: [id])
-  merkleRootId   String    @map("merkle_root_id") @db.Uuid
-  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  id            String              @id @default(uuid()) @db.Uuid
+  proof         String
+  nullifier     String              @unique
+  publicSignals String[]
+  merkleRoot    CommunityMerkleRoot @relation(fields: [merkleRootId], references: [id])
+  merkleRootId  String              @map("merkle_root_id") @db.Uuid
+  createdAt     DateTime            @default(now()) @map("created_at") @db.Timestamptz
   // Relations
-  post           Post?     @relation("PostProof", fields: [postId], references: [id])
-  postId         String?   @unique @map("post_id") @db.Uuid
-  reply          PostReply? @relation("ReplyProof", fields: [replyId], references: [id])
-  replyId        String?   @unique @map("reply_id") @db.Uuid
-  reaction       Reaction? @relation("ReactionProof")
+  post          Post?               @relation("PostProof", fields: [postId], references: [id])
+  postId        String?             @unique @map("post_id") @db.Uuid
+  reply         PostReply?          @relation("ReplyProof", fields: [replyId], references: [id])
+  replyId       String?             @unique @map("reply_id") @db.Uuid
+  reaction      Reaction?           @relation("ReactionProof")
 
   @@map("semaphore_proof_metadata")
 }
 
 model Post {
-  id                String      @id @default(uuid()) @db.Uuid
+  id                String                  @id @default(uuid()) @db.Uuid
   title             String
   content           String
-  community         Community?  @relation(fields: [communityId], references: [id])
-  communityId       String?     @map("community_id") @db.Uuid
-  author            User        @relation(fields: [authorId], references: [id])
-  authorId          String      @map("author_id") @db.Uuid
-  signedBy          UserPublicKey? @relation("PostSignature", fields: [signedByKeyId], references: [id])
-  signedByKeyId     String?     @map("signed_by_key_id") @db.Uuid
-  signatureMetadata Json?       @map("signature_metadata") // Format: { signature: string, timestamp: number, nonce: string }
+  community         Community?              @relation(fields: [communityId], references: [id])
+  communityId       String?                 @map("community_id") @db.Uuid
+  author            User                    @relation(fields: [authorId], references: [id])
+  authorId          String                  @map("author_id") @db.Uuid
+  signedBy          UserPublicKey?          @relation("PostSignature", fields: [signedByKeyId], references: [id])
+  signedByKeyId     String?                 @map("signed_by_key_id") @db.Uuid
+  signatureMetadata String?                 @map("signature_metadata") // The signature string
   proofMetadata     SemaphoreProofMetadata? @relation("PostProof")
-  
-  postType          PostType    @default(COMMUNITY) @map("post_type")
-  isAnon            Boolean     @default(false) @map("is_anon")
-  totalViews        Int         @default(0) @map("total_views")
+  postType          PostType                @default(COMMUNITY) @map("post_type")
+  isAnon            Boolean                 @default(false) @map("is_anon")
+  totalViews        Int                     @default(0) @map("total_views")
   reactions         Reaction[]
-  createdAt         DateTime    @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt         DateTime?   @map("updated_at") @db.Timestamptz
+  createdAt         DateTime                @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime?               @map("updated_at") @db.Timestamptz
   replies           PostReply[]
 
-  @@map("posts")
   @@index([postType, authorId, createdAt])
   @@index([postType, communityId, createdAt])
   @@index([signedByKeyId])
+  @@map("posts")
 }
 
 // New enum for post types
 enum PostType {
-  PROFILE    @map("profile")
-  COMMUNITY  @map("community")
+  PROFILE   @map("profile")
+  COMMUNITY @map("community")
 
   @@map("post_type")
 }
 
 model PostReply {
-  id                String      @id @default(uuid()) @db.Uuid
+  id                String                  @id @default(uuid()) @db.Uuid
   content           String
-  post              Post        @relation(fields: [postId], references: [id])
-  postId            String      @map("post_id") @db.Uuid
-  author            User?       @relation(fields: [authorId], references: [id])
-  authorId          String?     @map("author_id") @db.Uuid
-  signedBy          UserPublicKey? @relation("ReplySignature", fields: [signedByKeyId], references: [id])
-  signedByKeyId     String?     @map("signed_by_key_id") @db.Uuid
-  signatureMetadata Json?       @map("signature_metadata") // Format: { signature: string, timestamp: number, nonce: string }
+  post              Post                    @relation(fields: [postId], references: [id])
+  postId            String                  @map("post_id") @db.Uuid
+  author            User?                   @relation(fields: [authorId], references: [id])
+  authorId          String?                 @map("author_id") @db.Uuid
+  signedBy          UserPublicKey?          @relation("ReplySignature", fields: [signedByKeyId], references: [id])
+  signedByKeyId     String?                 @map("signed_by_key_id") @db.Uuid
+  signatureMetadata String?                 @map("signature_metadata") // The signature string
   proofMetadata     SemaphoreProofMetadata? @relation("ReplyProof")
-  replyParent       PostReply?  @relation("ReplyToReply", fields: [replyParentId], references: [id])
-  replyParentId     String?     @map("reply_parent_id") @db.Uuid
-  childReplies      PostReply[] @relation("ReplyToReply")
-  isAnon            Boolean     @default(false) @map("is_anon")
+  replyParent       PostReply?              @relation("ReplyToReply", fields: [replyParentId], references: [id])
+  replyParentId     String?                 @map("reply_parent_id") @db.Uuid
+  childReplies      PostReply[]             @relation("ReplyToReply")
+  isAnon            Boolean                 @default(false) @map("is_anon")
   reactions         Reaction[]
-  createdAt         DateTime    @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt         DateTime?   @map("updated_at") @db.Timestamptz
+  createdAt         DateTime                @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime?               @map("updated_at") @db.Timestamptz
 
-  @@map("post_replies")
   @@index([postId, createdAt])
   @@index([authorId, createdAt])
   @@index([signedByKeyId])
+  @@map("post_replies")
 }
 
 // Model for managing user public keys
 model UserPublicKey {
-  id          String    @id @default(uuid()) @db.Uuid
-  user        User      @relation(fields: [userId], references: [id])
-  userId      String    @map("user_id") @db.Uuid
-  publicKey   String    @unique
-  isDeactivated Boolean @default(false) @map("is_deactivated")
-  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
-  deactivatedAt DateTime? @map("deactivated_at") @db.Timestamptz
-  signedPosts Post[]    @relation("PostSignature")
+  id            String      @id @default(uuid()) @db.Uuid
+  user          User        @relation(fields: [userId], references: [id])
+  userId        String      @map("user_id") @db.Uuid
+  publicKey     String      @unique
+  isDeactivated Boolean     @default(false) @map("is_deactivated")
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz
+  deactivatedAt DateTime?   @map("deactivated_at") @db.Timestamptz
+  signedPosts   Post[]      @relation("PostSignature")
   signedReplies PostReply[] @relation("ReplySignature")
 
-  @@map("user_public_keys")
   @@index([userId, isDeactivated])
+  @@map("user_public_keys")
 }

@@ -5,7 +5,7 @@ export const ProtocolSchema = z.object({
   name: z.string(),
   slug: z.string(),
   description: z.string().optional(),
-  isActive: z.boolean(),
+  isActive: z.boolean().default(true)
 });
 
 export type Protocol = z.infer<typeof ProtocolSchema>;
@@ -15,13 +15,13 @@ export const CreateProtocolInput = z.object({
   name: z.string(),
   slug: z.string(),
   description: z.string().optional(),
-  isActive: z.boolean().default(true),
+  isActive: z.boolean().default(true)
 });
 
 export const UpdateProtocolInput = z.object({
   id: z.string().uuid(),
-  data: CreateProtocolInput,
+  data: CreateProtocolInput
 });
 
 export type CreateProtocolInput = z.infer<typeof CreateProtocolInput>;
-export type UpdateProtocolInput = z.infer<typeof UpdateProtocolInput>; 
+export type UpdateProtocolInput = z.infer<typeof UpdateProtocolInput>;

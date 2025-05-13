@@ -1,14 +1,14 @@
-import { PageContent } from "@/components/PageContent";
-import { PlusIcon } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { Link } from "@tanstack/react-router";
-import { AuthWrapper } from "@/components/AuthWrapper";
-import { PostItems } from "./PostItems";
-import { useGetCommunities } from "@/hooks/useCommunities";
+import { PageContent } from "@/components/PageContent"
+import { PlusIcon } from "lucide-react"
+import { Button } from "@/components/ui/Button"
+import { Link } from "@tanstack/react-router"
+import { AuthWrapper } from "@/components/AuthWrapper"
+import { PostItems } from "./PostItems"
+import { useGetAllCommunities } from "@/hooks/useCommunities"
 
 export const HomePage = () => {
-  const { data: communities } = useGetCommunities();
-  const firstCommunityId = communities?.[0]?.id;
+  const { data: communities } = useGetAllCommunities()
+  const firstCommunityId = communities?.[0]?.id
 
   return (
     <PageContent className="flex flex-col gap-6">
@@ -25,5 +25,5 @@ export const HomePage = () => {
       </AuthWrapper>
       {firstCommunityId && <PostItems communityId={firstCommunityId} />}
     </PageContent>
-  );
-};
+  )
+}

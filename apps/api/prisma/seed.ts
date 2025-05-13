@@ -1,18 +1,46 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
+import { Group } from '@semaphore-protocol/group';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 // Helper function to generate dummy Semaphore proof data
 function generateDummyProof(communityId: string) {
-  const merkleRoot = "0x" + Array(64).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+  // Create a dummy group with a single member
+  const group = new Group([generatePublicKey()]);
+
   return {
-    proof: "0x" + Array(64).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join(''),
-    nullifier: "0x" + Array(32).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join(''),
-    publicSignals: [merkleRoot, ...Array(2).fill(0).map(() => "0x" + Array(16).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join(''))],
+    proof:
+      '0x' +
+      Array(64)
+        .fill(0)
+        .map(() => Math.floor(Math.random() * 16).toString(16))
+        .join(''),
+    nullifier:
+      '0x' +
+      Array(32)
+        .fill(0)
+        .map(() => Math.floor(Math.random() * 16).toString(16))
+        .join(''),
+    publicSignals: [
+      group.root.toString(),
+      ...Array(2)
+        .fill(0)
+        .map(
+          () =>
+            '0x' +
+            Array(16)
+              .fill(0)
+              .map(() => Math.floor(Math.random() * 16).toString(16))
+              .join('')
+        )
+    ],
     merkleRoot: {
       create: {
         communityId,
-        merkleRoot
+        merkleRoot: JSON.stringify({
+          members: group.members.map((m) => m.toString()),
+          root: group.root.toString()
+        })
       }
     }
   };
@@ -20,14 +48,20 @@ function generateDummyProof(communityId: string) {
 
 // Helper function to generate a random public key
 function generatePublicKey() {
-  return "0x" + Array(40).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+  return (
+    '0x' +
+    Array(40)
+      .fill(0)
+      .map(() => Math.floor(Math.random() * 16).toString(16))
+      .join('')
+  );
 }
 
 async function main() {
-  console.log('🌱 Starting database seeding...')
+  console.log('🌱 Starting database seeding...');
 
   // Create users
-  console.log('Creating users...')
+  console.log('Creating users...');
   const users = await prisma.$transaction([
     prisma.user.create({
       data: {
@@ -35,8 +69,8 @@ async function main() {
         username: 'Anonymous',
         isAnon: true,
         showFollowers: true,
-        showFollowing: true,
-      },
+        showFollowing: true
+      }
     }),
     prisma.user.create({
       data: {
@@ -50,10 +84,10 @@ async function main() {
         showFollowing: false,
         publicKeys: {
           create: {
-            publicKey: generatePublicKey(),
+            publicKey: generatePublicKey()
           }
         }
-      },
+      }
     }),
     prisma.user.create({
       data: {
@@ -67,10 +101,10 @@ async function main() {
         showFollowing: false,
         publicKeys: {
           create: {
-            publicKey: generatePublicKey(),
+            publicKey: generatePublicKey()
           }
         }
-      },
+      }
     }),
     prisma.user.create({
       data: {
@@ -85,10 +119,10 @@ async function main() {
         showFollowing: true,
         publicKeys: {
           create: {
-            publicKey: generatePublicKey(),
+            publicKey: generatePublicKey()
           }
         }
-      },
+      }
     }),
     prisma.user.create({
       data: {
@@ -102,22 +136,22 @@ async function main() {
         showFollowing: true,
         publicKeys: {
           create: {
-            publicKey: generatePublicKey(),
+            publicKey: generatePublicKey()
           }
         }
-      },
-    }),
-  ])
+      }
+    })
+  ]);
 
   // Helper function to get user ID by username
   const getUserId = (username: string) => {
-    const user = users.find(u => u.username === username)
-    if (!user) throw new Error(`User ${username} not found`)
-    return user.id
-  }
+    const user = users.find((u: { username: string; id: string }) => u.username === username);
+    if (!user) throw new Error(`User ${username} not found`);
+    return user.id;
+  };
 
   // Create protocols
-  console.log('Creating protocols...')
+  console.log('Creating protocols...');
   const emailProtocol = await prisma.protocol.create({
     data: {
       name: 'Email Verification',
@@ -125,7 +159,7 @@ async function main() {
       description: 'Verifies email ownership through magic links',
       isActive: true
     }
-  })
+  });
 
   const passportProtocol = await prisma.protocol.create({
     data: {
@@ -134,103 +168,127 @@ async function main() {
       description: 'Verifies age and country through passport',
       isActive: true
     }
-  })
+  });
+
+  const dummyProtocol = await prisma.protocol.create({
+    data: {
+      name: 'Dummy Protocol',
+      slug: 'dummy-protocol',
+      description: 'A dummy protocol for testing',
+      isActive: true
+    }
+  });
 
   // Create badge definitions
-  console.log('Creating badge definitions...')
-  const [pseBadge, msftBadge, age21Badge, trustedEmailsBadge, passkeyBadge] = await prisma.$transaction([
-    prisma.badgeDefinition.create({
-      data: {
-        name: "PSE Email",
-        slug: "pse-email",
-        description: "Verified PSE email address",
-        protocols: {
-          create: [{
-            protocol: { connect: { id: emailProtocol.id } }
-          }]
-        },
-        privateByDefault: false,
-        metadata: {
-          type: "email",
-          domains: ["pse.dev"],
-          description: "Verifies PSE email ownership"
+  console.log('Creating badge definitions...');
+  const [pseBadge, msftBadge, age21Badge, trustedEmailsBadge, dummyBadge] =
+    await prisma.$transaction([
+      prisma.badgeDefinition.create({
+        data: {
+          name: 'PSE Email',
+          slug: 'pse-email',
+          description: 'Verified PSE email address',
+          protocols: {
+            create: [
+              {
+                protocol: { connect: { id: emailProtocol.id } }
+              }
+            ]
+          },
+          privateByDefault: false,
+          metadata: {
+            type: 'email',
+            domains: ['pse.dev'],
+            description: 'Verifies PSE email ownership'
+          }
         }
-      }
-    }),
-    prisma.badgeDefinition.create({
-      data: {
-        name: "Microsoft Email",
-        slug: "microsoft-email",
-        description: "Verified Microsoft email address",
-        protocols: {
-          create: [{
-            protocol: { connect: { id: emailProtocol.id } }
-          }]
-        },
-        privateByDefault: false,
-        metadata: {
-          type: "email",
-          domains: ["microsoft.com"],
-          description: "Verifies Microsoft email ownership"
+      }),
+      prisma.badgeDefinition.create({
+        data: {
+          name: 'Microsoft Email',
+          slug: 'microsoft-email',
+          description: 'Verified Microsoft email address',
+          protocols: {
+            create: [
+              {
+                protocol: { connect: { id: emailProtocol.id } }
+              }
+            ]
+          },
+          privateByDefault: false,
+          metadata: {
+            type: 'email',
+            domains: ['microsoft.com'],
+            description: 'Verifies Microsoft email ownership'
+          }
         }
-      }
-    }),
-    prisma.badgeDefinition.create({
-      data: {
-        name: "Over 21",
-        slug: "over-21",
-        description: "Verified age over 21",
-        protocols: {
-          create: [{
-            protocol: { connect: { id: passportProtocol.id } }
-          }]
-        },
-        privateByDefault: true,
-        metadata: {
-          type: "age",
-          minAge: 21,
-          description: "Verifies age is over 21"
+      }),
+      prisma.badgeDefinition.create({
+        data: {
+          name: 'Over 21',
+          slug: 'over-21',
+          description: 'Verified age over 21',
+          protocols: {
+            create: [
+              {
+                protocol: { connect: { id: passportProtocol.id } }
+              }
+            ]
+          },
+          privateByDefault: true,
+          metadata: {
+            type: 'age',
+            minAge: 21,
+            description: 'Verifies age is over 21'
+          }
         }
-      }
-    }),
-    prisma.badgeDefinition.create({
-      data: {
-        name: "Trusted Email",
-        slug: "trusted-email",
-        description: "Email from trusted domain",
-        protocols: {
-          create: [{
-            protocol: { connect: { id: emailProtocol.id } }
-          }]
-        },
-        privateByDefault: false,
-        metadata: {
-          type: "email",
-          domains: ["gmail.com", "outlook.com", "yahoo.com"],
-          description: "Verifies email from trusted domains"
+      }),
+      prisma.badgeDefinition.create({
+        data: {
+          name: 'Trusted Email',
+          slug: 'trusted-email',
+          description: 'Email from trusted domain',
+          protocols: {
+            create: [
+              {
+                protocol: { connect: { id: emailProtocol.id } }
+              }
+            ]
+          },
+          privateByDefault: false,
+          metadata: {
+            type: 'email',
+            domains: ['gmail.com', 'outlook.com', 'yahoo.com'],
+            description: 'Verifies email from trusted domains'
+          }
         }
-      }
-    }),
-    prisma.badgeDefinition.create({
-      data: {
-        name: "Passkey",
-        slug: "passkey",
-        description: "WebAuthn Passkey login",
-        protocols: { create: [] },
-        privateByDefault: false,
-        metadata: {
-          type: "passkey",
-          description: "WebAuthn credential for passwordless login"
+      }),
+      prisma.badgeDefinition.create({
+        data: {
+          name: 'Dummy Badge',
+          slug: 'dummy-badge',
+          description: 'A dummy badge for testing',
+          protocols: {
+            create: [
+              {
+                protocol: { connect: { id: dummyProtocol.id } }
+              }
+            ]
+          },
+          privateByDefault: false,
+          metadata: {
+            type: 'dummy',
+            description: 'A dummy badge for testing purposes'
+          }
         }
-      }
-    })
-  ])
+      })
+    ]);
 
   // Issue badges to users
-  console.log('Issuing badges to users...')
+  console.log('Issuing badges to users...');
   await prisma.$transaction([
     // PSE badges for PSE team
-    ...['kali', 'Mari', 'AtHeartEngineer'].map(username => 
+    ...['kali', 'Mari', 'AtHeartEngineer'].map((username) =>
       prisma.badgeCredential.create({
         data: {
           user: { connect: { id: getUserId(username) } },
@@ -252,7 +310,7 @@ async function main() {
       }
     }),
     // Age verification for all non-anonymous users
-    ...['kali', 'Mari', 'Mario Bianchi', 'AtHeartEngineer'].map(username =>
+    ...['kali', 'Mari', 'Mario Bianchi', 'AtHeartEngineer'].map((username) =>
       prisma.badgeCredential.create({
         data: {
           user: { connect: { id: getUserId(username) } },
@@ -263,29 +321,29 @@ async function main() {
         }
       })
     )
-  ])
+  ]);
 
   // Issue trusted emails badge for users with qualifying domains
-  console.log('Issuing trusted emails badges...')
+  console.log('Issuing trusted emails badges...');
   const trustedEmailsCredentials = ['kali', 'Mari', 'AtHeartEngineer', 'Mario Bianchi']
-    .map(username => {
-      const user = users.find(u => u.username === username)
-      if (!user?.email) return null
-      const emails = (trustedEmailsBadge.metadata as { emails: string[] })?.emails || []
-      if (!emails.includes(user.email)) return null
+    .map((username) => {
+      const user = users.find((u: { username: string }) => u.username === username);
+      if (!user?.email) return null;
+      const emails = (trustedEmailsBadge.metadata as { emails: string[] })?.emails || [];
+      if (!emails.includes(user.email)) return null;
       return {
         user: { connect: { id: user.id } },
         definition: { connect: { id: trustedEmailsBadge.id } },
         isPublic: true,
         verifiedAt: new Date(),
         metadata: { email: user.email }
-      }
+      };
     })
-    .filter((data): data is NonNullable<typeof data> => data !== null)
+    .filter((data): data is NonNullable<typeof data> => data !== null);
 
   // Create communities with badge requirements
-  console.log('Creating communities...')
-  const [pseCommunity, msftCommunity, age21Community] = await prisma.$transaction([
+  console.log('Creating communities...');
+  const [pseCommunity, msftCommunity, age21Community, testCommunity] = await prisma.$transaction([
     prisma.community.create({
       data: {
         name: 'Privacy + Scaling Explorations',
@@ -294,14 +352,16 @@ async function main() {
         avatar: 'https://pse.dev/logos/pse-logo-bg.svg',
         isPrivate: false,
         requiredBadges: {
-          create: [{
-            badge: { connect: { id: pseBadge.id } },
-            requirements: {
-              type: "domain",
-              domains: ["pse.dev"],
-              isPublic: true
+          create: [
+            {
+              badge: { connect: { id: pseBadge.id } },
+              requirements: {
+                type: 'domain',
+                domains: ['pse.dev'],
+                isPublic: true
+              }
             }
-          }]
+          ]
         }
       }
     }),
@@ -313,14 +373,16 @@ async function main() {
         avatar: 'https://example.com/msft.png',
         isPrivate: true,
         requiredBadges: {
-          create: [{
-            badge: { connect: { id: msftBadge.id } },
-            requirements: {
-              type: "domain",
-              domains: ["microsoft.com"],
-              isPublic: true
+          create: [
+            {
+              badge: { connect: { id: msftBadge.id } },
+              requirements: {
+                type: 'domain',
+                domains: ['microsoft.com'],
+                isPublic: true
+              }
             }
-          }]
+          ]
         }
       }
     }),
@@ -331,24 +393,45 @@ async function main() {
         description: 'A community for verified adults',
         isPrivate: false,
         requiredBadges: {
-          create: [{
-            badge: { connect: { id: age21Badge.id } },
-            requirements: {
-              type: "age",
-              minAge: 21,
-              isPublic: true
+          create: [
+            {
+              badge: { connect: { id: age21Badge.id } },
+              requirements: {
+                type: 'age',
+                minAge: 21,
+                isPublic: true
+              }
             }
-          }]
+          ]
+        }
+      }
+    }),
+    prisma.community.create({
+      data: {
+        name: 'Test Community',
+        slug: 'test',
+        description: 'A test community that requires the dummy badge',
+        isPrivate: false,
+        requiredBadges: {
+          create: [
+            {
+              badge: { connect: { id: dummyBadge.id } },
+              requirements: {
+                type: 'dummy',
+                isPublic: true
+              }
+            }
+          ]
         }
       }
     })
-  ])
+  ]);
 
   // Add users to communities (only if they have required badges)
-  console.log('Adding users to communities...')
+  console.log('Adding users to communities...');
   await prisma.$transaction([
     // PSE members to PSE community
-    ...['kali', 'Mari', 'AtHeartEngineer'].map(username =>
+    ...['kali', 'Mari', 'AtHeartEngineer'].map((username) =>
       prisma.communityMember.create({
         data: {
           community: { connect: { id: pseCommunity.id } },
@@ -366,7 +449,7 @@ async function main() {
       }
     }),
     // All verified users to age 21+ community
-    ...['kali', 'Mari', 'Mario Bianchi', 'AtHeartEngineer'].map(username =>
+    ...['kali', 'Mari', 'Mario Bianchi', 'AtHeartEngineer'].map((username) =>
       prisma.communityMember.create({
         data: {
           community: { connect: { id: age21Community.id } },
@@ -374,16 +457,17 @@ async function main() {
         }
       })
     )
-  ])
+  ]);
 
   // Create posts and replies in communities
-  console.log('Creating posts and replies...')
-  
+  console.log('Creating posts and replies...');
+
   // PSE Community Posts
   const psePost1 = await prisma.post.create({
     data: {
       title: 'Welcome to Privacy + Scaling Explorations',
-      content: 'This is our official community for discussing privacy and scaling solutions in blockchain technology.',
+      content:
+        'This is our official community for discussing privacy and scaling solutions in blockchain technology.',
       author: { connect: { id: getUserId('AtHeartEngineer') } },
       community: { connect: { id: pseCommunity.id } },
       postType: 'COMMUNITY',
@@ -406,7 +490,7 @@ async function main() {
         ]
       }
     }
-  })
+  });
 
   await prisma.$transaction([
     prisma.postReply.create({
@@ -416,12 +500,14 @@ async function main() {
         author: { connect: { id: getUserId('kali') } },
         isAnon: false,
         childReplies: {
-          create: [{
-            content: 'Welcome! Looking forward to your contributions.',
-            authorId: getUserId('AtHeartEngineer'),
-            postId: psePost1.id,
-            isAnon: false
-          }]
+          create: [
+            {
+              content: 'Welcome! Looking forward to your contributions.',
+              authorId: getUserId('AtHeartEngineer'),
+              postId: psePost1.id,
+              isAnon: false
+            }
+          ]
         }
       }
     }),
@@ -433,12 +519,12 @@ async function main() {
         isAnon: false
       }
     })
-  ])
+  ]);
 
   const psePost2 = await prisma.post.create({
     data: {
       title: 'Latest Updates on Zero Knowledge Proofs',
-      content: 'Let\'s discuss the recent advancements in ZK technology and their implications.',
+      content: "Let's discuss the recent advancements in ZK technology and their implications.",
       author: { connect: { id: getUserId('kali') } },
       community: { connect: { id: pseCommunity.id } },
       postType: 'COMMUNITY',
@@ -461,7 +547,7 @@ async function main() {
         ]
       }
     }
-  })
+  });
 
   await prisma.postReply.create({
     data: {
@@ -470,15 +556,17 @@ async function main() {
       author: { connect: { id: getUserId('Mari') } },
       isAnon: false,
       childReplies: {
-        create: [{
-          content: 'Agreed! The latest benchmarks show a 50% improvement.',
-          authorId: getUserId('kali'),
-          postId: psePost2.id,
-          isAnon: false
-        }]
+        create: [
+          {
+            content: 'Agreed! The latest benchmarks show a 50% improvement.',
+            authorId: getUserId('kali'),
+            postId: psePost2.id,
+            isAnon: false
+          }
+        ]
       }
     }
-  })
+  });
 
   // Microsoft Community Posts
   const msftPost = await prisma.post.create({
@@ -507,7 +595,7 @@ async function main() {
         ]
       }
     }
-  })
+  });
 
   await prisma.postReply.create({
     data: {
@@ -516,7 +604,7 @@ async function main() {
       author: { connect: { id: getUserId('Mario Bianchi') } },
       isAnon: false
     }
-  })
+  });
 
   // Age 21+ Community Posts
   const agePost = await prisma.post.create({
@@ -545,7 +633,7 @@ async function main() {
         ]
       }
     }
-  })
+  });
 
   await prisma.$transaction([
     prisma.postReply.create({
@@ -555,12 +643,14 @@ async function main() {
         author: { connect: { id: getUserId('kali') } },
         isAnon: false,
         childReplies: {
-          create: [{
-            content: 'Exactly! We could prove age without revealing the exact birthdate.',
-            authorId: getUserId('Mari'),
-            postId: agePost.id,
-            isAnon: false
-          }]
+          create: [
+            {
+              content: 'Exactly! We could prove age without revealing the exact birthdate.',
+              authorId: getUserId('Mari'),
+              postId: agePost.id,
+              isAnon: false
+            }
+          ]
         }
       }
     }),
@@ -572,22 +662,18 @@ async function main() {
         isAnon: false
       }
     })
-  ])
+  ]);
 
   // Create some posts with reactions
-  console.log('Creating posts with reactions...')
+  console.log('Creating posts with reactions...');
   const posts = await prisma.$transaction([
     prisma.post.create({
       data: {
         title: 'Welcome to Deforum!',
-        content: 'This is our first post. We are excited to have you here!',
+        content: 'This is my first post. We are excited to have you here!',
         author: { connect: { id: getUserId('kali') } },
         postType: 'PROFILE',
-        signatureMetadata: {
-          signature: '0x1234567890abcdef',
-          timestamp: Date.now(),
-          nonce: '0x123456',
-        },
+        signatureMetadata: '0x1234567890abcdef',
         reactions: {
           create: [
             {
@@ -640,21 +726,17 @@ async function main() {
         }
       }
     })
-  ])
+  ]);
 
   // Add some replies with reactions
-  console.log('Creating replies with reactions...')
+  console.log('Creating replies with reactions...');
   await prisma.$transaction([
     prisma.postReply.create({
       data: {
         content: 'This is amazing! Love the privacy features.',
         post: { connect: { id: posts[1].id } },
         author: { connect: { id: getUserId('Mari') } },
-        signatureMetadata: {
-          signature: '0x1234567890abcdef',
-          timestamp: Date.now(),
-          nonce: '0x123456',
-        },
+        signatureMetadata: '0x1234567890abcdef',
         reactions: {
           create: [
             {
@@ -693,16 +775,16 @@ async function main() {
         }
       }
     })
-  ])
+  ]);
 
-  console.log('✅ Seeding completed successfully!')
+  console.log('✅ Seeding completed successfully!');
 }
 
 main()
   .catch((e) => {
-    console.error('❌ Seeding failed:', e)
-    process.exit(1)
+    console.error('❌ Seeding failed:', e);
+    process.exit(1);
   })
   .finally(async () => {
-    await prisma.$disconnect()
-  }) 
+    await prisma.$disconnect();
+  });

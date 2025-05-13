@@ -1,6 +1,6 @@
-import { PageContent } from "@/components/PageContent";
-import { Button } from "@/components/ui/Button";
-import { useParams, Link } from "@tanstack/react-router";
+import { PageContent } from "@/components/PageContent"
+import { Button } from "@/components/ui/Button"
+import { useParams, Link } from "@tanstack/react-router"
 import {
   UserPlusIcon,
   PlusIcon,
@@ -8,60 +8,67 @@ import {
   FileBadge as FileBadgeIcon,
   Check as CheckIcon,
   X as XIcon,
-} from "lucide-react";
-import { PostAuthor } from "../Post/PostAuthor";
-import { PostCard } from "../Post/PostCard";
-import { Badge } from "@/components/ui/Badge";
-import { Avatar } from "@/components/Avatar";
-import {
-  useGetCommunityBySlug,
-  useJoinCommunity,
-} from "@/hooks/useCommunities";
-import { useGetPostsByCommunity } from "@/hooks/usePosts";
-import { formatDate } from "@/lib/utils";
-import { InfoCard } from "@/components/ui/InfoCard";
-import { useGetBadges } from "@/hooks/useBadges";
-import { useGetUser } from "@/hooks/useAuth";
-import { useGlobalContext } from "@/contexts/GlobalContext";
-import { Banner } from "@/components/ui/Banner";
-import { AuthWrapper } from "@/components/AuthWrapper";
-import { useState } from "react";
+} from "lucide-react"
+import { PostAuthor } from "../Post/PostAuthor"
+import { PostCard } from "../Post/PostCard"
+import { Badge } from "@/components/ui/Badge"
+import { Avatar } from "@/components/Avatar"
+import { useGetCommunityBySlug } from "@/hooks/useCommunities"
+import { useGetPostsByCommunity } from "@/hooks/usePosts"
+import { InfoCard } from "@/components/ui/InfoCard"
+import { useGetAllBadges } from "@/hooks/useBadges"
+import { useGetUser } from "@/hooks/useAuth"
+import { useGlobalContext } from "@/contexts/GlobalContext"
+import { AuthWrapper } from "@/components/AuthWrapper"
+import { useState } from "react"
+import { trpc } from "@/lib/trpc"
 
 export const CommunityPage = () => {
-  const [forceReloadTimestamp, setForceReloadTimestamp] = useState(0);
-  const { slug } = useParams({ from: "/_left-sidebar/communities/$slug" });
+  const [forceReloadTimestamp, setForceReloadTimestamp] = useState(0)
+  const { slug } = useParams({ from: "/_left-sidebar/communities/$slug" })
 
-  const { isLoggedIn } = useGlobalContext();
+  const { isLoggedIn } = useGlobalContext()
 
   const { data: community, refetch: refetchCommunity } =
-    useGetCommunityBySlug(slug);
-  const { data: badges, refetch: refetchBadges } = useGetBadges();
-  const { data: user, refetch: refetchUser } = useGetUser();
-  const { data: posts } = useGetPostsByCommunity(community?.id);
-  const joinCommunityMutation = useJoinCommunity();
+    useGetCommunityBySlug(slug)
+  const { data: badges, refetch: refetchBadges } = useGetAllBadges()
+  const { data: user } = useGetUser()
+  const { data: posts } = useGetPostsByCommunity(community?.id || '')
+  const joinMutation = trpc.communities.join.useMutation({
+    onSuccess: () => {
+      refetchCommunity()
+      refetchBadges()
+      setForceReloadTimestamp(Date.now())
+    }
+  })
 
-  const joinCommunityFails = joinCommunityMutation.isError;
-  const hasRequiredBadges = community?.requiredBadges?.every((badge: any) =>
-    user?.badges?.some(
-      (userBadge: any) => Number(userBadge.id) === Number(badge),
+  const hasRequiredBadges = community?.requiredBadges?.every((requiredBadge: any) =>
+    user?.credentials?.some(
+      (credential: any) =>
+        requiredBadge.badgeId === credential.definition.id &&
+        (!credential.expiresAt || new Date(credential.expiresAt) > new Date()) &&
+        !credential.revokedAt
     ),
-  );
+  )
 
-  const userIsMember =
-    community?.members?.find((member: any) => member === user?.id) &&
-    hasRequiredBadges;
+  if (!hasRequiredBadges) {
+    console.warn("User does not have required badges", {
+      requiredBadges: community?.requiredBadges,
+      userCredentials: user?.credentials
+    })
+  }
+
+  const userIsMember = user?.communities?.some(
+    (userCommunity: any) => userCommunity[0] === community?.id
+  ) && hasRequiredBadges
 
   const onJoinCommunity = async () => {
-    if (!isLoggedIn || !community) return;
-    await joinCommunityMutation.mutateAsync(community.id);
-    refetchCommunity();
-    refetchUser();
-    refetchBadges();
-    setForceReloadTimestamp(Date.now());
-  };
+    if (!isLoggedIn || !community) return
+    await joinMutation.mutateAsync(community.id)
+  }
 
   if (!community) {
-    return <div>Community not found: {slug}</div>;
+    return <div>Community not found: {slug}</div>
   }
 
   return (
@@ -87,7 +94,7 @@ export const CommunityPage = () => {
                     size="sm"
                     icon={UserPlusIcon}
                     variant="outline"
-                    loading={joinCommunityMutation.isPending}
+                    loading={joinMutation.isPending}
                     onClick={onJoinCommunity}
                   >
                     Join
@@ -116,15 +123,28 @@ export const CommunityPage = () => {
             />
             <InfoCard
               label="Posts"
-              value={posts?.length || 0}
+              value={posts?.items?.length || 0}
               variant="base"
               fontSize="lg"
             />
           </div>
+
+          {community.requiredBadges && community.requiredBadges.length > 0 && (
+            <div className="flex flex-col gap-2">
+              <h2 className="text-lg font-semibold">Required Badges</h2>
+              <div className="flex flex-wrap gap-2">
+                {community.requiredBadges.map((requiredBadge) => (
+                  <Badge key={requiredBadge.id} variant="secondary">
+                    {requiredBadge.badge.name}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col gap-4">
-          {posts?.map((post: any) => (
+          {posts?.items?.map((post: any) => (
             <div key={post.id} className="flex flex-col gap-14">
               <PostCard
                 className="relative"
@@ -142,5 +162,5 @@ export const CommunityPage = () => {
         </div>
       </div>
     </PageContent>
-  );
-};
+  )
+}

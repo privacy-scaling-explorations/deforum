@@ -1,10 +1,10 @@
-import { PageContent } from "@/components/PageContent";
-import { Bell } from "lucide-react";
-import { useTranslation } from 'react-i18next';
+import { PageContent } from "@/components/PageContent"
+import { Bell } from "lucide-react"
+import { useTranslation } from 'react-i18next'
 
 export const NotificationsPage = () => {
-  const { t } = useTranslation();
-  
+  const { t } = useTranslation()
+
   return (
     <PageContent
       title={t('pages.notifications.title')}
@@ -14,6 +14,7 @@ export const NotificationsPage = () => {
         title: t('pages.notifications.empty'),
       }}
     >
+      NOTIFICATIONS NOT IMPLMENETED YET
     </PageContent>
-  );
-};
+  )
+}

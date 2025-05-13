@@ -1,0 +1,254 @@
+{
+  "actions": {
+    "cancel": "रद्द करें",
+    "create": "बनाएं",
+    "delete": "हटाएं",
+    "edit": "संपादित करें",
+    "login": "लॉग इन",
+    "logout": "लॉग आउट",
+    "save": "सहेजें",
+    "search": "खोजें...",
+    "submit": "जमा करें",
+    "join": "शामिल हों",
+    "new_post": "नई पोस्ट",
+    "sign_out": "साइन आउट",
+    "edit_profile": "प्रोफ़ाइल संपादित करें",
+    "generate_recovery": "पुनर्प्राप्ति कोड बनाएं",
+    "save_draft": "ड्राफ्ट के रूप में सहेजें",
+    "post": "पोस्ट करें",
+    "add_badge": "नया बैज जोड़ें",
+    "run": "चलाएं"
+  },
+  "auth": {
+    "google_signin": {
+      "title": "निजी Google साइन इन",
+      "description": "हम आपके ईमेल डोमेन के स्वामित्व को निजी तरीके से साबित करने के लिए Stealth.notes प्रोटोकॉल का उपयोग करेंगे, बिना हमारे सर्वर को यह जाने कि आप कौन हैं।",
+      "read_more": "यहां और पढ़ें",
+      "button": "Google से साइन इन करें"
+    }
+  },
+  "brand": {
+    "name": "forum",
+    "prefix": "de"
+  },
+  "header": {
+    "search_placeholder": "खोजें...",
+    "menu": {
+      "open": "मेनू खोलें",
+      "close": "मेनू बंद करें"
+    }
+  },
+  "navigation": {
+    "home": "होम",
+    "profile": "प्रोफ़ाइल",
+    "settings": "सेटिंग्स"
+  },
+  "pages": {
+    "settings": {
+      "title": "सेटिंग्स",
+      "complete_profile": "अपने अनुभव को बेहतर बनाने के लिए कृपया अपनी प्रोफ़ाइल पूरी करें!",
+      "dark_mode": "डार्क मोड",
+      "avatar": {
+        "title": "अवतार",
+        "description": "वह छवि जो आपकी प्रोफ़ाइल देखने पर सभी को दिखाई देगी।"
+      },
+      "basic_info": {
+        "title": "मूल जानकारी",
+        "description": "अपनी व्यक्तिगत जानकारी देखें और अपडेट करें",
+        "username": {
+          "label": "उपयोगकर्ता नाम",
+          "placeholder": "आपका उपयोगकर्ता नाम (उदा., राहुल123)"
+        },
+        "website": {
+          "label": "URL",
+          "placeholder": "https://"
+        },
+        "bio": {
+          "label": "जानकारी",
+          "placeholder": "समुदाय को अपने बारे में कुछ बताएं।"
+        },
+        "home_page": {
+          "label": "डिफ़ॉल्ट होम पेज",
+          "options": {
+            "home": "होम",
+            "profile": "प्रोफ़ाइल"
+          }
+        },
+        "language": {
+          "label": "भाषा",
+          "options": {
+            "en": "अंग्रे़ी",
+            "es": "स्पेनिश",
+            "ko": "कोरियाई",
+            "zh": "चीनी",
+            "de": "जर्मन",
+            "fr": "फ्रेंच",
+            "ru": "रूसी",
+            "hi": "हिंदी",
+            "bn": "बंगाली",
+            "pt": "पुर्तगाली",
+            "id": "इंडोनेशियाई",
+            "ur": "उर्दू",
+            "ja": "जापानी",
+            "ar": "अरबी",
+            "vi": "वियतनामी"
+          }
+        }
+      },
+      "sessions": {
+        "title": "सक्रिय सत्र",
+        "description": "वर्तमान में सक्रिय सत्र वाले उपकरण।",
+        "headers": {
+          "session": "सत्र",
+          "device": "उपकरण"
+        }
+      },
+      "passkeys": {
+        "title": "पासकी",
+        "description": "आपके खाते में पंजीकृत पासकी।",
+        "headers": {
+          "credential": "पासकी",
+          "last_used": "अंतिम उपयोग"
+        }
+      }
+    },
+    "profile": {
+      "title": "प्रोफ़ाइल",
+      "recovery_warning": "आपने पुनर्प्राप्ति कोड सेट नहीं किया है। यदि आप अपना पासवर्ड खो देते हैं, तो आप अपना खाता पुनर्प्राप्त नहीं कर पाएंगे।",
+      "user_type": "मानक",
+      "uid_prefix": "uid:",
+      "created_prefix": "बनाया गया",
+      "no_bio": "कोई जानकारी नहीं",
+      "no_posts": "अभी तक कोई पोस्ट नहीं",
+      "no_public_key": "कोई सार्वजनिक कुंजी नहीं",
+      "posts": {
+        "title": "पोस्ट"
+      },
+      "badges": {
+        "title": "{{username}} के बैज",
+        "empty": "अभी तक कोई बैज नहीं"
+      },
+      "stats": {
+        "following": "फॉलो कर रहे हैं",
+        "followers": "फॉलोअर्स",
+        "posts": "पोस्ट",
+        "solos": "सोलो",
+        "feeds": "फीड",
+        "comments": "टिप्पणियां",
+        "communities": "समुदाय",
+        "badges": "बैज"
+      }
+    },
+    "notifications": {
+      "title": "सूचनाएं",
+      "empty": "अभी कोई सूचना नहीं",
+      "not_implemented": "सूचना सुविधा जल्द ही आ रही है"
+    },
+    "communities": {
+      "title": "समुदायों का अन्वेषण करें",
+      "empty": "कोई समुदाय नहीं मिला",
+      "not_found": "समुदाय नहीं मिला: {{slug}}",
+      "required_badges": "आवश्यक बैज",
+      "stats": {
+        "members": "सदस्य",
+        "posts": "पोस्ट"
+      },
+      "actions": {
+        "join": "शामिल हों",
+        "new_post": "नई पोस्ट"
+      }
+    },
+    "post": {
+      "create": {
+        "select_community": "आप कहां पोस्ट करना चाहते हैं?",
+        "placeholder": "आपके मन में क्या है?",
+        "anonymous": {
+          "label": "अनाम रूप से पोस्ट करें?",
+          "description_on": "आप Zero Knowledge का उपयोग करके अनाम रूप से पोस्ट कर रहे हैं",
+          "description_off": "आप {{username}} के रूप में पोस्ट कर रहे हैं"
+        },
+        "personal_page": "मेरा पेज",
+        "badges": "बैज",
+        "add_badges": "बैज जोड़ें"
+      },
+      "loading": "पोस्ट लोड हो रही है",
+      "not_found": "पोस्ट नहीं मिली",
+      "not_found_message": "आप जिस पोस्ट को खोज रहे हैं वह नहीं मिल सकी",
+      "drafts": "ड्राफ्ट"
+    },
+    "badges": {
+      "title": "मेरे बैज",
+      "description": "यहां अपने बैज का प्रबंधन और अनुकूलन करें। आप दृश्यता प्रबंधित कर सकते हैं, नए बैज जोड़ सकते हैं, पुनः सत्यापित कर सकते हैं या जिन्हें आप अब नहीं चाहते उन्हें हटा सकते हैं।",
+      "debug_title": "मेरे बैज",
+      "headers": {
+        "badge": "बैज",
+        "protocol": "प्रोटोकॉल",
+        "visibility": "दृश्यता",
+        "verified": "सत्यापित"
+      },
+      "add_new": {
+        "title": "नया बैज जोड़ें",
+        "success": "सत्यापन प्रक्रिया शुरू की गई!",
+        "steps": {
+          "badge_type": {
+            "label": "बैज प्रकार",
+            "description": "वह बैज चुनें जिसे आप सत्यापित करना चाहते हैं"
+          },
+          "protocols": {
+            "label": "प्रोटोकॉल",
+            "description": "इस बैज को सत्यापित करने के लिए एक या अधिक प्रोटोकॉल चुनें"
+          },
+          "run": {
+            "label": "सत्यापन चलाएं",
+            "description": "चयनित प्रोटोकॉल के साथ अपने बैज को सत्यापित करें"
+          }
+        },
+        "selected_config": {
+          "title": "चयनित कॉन्फ़िगरेशन",
+          "badge": "बैज:",
+          "protocols": "प्रोटोकॉल:",
+          "verify": "बैज सत्यापित करें",
+          "verifying": "सत्यापित कर रहे हैं..."
+        }
+      },
+      "visibility": {
+        "public": "सार्वजनिक",
+        "private": "निजी"
+      },
+      "actions": {
+        "delete": "हटाएं",
+        "add_new": "नया बैज जोड़ें"
+      }
+    }
+  },
+  "sidebar": {
+    "my_communities": "मेरे समुदाय",
+    "no_communities": "अभी तक किसी समुदाय में शामिल नहीं हुए",
+    "theme": {
+      "light": "लाइट मोड",
+      "dark": "डार्क मोड",
+      "toggle": "थीम बदलें"
+    }
+  },
+  "welcome": "Deforum में आपका स्वागत है",
+  "login": {
+    "title": "लॉग इन",
+    "description": "अपना पसंदीदा लॉगिन तरीका चुनें",
+    "username": "उपयोगकर्ता नाम",
+    "usernamePlaceholder": "अपना उपयोगकर्ता नाम दर्ज करें",
+    "useExistingPasskey": "मौजूदा पासकी का उपयोग करें",
+    "createNewAccount": "नया खाता बनाएं",
+    "loading": "लोड हो रहा है...",
+    "continueWithPasskey": "पासकी के साथ जारी रखें",
+    "usernameTaken": "उपयोगकर्ता नाम \"{{username}}\" पहले से लिया गया है",
+    "usernameRequired": "कृपया एक उपयोगकर्ता नाम चुनें",
+    "passkeyNotFound": "पासकी नहीं मिली। नया खाता बनाएं?",
+    "passkeyLoginFailed": "पासकी लॉगिन विफल",
+    "passkeyCreationCancelled": "पासकी निर्माण रद्द कर दिया गया",
+    "registrationFailed": "पंजीकरण विफल। कृपया पुनः प्रयास करें।"
+  },
+  "common": {
+    "loading": "लोड हो रहा है...",
+    "user_not_found": "उपयोगकर्ता नहीं मिला"
+  }
+}

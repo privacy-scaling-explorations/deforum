@@ -22,10 +22,12 @@ import { useGlobalContext } from "@/contexts/GlobalContext"
 import { AuthWrapper } from "@/components/AuthWrapper"
 import { useState } from "react"
 import { trpc } from "@/lib/trpc"
+import { useTranslation } from "react-i18next"
 
 export const CommunityPage = () => {
   const [forceReloadTimestamp, setForceReloadTimestamp] = useState(0)
   const { slug } = useParams({ from: "/_left-sidebar/communities/$slug" })
+  const { t } = useTranslation()
 
   const { isLoggedIn } = useGlobalContext()
 
@@ -68,7 +70,7 @@ export const CommunityPage = () => {
   }
 
   if (!community) {
-    return <div>Community not found: {slug}</div>
+    return <div>{t('pages.communities.not_found', { slug })}</div>
   }
 
   return (
@@ -97,7 +99,7 @@ export const CommunityPage = () => {
                     loading={joinMutation.isPending}
                     onClick={onJoinCommunity}
                   >
-                    Join
+                    {t('pages.communities.actions.join')}
                   </Button>
                 </AuthWrapper>
               )}
@@ -106,7 +108,7 @@ export const CommunityPage = () => {
                 <AuthWrapper>
                   <Link to="/post/create" search={{ community: community.id }}>
                     <Button size="sm" icon={PlusIcon}>
-                      New Post
+                      {t('pages.communities.actions.new_post')}
                     </Button>
                   </Link>
                 </AuthWrapper>
@@ -116,13 +118,13 @@ export const CommunityPage = () => {
 
           <div className="flex gap-6">
             <InfoCard
-              label="Members"
+              label={t('pages.communities.stats.members')}
               value={community?.members?.length || 0}
               variant="base"
               fontSize="lg"
             />
             <InfoCard
-              label="Posts"
+              label={t('pages.communities.stats.posts')}
               value={posts?.items?.length || 0}
               variant="base"
               fontSize="lg"
@@ -131,7 +133,7 @@ export const CommunityPage = () => {
 
           {community.requiredBadges && community.requiredBadges.length > 0 && (
             <div className="flex flex-col gap-2">
-              <h2 className="text-lg font-semibold">Required Badges</h2>
+              <h2 className="text-lg font-semibold">{t('pages.communities.required_badges')}</h2>
               <div className="flex flex-wrap gap-2">
                 {community.requiredBadges.map((requiredBadge) => (
                   <Badge key={requiredBadge.id} variant="secondary">

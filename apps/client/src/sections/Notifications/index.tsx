@@ -14,7 +14,7 @@ export const NotificationsPage = () => {
         title: t('pages.notifications.empty'),
       }}
     >
-      NOTIFICATIONS NOT IMPLMENETED YET
+      {t('pages.notifications.not_implemented')}
     </PageContent>
   )
 }

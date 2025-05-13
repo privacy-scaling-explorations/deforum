@@ -1,0 +1,244 @@
+{
+  "actions": {
+    "cancel": "취소",
+    "create": "생성",
+    "delete": "삭제",
+    "edit": "편집",
+    "login": "로그인",
+    "logout": "로그아웃",
+    "save": "저장",
+    "search": "검색...",
+    "submit": "제출",
+    "join": "가입",
+    "new_post": "새 게시물",
+    "sign_out": "로그아웃",
+    "edit_profile": "프로필 편집",
+    "generate_recovery": "복구 코드 생성",
+    "save_draft": "임시 저장",
+    "post": "게시",
+    "add_badge": "새 배지 추가",
+    "run": "실행"
+  },
+  "auth": {
+    "google_signin": {
+      "title": "비공개 Google 로그인",
+      "description": "Stealth.notes 프로토콜을 사용하여 서버가 귀하의 신원을 모르는 상태에서 이메일 도메인 소유권을 비공개로 증명하고 로그인할 수 있습니다.",
+      "read_more": "자세히 보기",
+      "button": "Google로 로그인"
+    }
+  },
+  "brand": {
+    "name": "forum",
+    "prefix": "de"
+  },
+  "header": {
+    "search_placeholder": "검색...",
+    "menu": {
+      "open": "메뉴 열기",
+      "close": "메뉴 닫기"
+    }
+  },
+  "navigation": {
+    "home": "홈",
+    "profile": "프로필",
+    "settings": "설정"
+  },
+  "pages": {
+    "settings": {
+      "title": "설정",
+      "complete_profile": "경험을 향상시키기 위해 프로필을 완성해주세요!",
+      "dark_mode": "다크 모드",
+      "avatar": {
+        "title": "아바타",
+        "description": "프로필을 방문할 때 모두가 볼 이미지입니다."
+      },
+      "basic_info": {
+        "title": "기본 정보",
+        "description": "개인 정보 보기 및 업데이트",
+        "username": {
+          "label": "사용자 이름",
+          "placeholder": "사용자 이름 (예: JohnDoe123)"
+        },
+        "website": {
+          "label": "URL",
+          "placeholder": "https://"
+        },
+        "bio": {
+          "label": "소개",
+          "placeholder": "커뮤니티에 대한 자신을 소개해주세요."
+        },
+        "home_page": {
+          "label": "기본 홈페이지",
+          "options": {
+            "home": "홈",
+            "profile": "프로필"
+          }
+        },
+        "language": {
+          "label": "언어",
+          "options": {
+            "en": "영어",
+            "es": "스페인어",
+            "ko": "한국어",
+            "zh": "중국어",
+            "de": "독일어"
+          }
+        }
+      },
+      "sessions": {
+        "title": "열린 세션",
+        "description": "현재 세션이 있는 기기들입니다.",
+        "headers": {
+          "session": "세션",
+          "device": "기기"
+        }
+      },
+      "passkeys": {
+        "title": "패스키",
+        "description": "계정에 등록된 패스키입니다.",
+        "headers": {
+          "credential": "패스키",
+          "last_used": "마지막 사용"
+        }
+      }
+    },
+    "profile": {
+      "title": "프로필",
+      "recovery_warning": "복구 코드를 설정하지 않았습니다. 비밀번호를 잃어버리면 계정을 복구할 수 없습니다.",
+      "user_type": "일반",
+      "uid_prefix": "uid:",
+      "created_prefix": "생성됨",
+      "no_bio": "소개 없음",
+      "no_posts": "아직 게시물 없음",
+      "no_public_key": "공개 키 없음",
+      "posts": {
+        "title": "게시물"
+      },
+      "badges": {
+        "title": "{{username}}의 배지",
+        "empty": "아직 배지 없음"
+      },
+      "stats": {
+        "following": "팔로잉",
+        "followers": "팔로워",
+        "posts": "게시물",
+        "solos": "솔로",
+        "feeds": "피드",
+        "comments": "댓글",
+        "communities": "커뮤니티",
+        "badges": "배지"
+      }
+    },
+    "notifications": {
+      "title": "알림",
+      "empty": "현재 알림 없음",
+      "not_implemented": "알림 기능이 곧 제공될 예정입니다"
+    },
+    "communities": {
+      "title": "커뮤니티 탐색",
+      "empty": "커뮤니티를 찾을 수 없음",
+      "not_found": "커뮤니티를 찾을 수 없음: {{slug}}",
+      "required_badges": "필요한 배지",
+      "stats": {
+        "members": "멤버",
+        "posts": "게시물"
+      },
+      "actions": {
+        "join": "가입",
+        "new_post": "새 게시물"
+      }
+    },
+    "post": {
+      "create": {
+        "select_community": "어디에 게시하시겠습니까?",
+        "placeholder": "무슨 생각을 하고 계신가요?",
+        "anonymous": {
+          "label": "익명으로 게시하시겠습니까?",
+          "description_on": "제로 지식으로 익명 게시 중입니다",
+          "description_off": "{{username}}으로 게시 중입니다"
+        },
+        "personal_page": "내 페이지",
+        "badges": "배지",
+        "add_badges": "배지 추가"
+      },
+      "loading": "게시물 로딩 중",
+      "not_found": "게시물을 찾을 수 없음",
+      "not_found_message": "찾으시는 게시물을 찾을 수 없습니다",
+      "drafts": "임시 저장"
+    },
+    "badges": {
+      "title": "내 배지",
+      "description": "여기서 배지를 관리하고 사용자 정의할 수 있습니다. 가시성을 관리하고, 새 배지를 추가하고, 더 이상 원하지 않는 배지를 재확인하거나 제거할 수 있습니다.",
+      "debug_title": "내 배지",
+      "headers": {
+        "badge": "배지",
+        "protocol": "프로토콜",
+        "visibility": "가시성",
+        "verified": "확인됨"
+      },
+      "add_new": {
+        "title": "새 배지 추가",
+        "success": "확인 프로세스가 시작되었습니다!",
+        "steps": {
+          "badge_type": {
+            "label": "배지 유형",
+            "description": "확인하려는 배지를 선택하세요"
+          },
+          "protocols": {
+            "label": "프로토콜",
+            "description": "이 배지를 확인하기 위한 하나 이상의 프로토콜을 선택하세요"
+          },
+          "run": {
+            "label": "확인 실행",
+            "description": "선택한 프로토콜로 배지 확인"
+          }
+        },
+        "selected_config": {
+          "title": "선택된 구성",
+          "badge": "배지:",
+          "protocols": "프로토콜:",
+          "verify": "배지 확인",
+          "verifying": "확인 중..."
+        }
+      },
+      "visibility": {
+        "public": "공개",
+        "private": "비공개"
+      },
+      "actions": {
+        "delete": "삭제",
+        "add_new": "새 배지 추가"
+      }
+    }
+  },
+  "sidebar": {
+    "my_communities": "내 커뮤니티",
+    "no_communities": "아직 가입한 커뮤니티가 없습니다",
+    "theme": {
+      "light": "라이트 모드",
+      "dark": "다크 모드",
+      "toggle": "테마 전환"
+    }
+  },
+  "welcome": "Deforum에 오신 것을 환영합니다",
+  "login": {
+    "title": "로그인",
+    "description": "선호하는 로그인 방법을 선택하세요",
+    "username": "사용자 이름",
+    "usernamePlaceholder": "사용자 이름 입력",
+    "useExistingPasskey": "기존 패스키 사용",
+    "createNewAccount": "새 계정 만들기",
+    "loading": "로딩 중...",
+    "continueWithPasskey": "패스키로 계속하기",
+    "usernameTaken": "사용자 이름 \"{{username}}\"이(가) 이미 사용 중입니다",
+    "usernameRequired": "사용자 이름을 선택해주세요",
+    "passkeyNotFound": "패스키를 찾을 수 없습니다. 새 계정을 만들겠습니까?",
+    "passkeyLoginFailed": "패스키 로그인 실패",
+    "passkeyCreationCancelled": "패스키 생성이 취소되었습니다",
+    "registrationFailed": "등록 실패. 다시 시도해주세요."
+  },
+  "common": {
+    "loading": "로딩 중...",
+    "user_not_found": "사용자를 찾을 수 없음"
+  }
+}

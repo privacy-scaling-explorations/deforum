@@ -8,32 +8,34 @@ import { Badge } from "@/components/ui/Badge"
 import { useGlobalContext } from "@/contexts/GlobalContext"
 import { BadgeCredential } from '@/shared/schemas/badge'
 import { Tooltip } from "@/components/ui/Tooltip"
+import { useTranslation } from "react-i18next"
 
 const RowSection = classed.div("grid grid-cols-[1fr_1fr_1fr_130px_1fr] gap-2")
 
 export const MyBadgesPage = () => {
   const { user } = useGlobalContext()
   const userBadges = user?.credentials || []
+  const { t } = useTranslation()
 
   return (
     <PageContent
-      title="My Badges"
-      description="Manage and customize your badges here. You can manage visibility, add new badges, reverify or remove ones you no longer want."
+      title={t('pages.badges.title')}
+      description={t('pages.badges.description')}
     >
       <div className="flex flex-col gap-2">
         <Card.Base spacing="sm">
           <RowSection className="h-2">
             <span className="text-sm font-medium text-base-muted-foreground">
-              Badge
+              {t('pages.badges.headers.badge')}
             </span>
             <span className="text-sm font-medium text-base-muted-foreground">
-              Protocols
+              {t('pages.badges.headers.protocol')}
             </span>
             <span className="text-sm font-medium text-base-muted-foreground">
-              Visibility
+              {t('pages.badges.headers.visibility')}
             </span>
             <span className="text-sm font-medium text-base-muted-foreground">
-              Verified
+              {t('pages.badges.headers.verified')}
             </span>
             <span className="text-sm font-medium text-base-muted-foreground"></span>
           </RowSection>
@@ -48,7 +50,7 @@ export const MyBadgesPage = () => {
                 ))}
               </div>
               <span className="text-sm">
-                {credential.isPublic ? "Public" : "Private"}
+                {credential.isPublic ? t('pages.badges.visibility.public') : t('pages.badges.visibility.private')}
               </span>
               <span className="text-sm">
                 {new Date(credential.verifiedAt || credential.createdAt).toLocaleDateString()}
@@ -56,7 +58,7 @@ export const MyBadgesPage = () => {
               <div className="flex gap-2">
                 <Tooltip content="Delete functionality will be implemented later">
                   <Button variant="destructive" size="sm" disabled>
-                    Delete
+                    {t('pages.badges.actions.delete')}
                   </Button>
                 </Tooltip>
               </div>
@@ -64,7 +66,7 @@ export const MyBadgesPage = () => {
           ))}
           <Link to="/badges/new">
             <Button icon={PlusIcon} className="w-fit">
-              Add new badge
+              {t('pages.badges.actions.add_new')}
             </Button>
           </Link>
         </Card.Base>

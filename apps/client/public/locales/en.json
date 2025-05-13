@@ -107,6 +107,7 @@
       "created_prefix": "Created",
       "no_bio": "No bio provided",
       "no_posts": "No posts yet",
+      "no_public_key": "No public key",
       "posts": {
         "title": "Posts"
       },
@@ -127,11 +128,45 @@
     },
     "notifications": {
       "title": "Notifications",
-      "empty": "No notifications at this time"
+      "empty": "No notifications at this time",
+      "not_implemented": "Notifications feature is coming soon"
+    },
+    "communities": {
+      "title": "Explore Communities",
+      "empty": "No communities found",
+      "not_found": "Community not found: {{slug}}",
+      "required_badges": "Required Badges",
+      "stats": {
+        "members": "Members",
+        "posts": "Posts"
+      },
+      "actions": {
+        "join": "Join",
+        "new_post": "New Post"
+      }
+    },
+    "post": {
+      "create": {
+        "select_community": "Where do you want to post?",
+        "placeholder": "What's on your mind?",
+        "anonymous": {
+          "label": "Post anonymously?",
+          "description_on": "You are posting anonymously using Zero Knowledge",
+          "description_off": "You are posting as {{username}}"
+        },
+        "personal_page": "My Page",
+        "badges": "Badges",
+        "add_badges": "Add badges"
+      },
+      "loading": "Loading post",
+      "not_found": "Post not found",
+      "not_found_message": "The post you are looking for could not be found",
+      "drafts": "Drafts"
     },
     "badges": {
       "title": "My Badges",
       "description": "Manage and customize your badges here. You can manage visibility, add new badges, reverify or remove ones you no longer want.",
+      "debug_title": "My Badges",
       "headers": {
         "badge": "Badge",
         "protocol": "Protocol",
@@ -140,28 +175,37 @@
       },
       "add_new": {
         "title": "Add New Badge",
-        "success": "Verification process initiated!"
-      }
-    },
-    "communities": {
-      "title": "Explore Communities",
-      "empty": "No communities found"
-    },
-    "post": {
-      "create": {
-        "select_community": "Where do you want to post?",
-        "placeholder": "Whats on your mind?",
-        "anonymous": {
-          "label": "Post anonymously?",
-          "description_on": "You are posting anonymously using Zero Knowledge",
-          "description_off": "You are posting as {{username}}"
+        "success": "Verification process initiated!",
+        "steps": {
+          "badge_type": {
+            "label": "Badge Type",
+            "description": "Select the Badge you want to verify"
+          },
+          "protocols": {
+            "label": "Protocols",
+            "description": "Select one or more protocols to verify this badge"
+          },
+          "run": {
+            "label": "Run Verification",
+            "description": "Verify your badge with selected protocols"
+          }
         },
-        "personal_page": "My Personal Page"
+        "selected_config": {
+          "title": "Selected Configuration",
+          "badge": "Badge:",
+          "protocols": "Protocols:",
+          "verify": "Verify Badge",
+          "verifying": "Verifying..."
+        }
       },
-      "loading": "Loading post",
-      "not_found": "Post not found",
-      "not_found_message": "The post you are looking for could not be found",
-      "drafts": "Drafts"
+      "visibility": {
+        "public": "Public",
+        "private": "Private"
+      },
+      "actions": {
+        "delete": "Delete",
+        "add_new": "Add new badge"
+      }
     }
   },
   "sidebar": {
@@ -189,5 +233,9 @@
     "passkeyLoginFailed": "Passkey login failed",
     "passkeyCreationCancelled": "Passkey creation was cancelled",
     "registrationFailed": "Registration failed. Please try again."
+  },
+  "common": {
+    "loading": "Loading...",
+    "user_not_found": "User not found"
   }
 }

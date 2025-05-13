@@ -1,0 +1,254 @@
+{
+  "actions": {
+    "cancel": "キャンセル",
+    "create": "作成",
+    "delete": "削除",
+    "edit": "編集",
+    "login": "ログイン",
+    "logout": "ログアウト",
+    "save": "保存",
+    "search": "検索...",
+    "submit": "送信",
+    "join": "参加",
+    "new_post": "新規投稿",
+    "sign_out": "サインアウト",
+    "edit_profile": "プロフィール編集",
+    "generate_recovery": "回復コードを生成",
+    "save_draft": "下書きとして保存",
+    "post": "投稿",
+    "add_badge": "新しいバッジを追加",
+    "run": "実行"
+  },
+  "auth": {
+    "google_signin": {
+      "title": "プライベートGoogleサインイン",
+      "description": "Stealth.notesプロトコルを使用して、サーバーにあなたの身元を知らせることなく、メールドメインの所有権を証明します。",
+      "read_more": "詳細はこちら",
+      "button": "Googleでサインイン"
+    }
+  },
+  "brand": {
+    "name": "forum",
+    "prefix": "de"
+  },
+  "header": {
+    "search_placeholder": "検索...",
+    "menu": {
+      "open": "メニューを開く",
+      "close": "メニューを閉じる"
+    }
+  },
+  "navigation": {
+    "home": "ホーム",
+    "profile": "プロフィール",
+    "settings": "設定"
+  },
+  "pages": {
+    "settings": {
+      "title": "設定",
+      "complete_profile": "体験を向上させるために、プロフィールを完成させてください！",
+      "dark_mode": "ダークモード",
+      "avatar": {
+        "title": "アバター",
+        "description": "プロフィールを閲覧する際に全員が表示する画像。"
+      },
+      "basic_info": {
+        "title": "基本情報",
+        "description": "個人情報の表示と更新",
+        "username": {
+          "label": "ユーザー名",
+          "placeholder": "ユーザー名（例：田中123）"
+        },
+        "website": {
+          "label": "URL",
+          "placeholder": "https://"
+        },
+        "bio": {
+          "label": "自己紹介",
+          "placeholder": "コミュニティにあなたについて教えてください。"
+        },
+        "home_page": {
+          "label": "デフォルトホームページ",
+          "options": {
+            "home": "ホーム",
+            "profile": "プロフィール"
+          }
+        },
+        "language": {
+          "label": "言語",
+          "options": {
+            "en": "英語",
+            "es": "スペイン語",
+            "ko": "韓国語",
+            "zh": "中国語",
+            "de": "ドイツ語",
+            "fr": "フランス語",
+            "ru": "ロシア語",
+            "hi": "ヒンディー語",
+            "bn": "ベンガル語",
+            "pt": "ポルトガル語",
+            "id": "インドネシア語",
+            "ur": "ウルドゥー語",
+            "ja": "日本語",
+            "ar": "アラビア語",
+            "vi": "ベトナム語"
+          }
+        }
+      },
+      "sessions": {
+        "title": "アクティブセッション",
+        "description": "現在アクティブなセッションを持つデバイス。",
+        "headers": {
+          "session": "セッション",
+          "device": "デバイス"
+        }
+      },
+      "passkeys": {
+        "title": "パスキー",
+        "description": "アカウントに登録されているパスキー。",
+        "headers": {
+          "credential": "パスキー",
+          "last_used": "最終使用"
+        }
+      }
+    },
+    "profile": {
+      "title": "プロフィール",
+      "recovery_warning": "回復コードを設定していません。パスワードを紛失した場合、アカウントを回復できません。",
+      "user_type": "標準",
+      "uid_prefix": "uid:",
+      "created_prefix": "作成日",
+      "no_bio": "自己紹介なし",
+      "no_posts": "まだ投稿がありません",
+      "no_public_key": "公開鍵なし",
+      "posts": {
+        "title": "投稿"
+      },
+      "badges": {
+        "title": "{{username}}のバッジ",
+        "empty": "まだバッジがありません"
+      },
+      "stats": {
+        "following": "フォロー中",
+        "followers": "フォロワー",
+        "posts": "投稿",
+        "solos": "ソロ",
+        "feeds": "フィード",
+        "comments": "コメント",
+        "communities": "コミュニティ",
+        "badges": "バッジ"
+      }
+    },
+    "notifications": {
+      "title": "通知",
+      "empty": "現在通知はありません",
+      "not_implemented": "通知機能は近日公開予定"
+    },
+    "communities": {
+      "title": "コミュニティを探索",
+      "empty": "コミュニティが見つかりません",
+      "not_found": "コミュニティが見つかりません：{{slug}}",
+      "required_badges": "必要なバッジ",
+      "stats": {
+        "members": "メンバー",
+        "posts": "投稿"
+      },
+      "actions": {
+        "join": "参加",
+        "new_post": "新規投稿"
+      }
+    },
+    "post": {
+      "create": {
+        "select_community": "どこに投稿しますか？",
+        "placeholder": "何を考えていますか？",
+        "anonymous": {
+          "label": "匿名で投稿しますか？",
+          "description_on": "Zero Knowledgeを使用して匿名で投稿しています",
+          "description_off": "{{username}}として投稿しています"
+        },
+        "personal_page": "マイページ",
+        "badges": "バッジ",
+        "add_badges": "バッジを追加"
+      },
+      "loading": "投稿を読み込み中",
+      "not_found": "投稿が見つかりません",
+      "not_found_message": "お探しの投稿が見つかりません",
+      "drafts": "下書き"
+    },
+    "badges": {
+      "title": "マイバッジ",
+      "description": "ここでバッジを管理し、カスタマイズできます。表示設定の管理、新しいバッジの追加、再検証、または不要なバッジの削除が可能です。",
+      "debug_title": "マイバッジ",
+      "headers": {
+        "badge": "バッジ",
+        "protocol": "プロトコル",
+        "visibility": "表示設定",
+        "verified": "検証済み"
+      },
+      "add_new": {
+        "title": "新しいバッジを追加",
+        "success": "検証プロセスを開始しました！",
+        "steps": {
+          "badge_type": {
+            "label": "バッジの種類",
+            "description": "検証したいバッジを選択してください"
+          },
+          "protocols": {
+            "label": "プロトコル",
+            "description": "このバッジを検証するための1つ以上のプロトコルを選択してください"
+          },
+          "run": {
+            "label": "検証を実行",
+            "description": "選択したプロトコルでバッジを検証してください"
+          }
+        },
+        "selected_config": {
+          "title": "選択された設定",
+          "badge": "バッジ：",
+          "protocols": "プロトコル：",
+          "verify": "バッジを検証",
+          "verifying": "検証中..."
+        }
+      },
+      "visibility": {
+        "public": "公開",
+        "private": "非公開"
+      },
+      "actions": {
+        "delete": "削除",
+        "add_new": "新しいバッジを追加"
+      }
+    }
+  },
+  "sidebar": {
+    "my_communities": "マイコミュニティ",
+    "no_communities": "まだコミュニティに参加していません",
+    "theme": {
+      "light": "ライトモード",
+      "dark": "ダークモード",
+      "toggle": "テーマを切り替え"
+    }
+  },
+  "welcome": "Deforumへようこそ",
+  "login": {
+    "title": "ログイン",
+    "description": "お好みのログイン方法を選択してください",
+    "username": "ユーザー名",
+    "usernamePlaceholder": "ユーザー名を入力してください",
+    "useExistingPasskey": "既存のパスキーを使用",
+    "createNewAccount": "新規アカウントを作成",
+    "loading": "読み込み中...",
+    "continueWithPasskey": "パスキーで続行",
+    "usernameTaken": "ユーザー名「{{username}}」は既に使用されています",
+    "usernameRequired": "ユーザー名を選択してください",
+    "passkeyNotFound": "パスキーが見つかりません。新規アカウントを作成しますか？",
+    "passkeyLoginFailed": "パスキーログインに失敗しました",
+    "passkeyCreationCancelled": "パスキーの作成がキャンセルされました",
+    "registrationFailed": "登録に失敗しました。もう一度お試しください。"
+  },
+  "common": {
+    "loading": "読み込み中...",
+    "user_not_found": "ユーザーが見つかりません"
+  }
+}

@@ -1,0 +1,254 @@
+{
+  "actions": {
+    "cancel": "إلغاء",
+    "create": "إنشاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "login": "تسجيل الدخول",
+    "logout": "تسجيل الخروج",
+    "save": "حفظ",
+    "search": "بحث...",
+    "submit": "إرسال",
+    "join": "انضمام",
+    "new_post": "منشور جديد",
+    "sign_out": "تسجيل الخروج",
+    "edit_profile": "تعديل الملف الشخصي",
+    "generate_recovery": "إنشاء رمز استرداد",
+    "save_draft": "حفظ كمسودة",
+    "post": "نشر",
+    "add_badge": "إضافة شارة جديدة",
+    "run": "تشغيل"
+  },
+  "auth": {
+    "google_signin": {
+      "title": "تسجيل الدخول الخاص بجوجل",
+      "description": "استخدم بروتوكول Stealth.notes لإثبات ملكية نطاق البريد الإلكتروني دون إخبار الخادم بهويتك.",
+      "read_more": "اقرأ المزيد",
+      "button": "تسجيل الدخول باستخدام جوجل"
+    }
+  },
+  "brand": {
+    "name": "forum",
+    "prefix": "de"
+  },
+  "header": {
+    "search_placeholder": "بحث...",
+    "menu": {
+      "open": "فتح القائمة",
+      "close": "إغلاق القائمة"
+    }
+  },
+  "navigation": {
+    "home": "الرئيسية",
+    "profile": "الملف الشخصي",
+    "settings": "الإعدادات"
+  },
+  "pages": {
+    "settings": {
+      "title": "الإعدادات",
+      "complete_profile": "أكمل ملفك الشخصي لتحسين تجربتك!",
+      "dark_mode": "الوضع الداكن",
+      "avatar": {
+        "title": "الصورة الشخصية",
+        "description": "الصورة التي يراها الجميع عند عرض ملفك الشخصي."
+      },
+      "basic_info": {
+        "title": "المعلومات الأساسية",
+        "description": "عرض وتحديث معلوماتك الشخصية",
+        "username": {
+          "label": "اسم المستخدم",
+          "placeholder": "اسم المستخدم (مثال: أحمد123)"
+        },
+        "website": {
+          "label": "الموقع الإلكتروني",
+          "placeholder": "https://"
+        },
+        "bio": {
+          "label": "نبذة شخصية",
+          "placeholder": "أخبر المجتمع عن نفسك."
+        },
+        "home_page": {
+          "label": "الصفحة الرئيسية الافتراضية",
+          "options": {
+            "home": "الرئيسية",
+            "profile": "الملف الشخصي"
+          }
+        },
+        "language": {
+          "label": "اللغة",
+          "options": {
+            "en": "الإنجليزية",
+            "es": "الإسبانية",
+            "ko": "الكورية",
+            "zh": "الصينية",
+            "de": "الألمانية",
+            "fr": "الفرنسية",
+            "ru": "الروسية",
+            "hi": "الهندية",
+            "bn": "البنغالية",
+            "pt": "البرتغالية",
+            "id": "الإندونيسية",
+            "ur": "الأردية",
+            "ja": "اليابانية",
+            "ar": "العربية",
+            "vi": "الفيتنامية"
+          }
+        }
+      },
+      "sessions": {
+        "title": "الجلسات النشطة",
+        "description": "الأجهزة التي لديها جلسات نشطة حالياً.",
+        "headers": {
+          "session": "الجلسة",
+          "device": "الجهاز"
+        }
+      },
+      "passkeys": {
+        "title": "مفاتيح المرور",
+        "description": "مفاتيح المرور المسجلة في حسابك.",
+        "headers": {
+          "credential": "مفتاح المرور",
+          "last_used": "آخر استخدام"
+        }
+      }
+    },
+    "profile": {
+      "title": "الملف الشخصي",
+      "recovery_warning": "لم تقم بإعداد رمز استرداد. إذا فقدت كلمة المرور، لن تتمكن من استرداد حسابك.",
+      "user_type": "قياسي",
+      "uid_prefix": "uid:",
+      "created_prefix": "تاريخ الإنشاء",
+      "no_bio": "لا توجد نبذة شخصية",
+      "no_posts": "لا توجد منشورات حتى الآن",
+      "no_public_key": "لا يوجد مفتاح عام",
+      "posts": {
+        "title": "المنشورات"
+      },
+      "badges": {
+        "title": "شارات {{username}}",
+        "empty": "لا توجد شارات حتى الآن"
+      },
+      "stats": {
+        "following": "المتابَعون",
+        "followers": "المتابِعون",
+        "posts": "المنشورات",
+        "solos": "المنشورات الفردية",
+        "feeds": "الخلاصات",
+        "comments": "التعليقات",
+        "communities": "المجتمعات",
+        "badges": "الشارات"
+      }
+    },
+    "notifications": {
+      "title": "الإشعارات",
+      "empty": "لا توجد إشعارات حالياً",
+      "not_implemented": "ميزة الإشعارات قادمة قريباً"
+    },
+    "communities": {
+      "title": "استكشف المجتمعات",
+      "empty": "لم يتم العثور على مجتمعات",
+      "not_found": "لم يتم العثور على المجتمع: {{slug}}",
+      "required_badges": "الشارات المطلوبة",
+      "stats": {
+        "members": "الأعضاء",
+        "posts": "المنشورات"
+      },
+      "actions": {
+        "join": "انضمام",
+        "new_post": "منشور جديد"
+      }
+    },
+    "post": {
+      "create": {
+        "select_community": "أين تريد النشر؟",
+        "placeholder": "بماذا تفكر؟",
+        "anonymous": {
+          "label": "هل تريد النشر بشكل مجهول؟",
+          "description_on": "أنت تنشر بشكل مجهول باستخدام Zero Knowledge",
+          "description_off": "أنت تنشر كـ {{username}}"
+        },
+        "personal_page": "صفحتي الشخصية",
+        "badges": "الشارات",
+        "add_badges": "إضافة شارات"
+      },
+      "loading": "جاري تحميل المنشور",
+      "not_found": "لم يتم العثور على المنشور",
+      "not_found_message": "لم يتم العثور على المنشور الذي تبحث عنه",
+      "drafts": "المسودات"
+    },
+    "badges": {
+      "title": "شاراتي",
+      "description": "يمكنك إدارة وتخصيص شاراتك هنا. قم بإدارة إعدادات الرؤية، وإضافة شارات جديدة، وإعادة التحقق، أو حذف الشارات غير المرغوب فيها.",
+      "debug_title": "شاراتي",
+      "headers": {
+        "badge": "الشارة",
+        "protocol": "البروتوكول",
+        "visibility": "الرؤية",
+        "verified": "تم التحقق"
+      },
+      "add_new": {
+        "title": "إضافة شارة جديدة",
+        "success": "تم بدء عملية التحقق!",
+        "steps": {
+          "badge_type": {
+            "label": "نوع الشارة",
+            "description": "اختر الشارة التي تريد التحقق منها"
+          },
+          "protocols": {
+            "label": "البروتوكولات",
+            "description": "اختر بروتوكولاً واحداً أو أكثر للتحقق من هذه الشارة"
+          },
+          "run": {
+            "label": "تشغيل التحقق",
+            "description": "تحقق من الشارة باستخدام البروتوكولات المحددة"
+          }
+        },
+        "selected_config": {
+          "title": "الإعدادات المحددة",
+          "badge": "الشارة:",
+          "protocols": "البروتوكولات:",
+          "verify": "التحقق من الشارة",
+          "verifying": "جاري التحقق..."
+        }
+      },
+      "visibility": {
+        "public": "عام",
+        "private": "خاص"
+      },
+      "actions": {
+        "delete": "حذف",
+        "add_new": "إضافة شارة جديدة"
+      }
+    }
+  },
+  "sidebar": {
+    "my_communities": "مجتمعاتي",
+    "no_communities": "لم تنضم إلى أي مجتمعات بعد",
+    "theme": {
+      "light": "الوضع الفاتح",
+      "dark": "الوضع الداكن",
+      "toggle": "تبديل المظهر"
+    }
+  },
+  "welcome": "مرحباً بك في Deforum",
+  "login": {
+    "title": "تسجيل الدخول",
+    "description": "اختر طريقة تسجيل الدخول المفضلة لديك",
+    "username": "اسم المستخدم",
+    "usernamePlaceholder": "أدخل اسم المستخدم",
+    "useExistingPasskey": "استخدام مفتاح مرور موجود",
+    "createNewAccount": "إنشاء حساب جديد",
+    "loading": "جاري التحميل...",
+    "continueWithPasskey": "المتابعة بمفتاح المرور",
+    "usernameTaken": "اسم المستخدم '{{username}}' مستخدم بالفعل",
+    "usernameRequired": "يرجى اختيار اسم مستخدم",
+    "passkeyNotFound": "لم يتم العثور على مفتاح المرور. هل تريد إنشاء حساب جديد؟",
+    "passkeyLoginFailed": "فشل تسجيل الدخول بمفتاح المرور",
+    "passkeyCreationCancelled": "تم إلغاء إنشاء مفتاح المرور",
+    "registrationFailed": "فشل التسجيل. يرجى المحاولة مرة أخرى."
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "user_not_found": "لم يتم العثور على المستخدم"
+  }
+}

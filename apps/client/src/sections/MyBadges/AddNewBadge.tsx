@@ -7,6 +7,7 @@ import Stepper, { StepData, StepperRenderProps } from "@/components/Stepper"
 import { Badge } from "@/components/ui/Badge"
 import { BadgeDefinition } from "@/shared/schemas/badge"
 import { Protocol } from "@/shared/schemas/protocol"
+import { useTranslation } from "react-i18next"
 
 export const AddNewBadge = () => {
   const [selectedBadge, setSelectedBadge] = useState<string | null>(null)
@@ -15,6 +16,7 @@ export const AddNewBadge = () => {
   const [isStep1Valid, setIsStep1Valid] = useState(false)
   const [isStep2Valid, setIsStep2Valid] = useState(false)
   const [isVerifying, setIsVerifying] = useState(false)
+  const { t } = useTranslation()
 
   const { data: badges } = trpc.badges.all.useQuery()
   const { data: protocols } = trpc.protocols.all.useQuery()
@@ -64,7 +66,7 @@ export const AddNewBadge = () => {
 
       setIsComplete(true)
       setTimeout(() => {
-        alert("Badge verified and issued successfully!")
+        alert(t('pages.badges.add_new.success'))
       }, 100)
     } catch (error) {
       console.error("Failed to verify badge:", error)
@@ -72,13 +74,13 @@ export const AddNewBadge = () => {
     } finally {
       setIsVerifying(false)
     }
-  }, [selectedBadge, selectedProtocols, verifyAndIssueMutation])
+  }, [selectedBadge, selectedProtocols, verifyAndIssueMutation, t])
 
   const steps: StepData[] = [
     {
       id: "badge-type",
-      label: "Badge Type",
-      description: "Select the Badge <yo></yo>u want to verify",
+      label: t('pages.badges.add_new.steps.badge_type.label'),
+      description: t('pages.badges.add_new.steps.badge_type.description'),
       isValid: isStep1Valid,
       render: ({ updateValidity }: StepperRenderProps) => {
         return (
@@ -109,8 +111,8 @@ export const AddNewBadge = () => {
     },
     {
       id: "protocols",
-      label: "Protocols",
-      description: "Select one or more protocols to verify this badge",
+      label: t('pages.badges.add_new.steps.protocols.label'),
+      description: t('pages.badges.add_new.steps.protocols.description'),
       isValid: isStep2Valid,
       render: ({ updateValidity }: StepperRenderProps) => {
         return (
@@ -141,7 +143,8 @@ export const AddNewBadge = () => {
     },
     {
       id: "run",
-      label: "Run Verification",
+      label: t('pages.badges.add_new.steps.run.label'),
+      description: t('pages.badges.add_new.steps.run.description'),
       isValid: true,
       render: ({ updateValidity }: { updateValidity: (isValid: boolean) => void }) => {
         const selectedBadgeData = badges?.find((b) => b.slug === selectedBadge)
@@ -150,13 +153,13 @@ export const AddNewBadge = () => {
         return (
           <Stepper.Step>
             <div className="flex flex-col gap-4">
-              <h3 className="text-lg font-semibold">Selected Configuration</h3>
+              <h3 className="text-lg font-semibold">{t('pages.badges.add_new.selected_config.title')}</h3>
               <div>
-                <p className="font-medium">Badge:</p>
+                <p className="font-medium">{t('pages.badges.add_new.selected_config.badge')}</p>
                 <p className="text-base-muted-foreground">{selectedBadgeData?.name}</p>
               </div>
               <div>
-                <p className="font-medium">Protocols:</p>
+                <p className="font-medium">{t('pages.badges.add_new.selected_config.protocols')}</p>
                 <div className="flex gap-2">
                   {selectedProtocolsData?.map(protocol => (
                     <Badge key={protocol.id} variant="secondary">
@@ -170,7 +173,7 @@ export const AddNewBadge = () => {
                 disabled={isVerifying}
                 className="w-fit"
               >
-                {isVerifying ? "Verifying..." : "Verify Badge"}
+                {isVerifying ? t('pages.badges.add_new.selected_config.verifying') : t('pages.badges.add_new.selected_config.verify')}
               </Button>
             </div>
           </Stepper.Step>
@@ -180,18 +183,18 @@ export const AddNewBadge = () => {
   ]
 
   return (
-    <PageContent title="Add New Badge" className="flex flex-col gap-5">
+    <PageContent title={t('pages.badges.add_new.title')} className="flex flex-col gap-5">
       <div className="w-full flex flex-col">
         <Stepper.Base
           steps={steps}
           onComplete={() => { }}
-          completeLabel="Create Badge"
+          completeLabel={t('pages.badges.add_new.title')}
         />
 
         {isComplete && (
           <div className="mt-8 p-4 bg-green-100 border border-green-300 rounded-md">
             <p className="text-green-800 font-medium">
-              Badge verified and issued successfully!
+              {t('pages.badges.add_new.success')}
             </p>
           </div>
         )}

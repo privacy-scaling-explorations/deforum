@@ -1,0 +1,254 @@
+{
+  "actions": {
+    "cancel": "Batal",
+    "create": "Buat",
+    "delete": "Hapus",
+    "edit": "Edit",
+    "login": "Masuk",
+    "logout": "Keluar",
+    "save": "Simpan",
+    "search": "Cari...",
+    "submit": "Kirim",
+    "join": "Bergabung",
+    "new_post": "Posting Baru",
+    "sign_out": "Keluar",
+    "edit_profile": "Edit Profil",
+    "generate_recovery": "Buat Kode Pemulihan",
+    "save_draft": "Simpan sebagai Draf",
+    "post": "Posting",
+    "add_badge": "Tambah Lencana Baru",
+    "run": "Jalankan"
+  },
+  "auth": {
+    "google_signin": {
+      "title": "Login Google Pribadi",
+      "description": "Kami akan menggunakan protokol Stealth.notes untuk membuktikan kepemilikan domain email Anda, tanpa server kami mengetahui siapa Anda.",
+      "read_more": "Baca selengkapnya di sini",
+      "button": "Masuk dengan Google"
+    }
+  },
+  "brand": {
+    "name": "forum",
+    "prefix": "de"
+  },
+  "header": {
+    "search_placeholder": "Cari...",
+    "menu": {
+      "open": "Buka Menu",
+      "close": "Tutup Menu"
+    }
+  },
+  "navigation": {
+    "home": "Beranda",
+    "profile": "Profil",
+    "settings": "Pengaturan"
+  },
+  "pages": {
+    "settings": {
+      "title": "Pengaturan",
+      "complete_profile": "Silakan lengkapi profil Anda untuk meningkatkan pengalaman Anda!",
+      "dark_mode": "Mode Gelap",
+      "avatar": {
+        "title": "Avatar",
+        "description": "Gambar yang akan dilihat semua orang saat melihat profil Anda."
+      },
+      "basic_info": {
+        "title": "Informasi Dasar",
+        "description": "Lihat dan perbarui informasi pribadi Anda",
+        "username": {
+          "label": "Nama Pengguna",
+          "placeholder": "Nama pengguna Anda (contoh, Budi123)"
+        },
+        "website": {
+          "label": "URL",
+          "placeholder": "https://"
+        },
+        "bio": {
+          "label": "Tentang",
+          "placeholder": "Ceritakan kepada komunitas tentang diri Anda."
+        },
+        "home_page": {
+          "label": "Halaman Beranda Default",
+          "options": {
+            "home": "Beranda",
+            "profile": "Profil"
+          }
+        },
+        "language": {
+          "label": "Bahasa",
+          "options": {
+            "en": "Bahasa Inggris",
+            "es": "Bahasa Spanyol",
+            "ko": "Bahasa Korea",
+            "zh": "Bahasa Mandarin",
+            "de": "Bahasa Jerman",
+            "fr": "Bahasa Prancis",
+            "ru": "Bahasa Rusia",
+            "hi": "Bahasa Hindi",
+            "bn": "Bahasa Bengali",
+            "pt": "Bahasa Portugis",
+            "id": "Bahasa Indonesia",
+            "ur": "Bahasa Urdu",
+            "ja": "Bahasa Jepang",
+            "ar": "Bahasa Arab",
+            "vi": "Bahasa Vietnam"
+          }
+        }
+      },
+      "sessions": {
+        "title": "Sesi Aktif",
+        "description": "Perangkat dengan sesi aktif saat ini.",
+        "headers": {
+          "session": "Sesi",
+          "device": "Perangkat"
+        }
+      },
+      "passkeys": {
+        "title": "Kunci Akses",
+        "description": "Kunci akses yang terdaftar di akun Anda.",
+        "headers": {
+          "credential": "Kunci Akses",
+          "last_used": "Terakhir Digunakan"
+        }
+      }
+    },
+    "profile": {
+      "title": "Profil",
+      "recovery_warning": "Anda belum mengatur kode pemulihan. Jika Anda kehilangan kata sandi, Anda tidak akan dapat memulihkan akun Anda.",
+      "user_type": "Standar",
+      "uid_prefix": "uid:",
+      "created_prefix": "Dibuat pada",
+      "no_bio": "Tidak ada bio",
+      "no_posts": "Belum ada postingan",
+      "no_public_key": "Tidak ada kunci publik",
+      "posts": {
+        "title": "Postingan"
+      },
+      "badges": {
+        "title": "Lencana {{username}}",
+        "empty": "Belum ada lencana"
+      },
+      "stats": {
+        "following": "Mengikuti",
+        "followers": "Pengikut",
+        "posts": "Postingan",
+        "solos": "Solo",
+        "feeds": "Feed",
+        "comments": "Komentar",
+        "communities": "Komunitas",
+        "badges": "Lencana"
+      }
+    },
+    "notifications": {
+      "title": "Notifikasi",
+      "empty": "Tidak ada notifikasi saat ini",
+      "not_implemented": "Fitur notifikasi akan segera hadir"
+    },
+    "communities": {
+      "title": "Jelajahi Komunitas",
+      "empty": "Tidak ada komunitas ditemukan",
+      "not_found": "Komunitas tidak ditemukan: {{slug}}",
+      "required_badges": "Lencana yang Diperlukan",
+      "stats": {
+        "members": "Anggota",
+        "posts": "Postingan"
+      },
+      "actions": {
+        "join": "Bergabung",
+        "new_post": "Posting Baru"
+      }
+    },
+    "post": {
+      "create": {
+        "select_community": "Di mana Anda ingin memposting?",
+        "placeholder": "Apa yang ada di pikiran Anda?",
+        "anonymous": {
+          "label": "Posting secara anonim?",
+          "description_on": "Anda memposting secara anonim menggunakan Zero Knowledge",
+          "description_off": "Anda memposting sebagai {{username}}"
+        },
+        "personal_page": "Halaman Saya",
+        "badges": "Lencana",
+        "add_badges": "Tambah Lencana"
+      },
+      "loading": "Memuat postingan",
+      "not_found": "Postingan tidak ditemukan",
+      "not_found_message": "Postingan yang Anda cari tidak ditemukan",
+      "drafts": "Draf"
+    },
+    "badges": {
+      "title": "Lencana Saya",
+      "description": "Kelola dan sesuaikan lencana Anda di sini. Anda dapat mengelola visibilitas, menambahkan lencana baru, memverifikasi ulang, atau menghapus yang tidak Anda inginkan lagi.",
+      "debug_title": "Lencana Saya",
+      "headers": {
+        "badge": "Lencana",
+        "protocol": "Protokol",
+        "visibility": "Visibilitas",
+        "verified": "Terverifikasi"
+      },
+      "add_new": {
+        "title": "Tambah Lencana Baru",
+        "success": "Proses verifikasi dimulai!",
+        "steps": {
+          "badge_type": {
+            "label": "Jenis Lencana",
+            "description": "Pilih lencana yang ingin Anda verifikasi"
+          },
+          "protocols": {
+            "label": "Protokol",
+            "description": "Pilih satu atau lebih protokol untuk memverifikasi lencana ini"
+          },
+          "run": {
+            "label": "Jalankan Verifikasi",
+            "description": "Verifikasi lencana Anda dengan protokol yang dipilih"
+          }
+        },
+        "selected_config": {
+          "title": "Konfigurasi yang Dipilih",
+          "badge": "Lencana:",
+          "protocols": "Protokol:",
+          "verify": "Verifikasi Lencana",
+          "verifying": "Memverifikasi..."
+        }
+      },
+      "visibility": {
+        "public": "Publik",
+        "private": "Pribadi"
+      },
+      "actions": {
+        "delete": "Hapus",
+        "add_new": "Tambah Lencana Baru"
+      }
+    }
+  },
+  "sidebar": {
+    "my_communities": "Komunitas Saya",
+    "no_communities": "Anda belum bergabung dengan komunitas apa pun",
+    "theme": {
+      "light": "Mode Terang",
+      "dark": "Mode Gelap",
+      "toggle": "Ubah Tema"
+    }
+  },
+  "welcome": "Selamat Datang di Deforum",
+  "login": {
+    "title": "Masuk",
+    "description": "Pilih metode login yang Anda sukai",
+    "username": "Nama Pengguna",
+    "usernamePlaceholder": "Masukkan nama pengguna Anda",
+    "useExistingPasskey": "Gunakan Kunci Akses yang Ada",
+    "createNewAccount": "Buat Akun Baru",
+    "loading": "Memuat...",
+    "continueWithPasskey": "Lanjutkan dengan Kunci Akses",
+    "usernameTaken": "Nama pengguna \"{{username}}\" sudah digunakan",
+    "usernameRequired": "Silakan pilih nama pengguna",
+    "passkeyNotFound": "Kunci akses tidak ditemukan. Ingin membuat akun baru?",
+    "passkeyLoginFailed": "Login dengan kunci akses gagal",
+    "passkeyCreationCancelled": "Pembuatan kunci akses dibatalkan",
+    "registrationFailed": "Registrasi gagal. Silakan coba lagi."
+  },
+  "common": {
+    "loading": "Memuat...",
+    "user_not_found": "Pengguna tidak ditemukan"
+  }
+}

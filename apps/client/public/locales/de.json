@@ -1,0 +1,244 @@
+{
+  "actions": {
+    "cancel": "Abbrechen",
+    "create": "Erstellen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "login": "Anmelden",
+    "logout": "Abmelden",
+    "save": "Speichern",
+    "search": "Suchen...",
+    "submit": "Absenden",
+    "join": "Beitreten",
+    "new_post": "Neuer Beitrag",
+    "sign_out": "Abmelden",
+    "edit_profile": "Profil bearbeiten",
+    "generate_recovery": "Wiederherstellungscode generieren",
+    "save_draft": "Als Entwurf speichern",
+    "post": "Beitrag",
+    "add_badge": "Neues Abzeichen hinzufügen",
+    "run": "Ausführen"
+  },
+  "auth": {
+    "google_signin": {
+      "title": "Privates Google-Anmelden",
+      "description": "Wir verwenden das Stealth.notes-Protokoll als Möglichkeit, sich anzumelden und Ihre E-Mail-Domain-Eigentümerschaft auf private Weise nachzuweisen, ohne dass unser Server weiß, wer Sie sind.",
+      "read_more": "Mehr erfahren",
+      "button": "Mit Google anmelden"
+    }
+  },
+  "brand": {
+    "name": "forum",
+    "prefix": "de"
+  },
+  "header": {
+    "search_placeholder": "Suchen...",
+    "menu": {
+      "open": "Menü öffnen",
+      "close": "Menü schließen"
+    }
+  },
+  "navigation": {
+    "home": "Startseite",
+    "profile": "Profil",
+    "settings": "Einstellungen"
+  },
+  "pages": {
+    "settings": {
+      "title": "Einstellungen",
+      "complete_profile": "Bitte vervollständigen Sie Ihr Profil für ein besseres Erlebnis!",
+      "dark_mode": "Dunkelmodus",
+      "avatar": {
+        "title": "Avatar",
+        "description": "Das Bild, das alle sehen werden, wenn sie Ihr Profil besuchen."
+      },
+      "basic_info": {
+        "title": "Grundinformationen",
+        "description": "Ihre persönlichen Daten anzeigen und aktualisieren",
+        "username": {
+          "label": "Benutzername",
+          "placeholder": "Ihr Benutzername (z.B. JohnDoe123)"
+        },
+        "website": {
+          "label": "URL",
+          "placeholder": "https://"
+        },
+        "bio": {
+          "label": "Über",
+          "placeholder": "Erzählen Sie der Community etwas über sich."
+        },
+        "home_page": {
+          "label": "Standard-Startseite",
+          "options": {
+            "home": "Startseite",
+            "profile": "Profil"
+          }
+        },
+        "language": {
+          "label": "Sprache",
+          "options": {
+            "en": "Englisch",
+            "es": "Spanisch",
+            "ko": "Koreanisch",
+            "zh": "Chinesisch",
+            "de": "Deutsch"
+          }
+        }
+      },
+      "sessions": {
+        "title": "Aktive Sitzungen",
+        "description": "Geräte, die derzeit Sitzungen haben.",
+        "headers": {
+          "session": "Sitzung",
+          "device": "Gerät"
+        }
+      },
+      "passkeys": {
+        "title": "Passkeys",
+        "description": "In Ihrem Konto registrierte Passkeys.",
+        "headers": {
+          "credential": "Passkey",
+          "last_used": "Zuletzt verwendet"
+        }
+      }
+    },
+    "profile": {
+      "title": "Profil",
+      "recovery_warning": "Sie haben keinen Wiederherstellungscode festgelegt. Wenn Sie Ihr Passwort verlieren, können Sie Ihr Konto nicht wiederherstellen.",
+      "user_type": "Standard",
+      "uid_prefix": "uid:",
+      "created_prefix": "Erstellt",
+      "no_bio": "Keine Biografie vorhanden",
+      "no_posts": "Noch keine Beiträge",
+      "no_public_key": "Kein öffentlicher Schlüssel",
+      "posts": {
+        "title": "Beiträge"
+      },
+      "badges": {
+        "title": "{{username}}s Abzeichen",
+        "empty": "Noch keine Abzeichen"
+      },
+      "stats": {
+        "following": "Folgt",
+        "followers": "Follower",
+        "posts": "Beiträge",
+        "solos": "Solos",
+        "feeds": "Feeds",
+        "comments": "Kommentare",
+        "communities": "Communities",
+        "badges": "Abzeichen"
+      }
+    },
+    "notifications": {
+      "title": "Benachrichtigungen",
+      "empty": "Derzeit keine Benachrichtigungen",
+      "not_implemented": "Die Benachrichtigungsfunktion wird bald verfügbar sein"
+    },
+    "communities": {
+      "title": "Communities entdecken",
+      "empty": "Keine Communities gefunden",
+      "not_found": "Community nicht gefunden: {{slug}}",
+      "required_badges": "Erforderliche Abzeichen",
+      "stats": {
+        "members": "Mitglieder",
+        "posts": "Beiträge"
+      },
+      "actions": {
+        "join": "Beitreten",
+        "new_post": "Neuer Beitrag"
+      }
+    },
+    "post": {
+      "create": {
+        "select_community": "Wo möchten Sie posten?",
+        "placeholder": "Was denken Sie gerade?",
+        "anonymous": {
+          "label": "Anonym posten?",
+          "description_on": "Sie posten anonym mit Zero Knowledge",
+          "description_off": "Sie posten als {{username}}"
+        },
+        "personal_page": "Meine Seite",
+        "badges": "Abzeichen",
+        "add_badges": "Abzeichen hinzufügen"
+      },
+      "loading": "Beitrag wird geladen",
+      "not_found": "Beitrag nicht gefunden",
+      "not_found_message": "Der gesuchte Beitrag konnte nicht gefunden werden",
+      "drafts": "Entwürfe"
+    },
+    "badges": {
+      "title": "Meine Abzeichen",
+      "description": "Verwalten und passen Sie Ihre Abzeichen hier an. Sie können die Sichtbarkeit verwalten, neue Abzeichen hinzufügen, nicht mehr gewünschte Abzeichen neu verifizieren oder entfernen.",
+      "debug_title": "Meine Abzeichen",
+      "headers": {
+        "badge": "Abzeichen",
+        "protocol": "Protokoll",
+        "visibility": "Sichtbarkeit",
+        "verified": "Verifiziert"
+      },
+      "add_new": {
+        "title": "Neues Abzeichen hinzufügen",
+        "success": "Verifizierungsprozess gestartet!",
+        "steps": {
+          "badge_type": {
+            "label": "Abzeichen-Typ",
+            "description": "Wählen Sie das zu verifizierende Abzeichen"
+          },
+          "protocols": {
+            "label": "Protokolle",
+            "description": "Wählen Sie ein oder mehrere Protokolle zur Verifizierung dieses Abzeichens"
+          },
+          "run": {
+            "label": "Verifizierung ausführen",
+            "description": "Verifizieren Sie Ihr Abzeichen mit den ausgewählten Protokollen"
+          }
+        },
+        "selected_config": {
+          "title": "Ausgewählte Konfiguration",
+          "badge": "Abzeichen:",
+          "protocols": "Protokolle:",
+          "verify": "Abzeichen verifizieren",
+          "verifying": "Wird verifiziert..."
+        }
+      },
+      "visibility": {
+        "public": "Öffentlich",
+        "private": "Privat"
+      },
+      "actions": {
+        "delete": "Löschen",
+        "add_new": "Neues Abzeichen hinzufügen"
+      }
+    }
+  },
+  "sidebar": {
+    "my_communities": "MEINE COMMUNITIES",
+    "no_communities": "Noch keiner Community beigetreten",
+    "theme": {
+      "light": "Hellmodus",
+      "dark": "Dunkelmodus",
+      "toggle": "Thema wechseln"
+    }
+  },
+  "welcome": "Willkommen bei Deforum",
+  "login": {
+    "title": "Anmelden",
+    "description": "Wählen Sie Ihre bevorzugte Anmeldemethode",
+    "username": "Benutzername",
+    "usernamePlaceholder": "Geben Sie Ihren Benutzernamen ein",
+    "useExistingPasskey": "Vorhandenen Passkey verwenden",
+    "createNewAccount": "Neues Konto erstellen",
+    "loading": "Wird geladen...",
+    "continueWithPasskey": "Mit Passkey fortfahren",
+    "usernameTaken": "Der Benutzername \"{{username}}\" ist bereits vergeben",
+    "usernameRequired": "Bitte wählen Sie einen Benutzernamen",
+    "passkeyNotFound": "Passkey nicht gefunden. Neues Konto erstellen?",
+    "passkeyLoginFailed": "Passkey-Anmeldung fehlgeschlagen",
+    "passkeyCreationCancelled": "Passkey-Erstellung abgebrochen",
+    "registrationFailed": "Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut."
+  },
+  "common": {
+    "loading": "Wird geladen...",
+    "user_not_found": "Benutzer nicht gefunden"
+  }
+}

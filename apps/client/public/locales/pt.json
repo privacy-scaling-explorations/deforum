@@ -1,0 +1,254 @@
+{
+  "actions": {
+    "cancel": "Cancelar",
+    "create": "Criar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "login": "Entrar",
+    "logout": "Sair",
+    "save": "Salvar",
+    "search": "Pesquisar...",
+    "submit": "Enviar",
+    "join": "Participar",
+    "new_post": "Nova Publicação",
+    "sign_out": "Sair",
+    "edit_profile": "Editar Perfil",
+    "generate_recovery": "Gerar Código de Recuperação",
+    "save_draft": "Salvar como Rascunho",
+    "post": "Publicar",
+    "add_badge": "Adicionar Novo Emblema",
+    "run": "Executar"
+  },
+  "auth": {
+    "google_signin": {
+      "title": "Login Privado do Google",
+      "description": "Usaremos o protocolo Stealth.notes para provar a propriedade do seu domínio de e-mail, sem que nossos servidores saibam quem você é.",
+      "read_more": "Leia mais aqui",
+      "button": "Entrar com Google"
+    }
+  },
+  "brand": {
+    "name": "forum",
+    "prefix": "de"
+  },
+  "header": {
+    "search_placeholder": "Pesquisar...",
+    "menu": {
+      "open": "Abrir Menu",
+      "close": "Fechar Menu"
+    }
+  },
+  "navigation": {
+    "home": "Início",
+    "profile": "Perfil",
+    "settings": "Configurações"
+  },
+  "pages": {
+    "settings": {
+      "title": "Configurações",
+      "complete_profile": "Por favor, complete seu perfil para melhorar sua experiência!",
+      "dark_mode": "Modo Escuro",
+      "avatar": {
+        "title": "Avatar",
+        "description": "A imagem que todos verão ao visualizar seu perfil."
+      },
+      "basic_info": {
+        "title": "Informações Básicas",
+        "description": "Visualize e atualize suas informações pessoais",
+        "username": {
+          "label": "Nome de Usuário",
+          "placeholder": "Seu nome de usuário (ex., João123)"
+        },
+        "website": {
+          "label": "URL",
+          "placeholder": "https://"
+        },
+        "bio": {
+          "label": "Sobre",
+          "placeholder": "Conte à comunidade um pouco sobre você."
+        },
+        "home_page": {
+          "label": "Página Inicial Padrão",
+          "options": {
+            "home": "Início",
+            "profile": "Perfil"
+          }
+        },
+        "language": {
+          "label": "Idioma",
+          "options": {
+            "en": "Inglês",
+            "es": "Espanhol",
+            "ko": "Coreano",
+            "zh": "Chinês",
+            "de": "Alemão",
+            "fr": "Francês",
+            "ru": "Russo",
+            "hi": "Hindi",
+            "bn": "Bengali",
+            "pt": "Português",
+            "id": "Indonésio",
+            "ur": "Urdu",
+            "ja": "Japonês",
+            "ar": "Árabe",
+            "vi": "Vietnamita"
+          }
+        }
+      },
+      "sessions": {
+        "title": "Sessões Ativas",
+        "description": "Dispositivos com sessões ativas no momento.",
+        "headers": {
+          "session": "Sessão",
+          "device": "Dispositivo"
+        }
+      },
+      "passkeys": {
+        "title": "Chaves de Acesso",
+        "description": "Chaves de acesso registradas em sua conta.",
+        "headers": {
+          "credential": "Chave de Acesso",
+          "last_used": "Último Uso"
+        }
+      }
+    },
+    "profile": {
+      "title": "Perfil",
+      "recovery_warning": "Você não configurou um código de recuperação. Se perder sua senha, não poderá recuperar sua conta.",
+      "user_type": "Padrão",
+      "uid_prefix": "uid:",
+      "created_prefix": "Criado em",
+      "no_bio": "Sem biografia",
+      "no_posts": "Ainda não há publicações",
+      "no_public_key": "Sem chave pública",
+      "posts": {
+        "title": "Publicações"
+      },
+      "badges": {
+        "title": "Emblemas de {{username}}",
+        "empty": "Ainda não há emblemas"
+      },
+      "stats": {
+        "following": "Seguindo",
+        "followers": "Seguidores",
+        "posts": "Publicações",
+        "solos": "Solo",
+        "feeds": "Feeds",
+        "comments": "Comentários",
+        "communities": "Comunidades",
+        "badges": "Emblemas"
+      }
+    },
+    "notifications": {
+      "title": "Notificações",
+      "empty": "Não há notificações no momento",
+      "not_implemented": "Recurso de notificações em breve"
+    },
+    "communities": {
+      "title": "Explorar Comunidades",
+      "empty": "Nenhuma comunidade encontrada",
+      "not_found": "Comunidade não encontrada: {{slug}}",
+      "required_badges": "Emblemas Necessários",
+      "stats": {
+        "members": "Membros",
+        "posts": "Publicações"
+      },
+      "actions": {
+        "join": "Participar",
+        "new_post": "Nova Publicação"
+      }
+    },
+    "post": {
+      "create": {
+        "select_community": "Onde você quer publicar?",
+        "placeholder": "O que está em sua mente?",
+        "anonymous": {
+          "label": "Publicar anonimamente?",
+          "description_on": "Você está publicando anonimamente usando Zero Knowledge",
+          "description_off": "Você está publicando como {{username}}"
+        },
+        "personal_page": "Minha Página",
+        "badges": "Emblemas",
+        "add_badges": "Adicionar Emblemas"
+      },
+      "loading": "Carregando publicação",
+      "not_found": "Publicação não encontrada",
+      "not_found_message": "A publicação que você está procurando não foi encontrada",
+      "drafts": "Rascunhos"
+    },
+    "badges": {
+      "title": "Meus Emblemas",
+      "description": "Gerencie e personalize seus emblemas aqui. Você pode gerenciar a visibilidade, adicionar novos emblemas, re-verificar ou excluir os que não deseja mais.",
+      "debug_title": "Meus Emblemas",
+      "headers": {
+        "badge": "Emblema",
+        "protocol": "Protocolo",
+        "visibility": "Visibilidade",
+        "verified": "Verificado"
+      },
+      "add_new": {
+        "title": "Adicionar Novo Emblema",
+        "success": "Processo de verificação iniciado!",
+        "steps": {
+          "badge_type": {
+            "label": "Tipo de Emblema",
+            "description": "Selecione o emblema que deseja verificar"
+          },
+          "protocols": {
+            "label": "Protocolos",
+            "description": "Selecione um ou mais protocolos para verificar este emblema"
+          },
+          "run": {
+            "label": "Executar Verificação",
+            "description": "Verifique seu emblema com os protocolos selecionados"
+          }
+        },
+        "selected_config": {
+          "title": "Configuração Selecionada",
+          "badge": "Emblema:",
+          "protocols": "Protocolos:",
+          "verify": "Verificar Emblema",
+          "verifying": "Verificando..."
+        }
+      },
+      "visibility": {
+        "public": "Público",
+        "private": "Privado"
+      },
+      "actions": {
+        "delete": "Excluir",
+        "add_new": "Adicionar Novo Emblema"
+      }
+    }
+  },
+  "sidebar": {
+    "my_communities": "Minhas Comunidades",
+    "no_communities": "Você ainda não participa de nenhuma comunidade",
+    "theme": {
+      "light": "Modo Claro",
+      "dark": "Modo Escuro",
+      "toggle": "Alternar Tema"
+    }
+  },
+  "welcome": "Bem-vindo ao Deforum",
+  "login": {
+    "title": "Entrar",
+    "description": "Escolha seu método de login preferido",
+    "username": "Nome de Usuário",
+    "usernamePlaceholder": "Digite seu nome de usuário",
+    "useExistingPasskey": "Usar Chave de Acesso Existente",
+    "createNewAccount": "Criar Nova Conta",
+    "loading": "Carregando...",
+    "continueWithPasskey": "Continuar com Chave de Acesso",
+    "usernameTaken": "O nome de usuário \"{{username}}\" já está em uso",
+    "usernameRequired": "Por favor, escolha um nome de usuário",
+    "passkeyNotFound": "Chave de acesso não encontrada. Deseja criar uma nova conta?",
+    "passkeyLoginFailed": "Falha no login com chave de acesso",
+    "passkeyCreationCancelled": "Criação de chave de acesso cancelada",
+    "registrationFailed": "Falha no registro. Por favor, tente novamente."
+  },
+  "common": {
+    "loading": "Carregando...",
+    "user_not_found": "Usuário não encontrado"
+  }
+}

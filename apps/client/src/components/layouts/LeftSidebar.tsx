@@ -105,14 +105,14 @@ const SidebarContent = () => {
     <nav
       aria-label="Sidebar Navigation"
       className="flex flex-col divide-y-[1px] divide-sidebar-border"
-    >sidebar
+    >
       <div className="space-y-1 pb-6">{renderStartItems(isLoggedIn)}</div>
 
       {/* Debug: Forced badges link */}
       <NavItem
         to="/badges"
         key="debug-badges"
-        title="My Badges (Debug)"
+        title={t('pages.badges.debug_title')}
         icon={Award}
       />
 

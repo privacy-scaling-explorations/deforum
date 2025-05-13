@@ -1,12 +1,25 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next'
 
 const languages = [
   { code: 'en', label: 'English' },
-  { code: 'es', label: 'Español' }
-];
+  { code: 'es', label: 'Español' },
+  { code: 'ko', label: '한국어' },
+  { code: 'zh', label: '中文' },
+  { code: 'de', label: 'Deutsch' },
+  { code: 'fr', label: 'Français' },
+  { code: 'ru', label: 'Русский' },
+  { code: 'hi', label: 'हिंदी' },
+  { code: 'bn', label: 'বাংলা' },
+  { code: 'pt', label: 'Português' },
+  { code: 'id', label: 'Bahasa Indonesia' },
+  { code: 'ur', label: 'اردو' },
+  { code: 'ja', label: '日本語' },
+  { code: 'ar', label: 'العربية' },
+  { code: 'vi', label: 'Tiếng Việt' }
+]
 
 export function LanguageSwitcher() {
-  const { i18n } = useTranslation();
+  const { i18n } = useTranslation()
 
   return (
     <select
@@ -20,5 +33,5 @@ export function LanguageSwitcher() {
         </option>
       ))}
     </select>
-  );
-} 
+  )
+}

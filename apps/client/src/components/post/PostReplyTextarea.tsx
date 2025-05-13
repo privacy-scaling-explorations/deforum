@@ -9,6 +9,7 @@ import { useState } from "react"
 import { Tag } from "../ui/Tag"
 import { useGetAllBadges } from "@/hooks/useBadges"
 import { PostAuthor } from "@/shared/schemas/post"
+import { useTranslation } from 'react-i18next'
 
 interface PostReplyFormData {
   tags: string[]
@@ -42,6 +43,7 @@ export const PostReplyTextarea = ({
 
   const [selectedBadges, setSelectedBadges] = useState<string[]>([])
   const form = useForm<PostReplyFormData, any, any, any, any, any, any, any, any, any>()
+  const { t } = useTranslation()
 
   const { data: badges } = useGetAllBadges()
 
@@ -61,7 +63,6 @@ export const PostReplyTextarea = ({
       <Textarea
         placeholder={placeholder}
         rows={rows}
-
         onClick={onClick}
         onBlur={onBlur}
       />
@@ -77,10 +78,10 @@ export const PostReplyTextarea = ({
                     header={
                       <div className="flex items-center gap-[6px] text-base-muted-foreground">
                         <FileBadge className="size-[18px]" />
-                        <span className="text-base font-medium">Badges</span>
+                        <span className="text-base font-medium">{t('pages.post.create.badges')}</span>
                       </div>
                     }
-                    label="Add badges"
+                    label={t('pages.post.create.add_badges')}
                     items={badges?.map(({ id, name }: any) => ({
                       value: id,
                       label: (
@@ -92,7 +93,6 @@ export const PostReplyTextarea = ({
                     })) || []}
                     onValueChange={(value) => {
                       const currentTags = field.state.value || []
-                      console.log("test", currentTags, value)
                       if (!currentTags.includes(value)) {
                         setSelectedBadges([...currentTags, value])
                       }
@@ -108,11 +108,11 @@ export const PostReplyTextarea = ({
                 children={(field) => (
                   <Switch
                     disabled
-                    label="Post as anonymous?"
+                    label={t('pages.post.create.anonymous.label')}
                     description={
                       field.state.value
-                        ? "Your name will not be displayed"
-                        : `You are posting as ${author?.username}`
+                        ? t('pages.post.create.anonymous.description_on')
+                        : t('pages.post.create.anonymous.description_off', { username: author?.username })
                     }
                     checked={!!field.state.value}
                     onChange={(e) => field.handleChange(e.target.checked)}
@@ -131,7 +131,7 @@ export const PostReplyTextarea = ({
                     disabled={isSubmitting}
                     className="min-w-[160px]"
                   >
-                    Post
+                    {t('actions.post')}
                   </Button>
                 )}
               />

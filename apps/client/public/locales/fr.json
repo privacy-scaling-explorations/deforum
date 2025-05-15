@@ -1,0 +1,246 @@
+{
+  "actions": {
+    "cancel": "Annuler",
+    "create": "Créer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "save": "Enregistrer",
+    "search": "Rechercher...",
+    "submit": "Soumettre",
+    "join": "Rejoindre",
+    "new_post": "Nouveau message",
+    "sign_out": "Se déconnecter",
+    "edit_profile": "Modifier le profil",
+    "generate_recovery": "Générer un code de récupération",
+    "save_draft": "Enregistrer comme brouillon",
+    "post": "Publier",
+    "add_badge": "Ajouter un nouveau badge",
+    "run": "Exécuter"
+  },
+  "auth": {
+    "google_signin": {
+      "title": "Connexion Google privée",
+      "description": "Nous utiliserons le protocole Stealth.notes comme moyen de vous connecter et de prouver la propriété de votre domaine email de manière privée, sans que notre serveur ne sache qui vous êtes.",
+      "read_more": "En savoir plus",
+      "button": "Se connecter avec Google"
+    }
+  },
+  "brand": {
+    "name": "forum",
+    "prefix": "de"
+  },
+  "header": {
+    "search_placeholder": "Rechercher...",
+    "menu": {
+      "open": "Ouvrir le menu",
+      "close": "Fermer le menu"
+    }
+  },
+  "navigation": {
+    "home": "Accueil",
+    "profile": "Profil",
+    "settings": "Paramètres"
+  },
+  "pages": {
+    "settings": {
+      "title": "Paramètres",
+      "complete_profile": "Veuillez compléter votre profil pour améliorer votre expérience !",
+      "dark_mode": "Mode sombre",
+      "avatar": {
+        "title": "Avatar",
+        "description": "L'image que tout le monde verra en visitant votre profil."
+      },
+      "basic_info": {
+        "title": "Informations de base",
+        "description": "Afficher et mettre à jour vos informations personnelles",
+        "username": {
+          "label": "Nom d'utilisateur",
+          "placeholder": "Votre nom d'utilisateur (ex. JeanDupont123)"
+        },
+        "website": {
+          "label": "URL",
+          "placeholder": "https://"
+        },
+        "bio": {
+          "label": "À propos",
+          "placeholder": "Parlez un peu de vous à la communauté."
+        },
+        "home_page": {
+          "label": "Page d'accueil par défaut",
+          "options": {
+            "home": "Accueil",
+            "profile": "Profil"
+          }
+        },
+        "language": {
+          "label": "Langue",
+          "options": {
+            "en": "Anglais",
+            "es": "Espagnol",
+            "ko": "Coréen",
+            "zh": "Chinois",
+            "de": "Allemand",
+            "fr": "Français",
+            "ru": "Russe"
+          }
+        }
+      },
+      "sessions": {
+        "title": "Sessions actives",
+        "description": "Appareils ayant actuellement des sessions.",
+        "headers": {
+          "session": "Session",
+          "device": "Appareil"
+        }
+      },
+      "passkeys": {
+        "title": "Clés d'accès",
+        "description": "Clés d'accès enregistrées sur votre compte.",
+        "headers": {
+          "credential": "Clé d'accès",
+          "last_used": "Dernière utilisation"
+        }
+      }
+    },
+    "profile": {
+      "title": "Profil",
+      "recovery_warning": "Vous n'avez pas défini de code de récupération. Si vous perdez votre mot de passe, vous ne pourrez pas récupérer votre compte.",
+      "user_type": "Standard",
+      "uid_prefix": "uid:",
+      "created_prefix": "Créé",
+      "no_bio": "Aucune biographie",
+      "no_posts": "Aucun message pour le moment",
+      "no_public_key": "Aucune clé publique",
+      "posts": {
+        "title": "Messages"
+      },
+      "badges": {
+        "title": "Badges de {{username}}",
+        "empty": "Aucun badge pour le moment"
+      },
+      "stats": {
+        "following": "Abonnements",
+        "followers": "Abonnés",
+        "posts": "Messages",
+        "solos": "Solos",
+        "feeds": "Flux",
+        "comments": "Commentaires",
+        "communities": "Communautés",
+        "badges": "Badges"
+      }
+    },
+    "notifications": {
+      "title": "Notifications",
+      "empty": "Aucune notification pour le moment",
+      "not_implemented": "La fonctionnalité de notifications sera bientôt disponible"
+    },
+    "communities": {
+      "title": "Explorer les communautés",
+      "empty": "Aucune communauté trouvée",
+      "not_found": "Communauté non trouvée : {{slug}}",
+      "required_badges": "Badges requis",
+      "stats": {
+        "members": "Membres",
+        "posts": "Messages"
+      },
+      "actions": {
+        "join": "Rejoindre",
+        "new_post": "Nouveau message"
+      }
+    },
+    "post": {
+      "create": {
+        "select_community": "Où voulez-vous publier ?",
+        "placeholder": "Qu'avez-vous en tête ?",
+        "anonymous": {
+          "label": "Publier anonymement ?",
+          "description_on": "Vous publiez anonymement en utilisant Zero Knowledge",
+          "description_off": "Vous publiez en tant que {{username}}"
+        },
+        "personal_page": "Ma page",
+        "badges": "Badges",
+        "add_badges": "Ajouter des badges"
+      },
+      "loading": "Chargement du message",
+      "not_found": "Message non trouvé",
+      "not_found_message": "Le message que vous recherchez n'a pas pu être trouvé",
+      "drafts": "Brouillons"
+    },
+    "badges": {
+      "title": "Mes badges",
+      "description": "Gérez et personnalisez vos badges ici. Vous pouvez gérer la visibilité, ajouter de nouveaux badges, revérifier ou supprimer ceux que vous ne souhaitez plus.",
+      "debug_title": "Mes badges",
+      "headers": {
+        "badge": "Badge",
+        "protocol": "Protocole",
+        "visibility": "Visibilité",
+        "verified": "Vérifié"
+      },
+      "add_new": {
+        "title": "Ajouter un nouveau badge",
+        "success": "Processus de vérification lancé !",
+        "steps": {
+          "badge_type": {
+            "label": "Type de badge",
+            "description": "Sélectionnez le badge que vous souhaitez vérifier"
+          },
+          "protocols": {
+            "label": "Protocoles",
+            "description": "Sélectionnez un ou plusieurs protocoles pour vérifier ce badge"
+          },
+          "run": {
+            "label": "Lancer la vérification",
+            "description": "Vérifiez votre badge avec les protocoles sélectionnés"
+          }
+        },
+        "selected_config": {
+          "title": "Configuration sélectionnée",
+          "badge": "Badge :",
+          "protocols": "Protocoles :",
+          "verify": "Vérifier le badge",
+          "verifying": "Vérification en cours..."
+        }
+      },
+      "visibility": {
+        "public": "Public",
+        "private": "Privé"
+      },
+      "actions": {
+        "delete": "Supprimer",
+        "add_new": "Ajouter un nouveau badge"
+      }
+    }
+  },
+  "sidebar": {
+    "my_communities": "MES COMMUNAUTÉS",
+    "no_communities": "Pas encore de communauté rejointe",
+    "theme": {
+      "light": "Mode clair",
+      "dark": "Mode sombre",
+      "toggle": "Changer de thème"
+    }
+  },
+  "welcome": "Bienvenue sur Deforum",
+  "login": {
+    "title": "Connexion",
+    "description": "Choisissez votre méthode de connexion préférée",
+    "username": "Nom d'utilisateur",
+    "usernamePlaceholder": "Entrez votre nom d'utilisateur",
+    "useExistingPasskey": "Utiliser une clé d'accès existante",
+    "createNewAccount": "Créer un nouveau compte",
+    "loading": "Chargement...",
+    "continueWithPasskey": "Continuer avec la clé d'accès",
+    "usernameTaken": "Le nom d'utilisateur \"{{username}}\" est déjà pris",
+    "usernameRequired": "Veuillez choisir un nom d'utilisateur",
+    "passkeyNotFound": "Clé d'accès non trouvée. Créer un nouveau compte ?",
+    "passkeyLoginFailed": "Échec de la connexion avec la clé d'accès",
+    "passkeyCreationCancelled": "Création de la clé d'accès annulée",
+    "registrationFailed": "Échec de l'inscription. Veuillez réessayer."
+  },
+  "common": {
+    "loading": "Chargement...",
+    "user_not_found": "Utilisateur non trouvé"
+  }
+}

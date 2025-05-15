@@ -1,0 +1,254 @@
+{
+  "actions": {
+    "cancel": "منسوخ کریں",
+    "create": "بنائیں",
+    "delete": "حذف کریں",
+    "edit": "ترمیم کریں",
+    "login": "لاگ ان",
+    "logout": "لاگ آؤٹ",
+    "save": "محفوظ کریں",
+    "search": "تلاش کریں...",
+    "submit": "جمع کروائیں",
+    "join": "شامل ہوں",
+    "new_post": "نیا پوسٹ",
+    "sign_out": "سائن آؤٹ",
+    "edit_profile": "پروفائل میں ترمیم کریں",
+    "generate_recovery": "ریکوری کوڈ بنائیں",
+    "save_draft": "ڈرافٹ کے طور پر محفوظ کریں",
+    "post": "پوسٹ کریں",
+    "add_badge": "نیا بیج شامل کریں",
+    "run": "چلائیں"
+  },
+  "auth": {
+    "google_signin": {
+      "title": "پرائیویٹ گوگل سائن ان",
+      "description": "ہم آپ کی ای میل ڈومین کی ملکیت ثابت کرنے کے لیے Stealth.notes پروٹوکول استعمال کریں گے، ہمارے سرورز کو یہ جانے بغیر کہ آپ کون ہیں۔",
+      "read_more": "یہاں مزید پڑھیں",
+      "button": "گوگل کے ساتھ سائن ان کریں"
+    }
+  },
+  "brand": {
+    "name": "forum",
+    "prefix": "de"
+  },
+  "header": {
+    "search_placeholder": "تلاش کریں...",
+    "menu": {
+      "open": "مینو کھولیں",
+      "close": "مینو بند کریں"
+    }
+  },
+  "navigation": {
+    "home": "ہوم",
+    "profile": "پروفائل",
+    "settings": "ترتیبات"
+  },
+  "pages": {
+    "settings": {
+      "title": "ترتیبات",
+      "complete_profile": "اپنے تجربے کو بہتر بنانے کے لیے براہ کرم اپنا پروفائل مکمل کریں!",
+      "dark_mode": "ڈارک موڈ",
+      "avatar": {
+        "title": "اوتار",
+        "description": "وہ تصویر جو سب دیکھیں گے جب وہ آپ کا پروفائل دیکھیں گے۔"
+      },
+      "basic_info": {
+        "title": "بنیادی معلومات",
+        "description": "اپنی ذاتی معلومات دیکھیں اور اپ ڈیٹ کریں",
+        "username": {
+          "label": "صارف نام",
+          "placeholder": "آپ کا صارف نام (مثال کے طور پر، احمد123)"
+        },
+        "website": {
+          "label": "URL",
+          "placeholder": "https://"
+        },
+        "bio": {
+          "label": "تعارف",
+          "placeholder": "برادری کو اپنے بارے میں کچھ بتائیں۔"
+        },
+        "home_page": {
+          "label": "ڈیفالٹ ہوم پیج",
+          "options": {
+            "home": "ہوم",
+            "profile": "پروفائل"
+          }
+        },
+        "language": {
+          "label": "زبان",
+          "options": {
+            "en": "انگریزی",
+            "es": "ہسپانوی",
+            "ko": "کوریائی",
+            "zh": "چینی",
+            "de": "جرمن",
+            "fr": "فرانسیسی",
+            "ru": "روسی",
+            "hi": "ہندی",
+            "bn": "بنگالی",
+            "pt": "پرتگالی",
+            "id": "انڈونیشیائی",
+            "ur": "اردو",
+            "ja": "جاپانی",
+            "ar": "عربی",
+            "vi": "ویتنامی"
+          }
+        }
+      },
+      "sessions": {
+        "title": "فعال سیشنز",
+        "description": "فی الحال فعال سیشنز والے ڈیوائسز۔",
+        "headers": {
+          "session": "سیشن",
+          "device": "ڈیوائس"
+        }
+      },
+      "passkeys": {
+        "title": "پاس کیز",
+        "description": "آپ کے اکاؤنٹ میں رجسٹرڈ پاس کیز۔",
+        "headers": {
+          "credential": "پاس کی",
+          "last_used": "آخری استعمال"
+        }
+      }
+    },
+    "profile": {
+      "title": "پروفائل",
+      "recovery_warning": "آپ نے ریکوری کوڈ سیٹ نہیں کیا ہے۔ اگر آپ اپنا پاس ورڈ کھو دیتے ہیں، تو آپ اپنے اکاؤنٹ کو بحال نہیں کر سکیں گے۔",
+      "user_type": "معیاری",
+      "uid_prefix": "uid:",
+      "created_prefix": "بنایا گیا",
+      "no_bio": "کوئی تعارف نہیں",
+      "no_posts": "ابھی تک کوئی پوسٹ نہیں",
+      "no_public_key": "کوئی پبلک کی نہیں",
+      "posts": {
+        "title": "پوسٹس"
+      },
+      "badges": {
+        "title": "{{username}} کے بیجز",
+        "empty": "ابھی تک کوئی بیج نہیں"
+      },
+      "stats": {
+        "following": "فالو کر رہے ہیں",
+        "followers": "فالوورز",
+        "posts": "پوسٹس",
+        "solos": "سولو",
+        "فیڈز": "فیڈز",
+        "comments": "تبصرے",
+        "communities": "کمیونٹیز",
+        "badges": "بیجز"
+      }
+    },
+    "notifications": {
+      "title": "نوٹیفیکیشنز",
+      "empty": "فی الحال کوئی نوٹیفیکیشن نہیں",
+      "not_implemented": "نوٹیفیکیشن فیچر جلد آ رہا ہے"
+    },
+    "communities": {
+      "title": "کمیونٹیز دریافت کریں",
+      "empty": "کوئی کمیونٹی نہیں ملی",
+      "not_found": "کمیونٹی نہیں ملی: {{slug}}",
+      "required_badges": "ضروری بیجز",
+      "stats": {
+        "members": "اراکین",
+        "posts": "پوسٹس"
+      },
+      "actions": {
+        "join": "شامل ہوں",
+        "new_post": "نیا پوسٹ"
+      }
+    },
+    "post": {
+      "create": {
+        "select_community": "آپ کہاں پوسٹ کرنا چاہتے ہیں؟",
+        "placeholder": "آپ کے ذہن میں کیا ہے؟",
+        "anonymous": {
+          "label": "گمنام پوسٹ کریں؟",
+          "description_on": "آپ Zero Knowledge کا استعمال کرتے ہوئے گمنام پوسٹ کر رہے ہیں",
+          "description_off": "آپ {{username}} کے طور پر پوسٹ کر رہے ہیں"
+        },
+        "personal_page": "میری پیج",
+        "badges": "بیجز",
+        "add_badges": "بیجز شامل کریں"
+      },
+      "loading": "پوسٹ لوڈ ہو رہی ہے",
+      "not_found": "پوسٹ نہیں ملی",
+      "not_found_message": "آپ کی تلاش کردہ پوسٹ نہیں ملی",
+      "drafts": "ڈرافٹس"
+    },
+    "badges": {
+      "title": "میرے بیجز",
+      "description": "یہاں اپنے بیجز کا انتظام اور کسٹمائز کریں۔ آپ وزیبلٹی کا انتظام کر سکتے ہیں، نئے بیجز شامل کر سکتے ہیں، دوبارہ ویریفائی کر سکتے ہیں یا جو آپ نہیں چاہتے انہیں حذف کر سکتے ہیں۔",
+      "debug_title": "میرے بیجز",
+      "headers": {
+        "badge": "بیج",
+        "protocol": "پروٹوکول",
+        "visibility": "وزیبلٹی",
+        "verified": "ویریفائیڈ"
+      },
+      "add_new": {
+        "title": "نیا بیج شامل کریں",
+        "success": "ویریفیکیشن پروسس شروع ہو گیا!",
+        "steps": {
+          "badge_type": {
+            "label": "بیج کی قسم",
+            "description": "وہ بیج منتخب کریں جسے آپ ویریفائی کرنا چاہتے ہیں"
+          },
+          "protocols": {
+            "label": "پروٹوکولز",
+            "description": "اس بیج کو ویریفائی کرنے کے لیے ایک یا زیادہ پروٹوکولز منتخب کریں"
+          },
+          "run": {
+            "label": "ویریفیکیشن چلائیں",
+            "description": "منتخب کردہ پروٹوکولز کے ساتھ اپنے بیج کو ویریفائی کریں"
+          }
+        },
+        "selected_config": {
+          "title": "منتخب کردہ کنفیگریشن",
+          "badge": "بیج:",
+          "protocols": "پروٹوکولز:",
+          "verify": "بیج ویریفائی کریں",
+          "verifying": "ویریفائی ہو رہا ہے..."
+        }
+      },
+      "visibility": {
+        "public": "پبلک",
+        "private": "پرائیویٹ"
+      },
+      "actions": {
+        "delete": "حذف کریں",
+        "add_new": "نیا بیج شامل کریں"
+      }
+    }
+  },
+  "sidebar": {
+    "my_communities": "میری کمیونٹیز",
+    "no_communities": "آپ ابھی تک کسی کمیونٹی میں شامل نہیں ہوئے",
+    "theme": {
+      "light": "لائٹ موڈ",
+      "dark": "ڈارک موڈ",
+      "toggle": "تھیم تبدیل کریں"
+    }
+  },
+  "welcome": "Deforum میں خوش آمدید",
+  "login": {
+    "title": "لاگ ان",
+    "description": "اپنی پسندیدہ لاگ ان میتھڈ منتخب کریں",
+    "username": "صارف نام",
+    "usernamePlaceholder": "اپنا صارف نام درج کریں",
+    "useExistingPasskey": "موجودہ پاس کی استعمال کریں",
+    "createNewAccount": "نیا اکاؤنٹ بنائیں",
+    "loading": "لوڈ ہو رہا ہے...",
+    "continueWithPasskey": "پاس کی کے ساتھ جاری رکھیں",
+    "usernameTaken": "صارف نام \"{{username}}\" پہلے سے موجود ہے",
+    "usernameRequired": "براہ کرم ایک صارف نام منتخب کریں",
+    "passkeyNotFound": "پاس کی نہیں ملی۔ نیا اکاؤنٹ بنانا چاہتے ہیں؟",
+    "passkeyLoginFailed": "پاس کی لاگ ان ناکام ہوا",
+    "passkeyCreationCancelled": "پاس کی کی تخلیق منسوخ کر دی گئی",
+    "registrationFailed": "رجسٹریشن ناکام ہوئی۔ براہ کرم دوبارہ کوشش کریں۔"
+  },
+  "common": {
+    "loading": "لوڈ ہو رہا ہے...",
+    "user_not_found": "صارف نہیں ملا"
+  }
+}

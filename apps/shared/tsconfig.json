@@ -13,8 +13,24 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+      "@deforum/shared": [
+        "../shared/src"
+      ],
+      "@deforum/shared/*": [
+        "../shared/src/*"
+      ]
+    },
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
-} 
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
+}

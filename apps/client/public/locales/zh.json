@@ -1,0 +1,244 @@
+{
+  "actions": {
+    "cancel": "取消",
+    "create": "创建",
+    "delete": "删除",
+    "edit": "编辑",
+    "login": "登录",
+    "logout": "退出",
+    "save": "保存",
+    "search": "搜索...",
+    "submit": "提交",
+    "join": "加入",
+    "new_post": "新帖子",
+    "sign_out": "退出登录",
+    "edit_profile": "编辑个人资料",
+    "generate_recovery": "生成恢复码",
+    "save_draft": "保存草稿",
+    "post": "发布",
+    "add_badge": "添加新徽章",
+    "run": "运行"
+  },
+  "auth": {
+    "google_signin": {
+      "title": "私密 Google 登录",
+      "description": "我们将使用 Stealth.notes 协议作为登录方式，以私密方式证明您的电子邮件域名所有权，而我们的服务器不会知道您的身份。",
+      "read_more": "了解更多",
+      "button": "使用 Google 登录"
+    }
+  },
+  "brand": {
+    "name": "forum",
+    "prefix": "de"
+  },
+  "header": {
+    "search_placeholder": "搜索...",
+    "menu": {
+      "open": "打开菜单",
+      "close": "关闭菜单"
+    }
+  },
+  "navigation": {
+    "home": "首页",
+    "profile": "个人资料",
+    "settings": "设置"
+  },
+  "pages": {
+    "settings": {
+      "title": "设置",
+      "complete_profile": "请完善您的个人资料以提升体验！",
+      "dark_mode": "深色模式",
+      "avatar": {
+        "title": "头像",
+        "description": "访问您的个人资料时所有人都会看到的图片。"
+      },
+      "basic_info": {
+        "title": "基本信息",
+        "description": "查看和更新您的个人信息",
+        "username": {
+          "label": "用户名",
+          "placeholder": "您的用户名（例如：JohnDoe123）"
+        },
+        "website": {
+          "label": "网址",
+          "placeholder": "https://"
+        },
+        "bio": {
+          "label": "关于",
+          "placeholder": "向社区介绍一下您自己。"
+        },
+        "home_page": {
+          "label": "默认首页",
+          "options": {
+            "home": "首页",
+            "profile": "个人资料"
+          }
+        },
+        "language": {
+          "label": "语言",
+          "options": {
+            "en": "英语",
+            "es": "西班牙语",
+            "ko": "韩语",
+            "zh": "中文",
+            "de": "德语"
+          }
+        }
+      },
+      "sessions": {
+        "title": "活动会话",
+        "description": "当前有会话的设备。",
+        "headers": {
+          "session": "会话",
+          "device": "设备"
+        }
+      },
+      "passkeys": {
+        "title": "通行密钥",
+        "description": "已注册到您账户的通行密钥。",
+        "headers": {
+          "credential": "通行密钥",
+          "last_used": "最后使用"
+        }
+      }
+    },
+    "profile": {
+      "title": "个人资料",
+      "recovery_warning": "您尚未设置恢复码。如果丢失密码，将无法恢复账户。",
+      "user_type": "标准",
+      "uid_prefix": "uid:",
+      "created_prefix": "创建于",
+      "no_bio": "暂无简介",
+      "no_posts": "暂无帖子",
+      "no_public_key": "无公钥",
+      "posts": {
+        "title": "帖子"
+      },
+      "badges": {
+        "title": "{{username}}的徽章",
+        "empty": "暂无徽章"
+      },
+      "stats": {
+        "following": "关注",
+        "followers": "粉丝",
+        "posts": "帖子",
+        "solos": "独奏",
+        "feeds": "动态",
+        "comments": "评论",
+        "communities": "社区",
+        "badges": "徽章"
+      }
+    },
+    "notifications": {
+      "title": "通知",
+      "empty": "当前没有通知",
+      "not_implemented": "通知功能即将推出"
+    },
+    "communities": {
+      "title": "探索社区",
+      "empty": "未找到社区",
+      "not_found": "未找到社区：{{slug}}",
+      "required_badges": "所需徽章",
+      "stats": {
+        "members": "成员",
+        "posts": "帖子"
+      },
+      "actions": {
+        "join": "加入",
+        "new_post": "新帖子"
+      }
+    },
+    "post": {
+      "create": {
+        "select_community": "您想在哪里发布？",
+        "placeholder": "有什么想法？",
+        "anonymous": {
+          "label": "匿名发布？",
+          "description_on": "您正在使用零知识证明匿名发布",
+          "description_off": "您正在以{{username}}的身份发布"
+        },
+        "personal_page": "我的页面",
+        "badges": "徽章",
+        "add_badges": "添加徽章"
+      },
+      "loading": "加载帖子中",
+      "not_found": "未找到帖子",
+      "not_found_message": "找不到您要查找的帖子",
+      "drafts": "草稿"
+    },
+    "badges": {
+      "title": "我的徽章",
+      "description": "在这里管理和自定义您的徽章。您可以管理可见性、添加新徽章、重新验证或删除不再需要的徽章。",
+      "debug_title": "我的徽章",
+      "headers": {
+        "badge": "徽章",
+        "protocol": "协议",
+        "visibility": "可见性",
+        "verified": "已验证"
+      },
+      "add_new": {
+        "title": "添加新徽章",
+        "success": "验证流程已启动！",
+        "steps": {
+          "badge_type": {
+            "label": "徽章类型",
+            "description": "选择您要验证的徽章"
+          },
+          "protocols": {
+            "label": "协议",
+            "description": "选择一个或多个协议来验证此徽章"
+          },
+          "run": {
+            "label": "运行验证",
+            "description": "使用选定的协议验证您的徽章"
+          }
+        },
+        "selected_config": {
+          "title": "已选配置",
+          "badge": "徽章：",
+          "protocols": "协议：",
+          "verify": "验证徽章",
+          "verifying": "验证中..."
+        }
+      },
+      "visibility": {
+        "public": "公开",
+        "private": "私密"
+      },
+      "actions": {
+        "delete": "删除",
+        "add_new": "添加新徽章"
+      }
+    }
+  },
+  "sidebar": {
+    "my_communities": "我的社区",
+    "no_communities": "尚未加入任何社区",
+    "theme": {
+      "light": "浅色模式",
+      "dark": "深色模式",
+      "toggle": "切换主题"
+    }
+  },
+  "welcome": "欢迎来到 Deforum",
+  "login": {
+    "title": "登录",
+    "description": "选择您偏好的登录方式",
+    "username": "用户名",
+    "usernamePlaceholder": "输入您的用户名",
+    "useExistingPasskey": "使用现有通行密钥",
+    "createNewAccount": "创建新账户",
+    "loading": "加载中...",
+    "continueWithPasskey": "使用通行密钥继续",
+    "usernameTaken": "用户名\"{{username}}\"已被使用",
+    "usernameRequired": "请选择用户名",
+    "passkeyNotFound": "未找到通行密钥。创建新账户？",
+    "passkeyLoginFailed": "通行密钥登录失败",
+    "passkeyCreationCancelled": "通行密钥创建已取消",
+    "registrationFailed": "注册失败。请重试。"
+  },
+  "common": {
+    "loading": "加载中...",
+    "user_not_found": "未找到用户"
+  }
+}

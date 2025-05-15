@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:23-alpine
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ ENV DB_HOST=db \
     DB_NAME=deforum \
     DB_USER=postgres \
     DB_PASSWORD=postgres \
-    DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME} 
+    DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
 
 # Copy root config files
 COPY package.json yarn.lock tsconfig.json ./
@@ -50,8 +50,8 @@ RUN cd apps/api && yarn build
 # Remove dev dependencies after build
 RUN yarn install --frozen-lockfile --production=true
 
-EXPOSE 5000
+EXPOSE 3002
 
 WORKDIR /app/apps/api
 
-CMD ["/app/apps/api/start.sh"] 
+CMD ["/app/apps/api/start.sh"]

@@ -1,8 +1,10 @@
-import { classed } from "@tw-classed/react";
-import type { FC } from "react";
-import * as AvatarPrimitive from "@radix-ui/react-avatar";
-import { cn } from "@/lib/utils";
-import { LucideIcon } from "lucide-react";
+import { classed } from "@tw-classed/react"
+import type { FC } from "react"
+import * as AvatarPrimitive from "@radix-ui/react-avatar"
+import { cn } from "@/lib/utils"
+import { LucideIcon } from "lucide-react"
+import { useNavigate } from "@tanstack/react-router"
+import { useTranslation } from "react-i18next"
 
 const RandomBackgroundColors = [
   "bg-red-600",
@@ -17,7 +19,7 @@ const RandomBackgroundColors = [
   "bg-amber-600",
   "bg-fuchsia-600",
   "bg-indigo-600",
-];
+]
 
 const AvatarBase = classed(
   AvatarPrimitive.Root,
@@ -35,25 +37,26 @@ const AvatarBase = classed(
       size: "md",
     },
   },
-);
+)
 
 const AvatarImage = classed(
   AvatarPrimitive.Image,
   "object-cover aspect-square h-full w-full",
-);
+)
 
 const AvatarFallback = classed(
   AvatarPrimitive.Fallback,
-  "flex h-full w-full items-center justify-center",
-);
+  "flex h-full w-full items-center justify-center text-white font-medium",
+)
 
 type AvatarProps = React.ComponentProps<typeof AvatarBase> & {
-  src?: string;
-  username?: string | null;
-  hasRandomBackground?: boolean;
-  className?: string;
-  icon?: LucideIcon;
-};
+  src?: string
+  username?: string | null
+  hasRandomBackground?: boolean
+  className?: string
+  icon?: LucideIcon
+  linkToSettings?: boolean
+}
 
 export const Avatar: FC<AvatarProps> = ({
   src,
@@ -62,22 +65,46 @@ export const Avatar: FC<AvatarProps> = ({
   className,
   children = null,
   icon,
+  linkToSettings,
   ...props
 }) => {
-
-  const Icon = icon;
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const Icon = icon
   const fallbackBackground =
     hasRandomBackground && username
       ? RandomBackgroundColors[
-          username.charCodeAt(0) % RandomBackgroundColors.length
-        ]
-      : "bg-base-muted";
+      username.charCodeAt(0) % RandomBackgroundColors.length
+      ]
+      : "bg-base-muted"
 
-  return (
-    <AvatarBase {...props} className={cn(className)}>
-      <AvatarImage src={src} />
-      <AvatarFallback className={fallbackBackground} />
+  // Get initial for fallback text
+  const fallbackText = username ? username.charAt(0).toUpperCase() : ''
+
+  const handleClick = () => {
+    if (linkToSettings) {
+      navigate({ to: '/settings' })
+    }
+  }
+
+  const avatarContent = (
+    <AvatarBase
+      {...props}
+      className={cn(className, "cursor-pointer hover:opacity-80 transition-opacity")}
+      onClick={handleClick}
+    >
+      <AvatarImage src={src} alt={username || ""} />
+      <AvatarFallback className={cn(fallbackBackground, {
+        'text-xs': props.size === 'sm',
+        'text-base': props.size === 'md',
+        'text-lg': props.size === 'lg',
+        'text-xl': props.size === 'xl',
+      })}>
+        {fallbackText}
+      </AvatarFallback>
       {Icon && <Icon className="size-3 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />}
     </AvatarBase>
-  );
-};
+  )
+
+  return avatarContent
+}

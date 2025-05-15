@@ -7,8 +7,9 @@ Deforum is a community platform (similar to Reddit) with a unique verification s
 ## Core Features
 
 ### Badge System
+
 - **Badge Types**: Badges represent verified credentials (e.g., email ownership, age verification)
-- **Privacy Control**: 
+- **Privacy Control**
   - Badges can be marked as private or public by default (`privateByDefault` setting)
   - Users can override the visibility of their individual badges
   - Private badges are only visible to community moderators when required
@@ -22,7 +23,9 @@ Deforum is a community platform (similar to Reddit) with a unique verification s
     - Age verification badges never expire
 
 ### Badge Definitions
+
 Badge definitions represent the types of badges that can be issued to users. Each badge definition:
+
 - Has a unique name and slug
 - Can be associated with multiple protocols
 - Can have custom metadata
@@ -30,12 +33,15 @@ Badge definitions represent the types of badges that can be issued to users. Eac
 - Can have an expiration period
 
 The relationship between protocols and badge definitions is many-to-many, meaning:
+
 - A protocol can be used to create multiple types of badges
 - A badge definition can use multiple protocols for verification
 - Each protocol-badge relationship can have its own metadata
 
 ### Badge Credentials
+
 Badge credentials are instances of badges issued to users. Each credential:
+
 - Links a user to a badge definition
 - Has a verification timestamp
 - Can be public or private
@@ -44,7 +50,9 @@ Badge credentials are instances of badges issued to users. Each credential:
 - Can be revoked
 
 ### Posts and Discussions
-- **Anonymous Posting**:
+
+- **Anonymous Posting**
+
   - Users can choose to post anonymously (`isAnon: true`)
   - Anonymous posts maintain accountability through private nullifier proofs
   - Original poster can prove ownership while maintaining privacy
@@ -59,7 +67,8 @@ Badge credentials are instances of badges issued to users. Each credential:
   - Format: `{ "emoji": { "count": number, "nullifiers": string[] } }`
 
 ### Communities
-- **Access Control**:
+
+- **Access Control**
   - Communities can require specific badges for membership
   - Badge requirements can be public or private
   - Support for domain-specific requirements (e.g., @company.com emails)
@@ -80,7 +89,7 @@ sequenceDiagram
     %% Frontend to Backend communication via tRPC
     Frontend->>Backend: tRPC Request
     Backend->>Frontend: tRPC Response
-    
+
     %% Backend to DB (via Prisma)
     Backend->>DB: Prisma ORM Queries
     DB->>Backend: Query Results
@@ -532,4 +541,3 @@ Badge credentials are instances of badges issued to users. Each credential:
 - Maintains proper indexing for efficient queries
 - Handles cascading deletes appropriately
 - Supports bulk operations for multiple protocols
- 

@@ -2,7 +2,7 @@ services:
   db:
     image: postgres:15-alpine
     ports:
-      - "54322:5432"
+      - '54322:5432'
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -10,7 +10,7 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -19,19 +19,19 @@ services:
       - deforum-internal
 
   backend:
-    build: 
+    build:
       context: .
       dockerfile: apps/api/Dockerfile
-    ports:
-      - "5000:5000"
     stop_grace_period: 5s
     stop_signal: SIGTERM
     command: /app/apps/api/start.sh
+    ports:
+      - ${BACKEND_PORT}:3002
     depends_on:
       db:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+      DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}
       NODE_ENV: ${NODE_ENV}
     env_file:
       - .env
@@ -54,7 +54,7 @@ services:
         - action: rebuild
           path: ./apps/api/package.json
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"]
+      test: ['CMD-SHELL', 'curl -f http://localhost:${BACKEND_PORT}/health || exit 1']
       interval: 15s
       timeout: 5s
       retries: 3
@@ -63,16 +63,16 @@ services:
       - deforum-internal
 
   frontend:
-    build: 
+    build:
       context: .
       dockerfile: apps/client/Dockerfile
     ports:
-      - "3000:3000"
+      - ${FRONTEND_PORT}:3000
     depends_on:
       backend:
         condition: service_healthy
     environment:
-      VITE_API_URL: http://backend:5000/api
+      VITE_API_URL: http://localhost:${BACKEND_PORT}
     env_file:
       - .env
     develop:
@@ -105,4 +105,4 @@ volumes:
 
 networks:
   deforum-internal:
-    driver: bridge 
+    driver: bridge

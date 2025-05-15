@@ -1,10 +1,17 @@
-import { useNavigate } from "@tanstack/react-router";
-import { useCallback } from "react";
+import { useGlobalContext } from '@/contexts/GlobalContext';
+import { trpc } from '../lib/trpc';
 
 export const useSignout = () => {
-  const navigate = useNavigate();
+  const { setIsLoggedIn } = useGlobalContext();
+  const utils = trpc.useUtils();
 
-  return useCallback(() => {
-    navigate({ to: "/" });
-  }, [navigate]);
+  console.debug('[useSignout] Handling sign out');
+  const signOut = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    setIsLoggedIn(false);
+    utils.auth.me.invalidate();
+  };
+
+  return { signOut };
 };

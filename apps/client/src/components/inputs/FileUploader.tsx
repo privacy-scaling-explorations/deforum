@@ -1,74 +1,66 @@
-"use client";
+"use client"
 
-import type React from "react";
+import type React from "react"
 
-import { useState, useRef, useEffect } from "react";
-import { Upload } from "lucide-react";
-import { classed } from "@tw-classed/react";
-import { Button } from "@/components/ui/Button";
+import { useState, useRef, useEffect } from "react"
+import { Upload } from "lucide-react"
+import { classed } from "@tw-classed/react"
+import { Button } from "@/components/ui/Button"
 
 const ImagePreview = classed.div(
   "size-[84px] rounded-full border border-dashed border-gray duration-200 flex items-center justify-center cursor-pointer bg-white-light hover:bg-white-dark transition-colors overflow-hidden",
-);
+)
 
-export const FileUploader = () => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+interface FileUploaderProps {
+  onFileSelect: (file: File) => void
+  accept?: string
+  maxSize?: number
+}
+
+export const FileUploader = ({ onFileSelect, accept = "image/*", maxSize }: FileUploaderProps) => {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     return () => {
       if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
+        URL.revokeObjectURL(previewUrl)
       }
-    };
-  }, [previewUrl]);
+    }
+  }, [previewUrl])
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      setSelectedFile(file);
+      const file = e.target.files[0]
 
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
+      if (maxSize && file.size > maxSize) {
+        alert(`File size must be less than ${maxSize / (1024 * 1024)}MB`)
+        return
       }
+
+      setSelectedFile(file)
+      onFileSelect(file)
 
       if (file.type.startsWith("image/")) {
-        const url = URL.createObjectURL(file);
-        setPreviewUrl(url);
+        const url = URL.createObjectURL(file)
+        setPreviewUrl(url)
       } else {
-        setPreviewUrl(null);
+        setPreviewUrl(null)
       }
     }
-  };
-
-  const handleUpload = () => {
-    if (!selectedFile) {
-      alert("Please select a file first");
-      return;
-    }
-
-    console.log("Uploading file:", selectedFile);
-
-    // Example implementation:
-    // const formData = new FormData()
-    // formData.append("file", selectedFile)
-    // fetch("/api/upload", {
-    //   method: "POST",
-    //   body: formData,
-    // })
-  };
+  }
 
   const handleCircleClick = () => {
-    fileInputRef.current?.click();
-  };
+    fileInputRef.current?.click()
+  }
 
   return (
     <div className="flex items-center gap-4">
       <ImagePreview onClick={handleCircleClick}>
         {previewUrl ? (
           <img
-            src={previewUrl || "/placeholder.svg"}
+            src={previewUrl}
             alt="Preview"
             className="w-full h-full object-cover"
           />
@@ -85,7 +77,7 @@ export const FileUploader = () => {
             onChange={handleFileChange}
             className="sr-only"
             id="file-upload"
-            accept="image/*"
+            accept={accept}
           />
           <label
             htmlFor="file-upload"
@@ -97,13 +89,7 @@ export const FileUploader = () => {
             </span>
           </label>
         </div>
-
-        <div className="div">
-          <Button icon={Upload} onClick={handleUpload}>
-            Upload
-          </Button>
-        </div>
       </div>
     </div>
-  );
-};
+  )
+}

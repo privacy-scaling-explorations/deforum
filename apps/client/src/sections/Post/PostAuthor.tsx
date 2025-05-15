@@ -1,20 +1,20 @@
-import { Avatar } from "@/components/Avatar";
-import { TimeSince } from "@/components/ui/TimeSince";
+import { Avatar } from "@/components/Avatar"
+import { TimeSince } from "@/components/ui/TimeSince"
 import {
   PostAuthorSchema,
   PostBadgeSchema,
-} from "@/shared/schemas/post.schema";
-import { VenetianMask as Mask } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Link } from "@tanstack/react-router";
-import { Mail as MailIcon } from "lucide-react";
+} from "@/shared/schemas/post.schema"
+import { VenetianMask as Mask } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { Link } from "@tanstack/react-router"
+import { Mail as MailIcon } from "lucide-react"
 interface PostAuthorProps {
-  author: PostAuthorSchema;
-  createdAt?: string;
-  titleSize?: "sm" | "lg";
-  avatarClassName?: string;
-  className?: string;
-  badges?: PostBadgeSchema[];
+  author: PostAuthorSchema
+  createdAt?: string
+  titleSize?: "sm" | "lg"
+  avatarClassName?: string
+  className?: string
+  badges?: PostBadgeSchema[]
 }
 
 export const PostAuthor = ({
@@ -34,7 +34,7 @@ export const PostAuthor = ({
         icon={author.isAnon ? Mask : undefined}
       />
       {author?.username && !author.isAnon && (
-        <Link to={`/user/${author.username}` as any}>
+        <Link to={`/u/${author.username}` as any}>
           <span className="text-card-foreground font-inter font-medium text-sm line-clamp-2 lg:line-clamp-1 hover:underline">
             {author.username}
           </span>
@@ -58,5 +58,5 @@ export const PostAuthor = ({
       )}
       {createdAt && <TimeSince isoDateTime={createdAt} />}
     </div>
-  );
-};
+  )
+}

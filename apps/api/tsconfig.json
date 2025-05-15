@@ -12,18 +12,38 @@
     "rootDir": "./src",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@deforum/shared": ["../shared/src"],
-      "@deforum/shared/*": ["../shared/src/*"]
+      "@/*": [
+        "src/*"
+      ],
+      "@deforum/shared": [
+        "../shared/src"
+      ],
+      "@deforum/shared/*": [
+        "../shared/src/*"
+      ]
     },
-    "typeRoots": ["./node_modules/@types", "../../node_modules/@types"],
-    "types": ["node"],
-    "lib": ["ES2022"],
+    "typeRoots": [
+      "./node_modules/@types",
+      "../../node_modules/@types"
+    ],
+    "types": [
+      "node"
+    ],
+    "lib": [
+      "ES2022"
+    ],
     "noImplicitAny": false
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"],
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
   "references": [
-    { "path": "../shared" }
+    {
+      "path": "../shared"
+    }
   ]
 }

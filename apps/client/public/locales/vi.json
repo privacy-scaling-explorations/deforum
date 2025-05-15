@@ -1,0 +1,254 @@
+{
+  "actions": {
+    "cancel": "Hủy",
+    "create": "Tạo",
+    "delete": "Xóa",
+    "edit": "Chỉnh sửa",
+    "login": "Đăng nhập",
+    "logout": "Đăng xuất",
+    "save": "Lưu",
+    "search": "Tìm kiếm...",
+    "submit": "Gửi",
+    "join": "Tham gia",
+    "new_post": "Bài đăng mới",
+    "sign_out": "Đăng xuất",
+    "edit_profile": "Chỉnh sửa hồ sơ",
+    "generate_recovery": "Tạo mã khôi phục",
+    "save_draft": "Lưu nháp",
+    "post": "Đăng",
+    "add_badge": "Thêm huy hiệu mới",
+    "run": "Chạy"
+  },
+  "auth": {
+    "google_signin": {
+      "title": "Đăng nhập Google Riêng tư",
+      "description": "Sử dụng giao thức Stealth.notes để chứng minh quyền sở hữu tên miền email mà không tiết lộ danh tính của bạn với máy chủ.",
+      "read_more": "Đọc thêm",
+      "button": "Đăng nhập bằng Google"
+    }
+  },
+  "brand": {
+    "name": "forum",
+    "prefix": "de"
+  },
+  "header": {
+    "search_placeholder": "Tìm kiếm...",
+    "menu": {
+      "open": "Mở menu",
+      "close": "Đóng menu"
+    }
+  },
+  "navigation": {
+    "home": "Trang chủ",
+    "profile": "Hồ sơ",
+    "settings": "Cài đặt"
+  },
+  "pages": {
+    "settings": {
+      "title": "Cài đặt",
+      "complete_profile": "Hoàn thành hồ sơ của bạn để cải thiện trải nghiệm!",
+      "dark_mode": "Chế độ tối",
+      "avatar": {
+        "title": "Ảnh đại diện",
+        "description": "Hình ảnh mà mọi người thấy khi xem hồ sơ của bạn."
+      },
+      "basic_info": {
+        "title": "Thông tin cơ bản",
+        "description": "Xem và cập nhật thông tin cá nhân của bạn",
+        "username": {
+          "label": "Tên người dùng",
+          "placeholder": "Tên người dùng (ví dụ: Minh123)"
+        },
+        "website": {
+          "label": "Trang web",
+          "placeholder": "https://"
+        },
+        "bio": {
+          "label": "Tiểu sử",
+          "placeholder": "Cho cộng đồng biết về bạn."
+        },
+        "home_page": {
+          "label": "Trang chủ mặc định",
+          "options": {
+            "home": "Trang chủ",
+            "profile": "Hồ sơ"
+          }
+        },
+        "language": {
+          "label": "Ngôn ngữ",
+          "options": {
+            "en": "Tiếng Anh",
+            "es": "Tiếng Tây Ban Nha",
+            "ko": "Tiếng Hàn",
+            "zh": "Tiếng Trung",
+            "de": "Tiếng Đức",
+            "fr": "Tiếng Pháp",
+            "ru": "Tiếng Nga",
+            "hi": "Tiếng Hindi",
+            "bn": "Tiếng Bengali",
+            "pt": "Tiếng Bồ Đào Nha",
+            "id": "Tiếng Indonesia",
+            "ur": "Tiếng Urdu",
+            "ja": "Tiếng Nhật",
+            "ar": "Tiếng Ả Rập",
+            "vi": "Tiếng Việt"
+          }
+        }
+      },
+      "sessions": {
+        "title": "Phiên đang hoạt động",
+        "description": "Các thiết bị có phiên đang hoạt động hiện tại.",
+        "headers": {
+          "session": "Phiên",
+          "device": "Thiết bị"
+        }
+      },
+      "passkeys": {
+        "title": "Khóa mật khẩu",
+        "description": "Các khóa mật khẩu đã đăng ký trong tài khoản của bạn.",
+        "headers": {
+          "credential": "Khóa mật khẩu",
+          "last_used": "Lần sử dụng cuối"
+        }
+      }
+    },
+    "profile": {
+      "title": "Hồ sơ",
+      "recovery_warning": "Bạn chưa thiết lập mã khôi phục. Nếu mất mật khẩu, bạn sẽ không thể khôi phục tài khoản.",
+      "user_type": "Tiêu chuẩn",
+      "uid_prefix": "uid:",
+      "created_prefix": "Ngày tạo",
+      "no_bio": "Không có tiểu sử",
+      "no_posts": "Chưa có bài đăng nào",
+      "no_public_key": "Không có khóa công khai",
+      "posts": {
+        "title": "Bài đăng"
+      },
+      "badges": {
+        "title": "Huy hiệu của {{username}}",
+        "empty": "Chưa có huy hiệu nào"
+      },
+      "stats": {
+        "following": "Đang theo dõi",
+        "followers": "Người theo dõi",
+        "posts": "Bài đăng",
+        "solos": "Bài đăng riêng",
+        "feeds": "Bảng tin",
+        "comments": "Bình luận",
+        "communities": "Cộng đồng",
+        "badges": "Huy hiệu"
+      }
+    },
+    "notifications": {
+      "title": "Thông báo",
+      "empty": "Hiện không có thông báo nào",
+      "not_implemented": "Tính năng thông báo sắp ra mắt"
+    },
+    "communities": {
+      "title": "Khám phá cộng đồng",
+      "empty": "Không tìm thấy cộng đồng nào",
+      "not_found": "Không tìm thấy cộng đồng: {{slug}}",
+      "required_badges": "Huy hiệu yêu cầu",
+      "stats": {
+        "members": "Thành viên",
+        "posts": "Bài đăng"
+      },
+      "actions": {
+        "join": "Tham gia",
+        "new_post": "Bài đăng mới"
+      }
+    },
+    "post": {
+      "create": {
+        "select_community": "Bạn muốn đăng ở đâu?",
+        "placeholder": "Bạn đang nghĩ gì?",
+        "anonymous": {
+          "label": "Bạn có muốn đăng ẩn danh không?",
+          "description_on": "Bạn đang đăng ẩn danh bằng Zero Knowledge",
+          "description_off": "Bạn đang đăng với tên {{username}}"
+        },
+        "personal_page": "Trang cá nhân",
+        "badges": "Huy hiệu",
+        "add_badges": "Thêm huy hiệu"
+      },
+      "loading": "Đang tải bài đăng",
+      "not_found": "Không tìm thấy bài đăng",
+      "not_found_message": "Không tìm thấy bài đăng bạn đang tìm kiếm",
+      "drafts": "Bản nháp"
+    },
+    "badges": {
+      "title": "Huy hiệu của tôi",
+      "description": "Quản lý và tùy chỉnh huy hiệu của bạn tại đây. Quản lý cài đặt hiển thị, thêm huy hiệu mới, xác minh lại hoặc xóa huy hiệu không mong muốn.",
+      "debug_title": "Huy hiệu của tôi",
+      "headers": {
+        "badge": "Huy hiệu",
+        "protocol": "Giao thức",
+        "visibility": "Hiển thị",
+        "verified": "Đã xác minh"
+      },
+      "add_new": {
+        "title": "Thêm huy hiệu mới",
+        "success": "Đã bắt đầu quá trình xác minh!",
+        "steps": {
+          "badge_type": {
+            "label": "Loại huy hiệu",
+            "description": "Chọn huy hiệu bạn muốn xác minh"
+          },
+          "protocols": {
+            "label": "Giao thức",
+            "description": "Chọn một hoặc nhiều giao thức để xác minh huy hiệu này"
+          },
+          "run": {
+            "label": "Chạy xác minh",
+            "description": "Xác minh huy hiệu bằng các giao thức đã chọn"
+          }
+        },
+        "selected_config": {
+          "title": "Cấu hình đã chọn",
+          "badge": "Huy hiệu:",
+          "protocols": "Giao thức:",
+          "verify": "Xác minh huy hiệu",
+          "verifying": "Đang xác minh..."
+        }
+      },
+      "visibility": {
+        "public": "Công khai",
+        "private": "Riêng tư"
+      },
+      "actions": {
+        "delete": "Xóa",
+        "add_new": "Thêm huy hiệu mới"
+      }
+    }
+  },
+  "sidebar": {
+    "my_communities": "Cộng đồng của tôi",
+    "no_communities": "Bạn chưa tham gia cộng đồng nào",
+    "theme": {
+      "light": "Chế độ sáng",
+      "dark": "Chế độ tối",
+      "toggle": "Chuyển đổi giao diện"
+    }
+  },
+  "welcome": "Chào mừng đến với Deforum",
+  "login": {
+    "title": "Đăng nhập",
+    "description": "Chọn phương thức đăng nhập ưa thích của bạn",
+    "username": "Tên người dùng",
+    "usernamePlaceholder": "Nhập tên người dùng",
+    "useExistingPasskey": "Sử dụng khóa mật khẩu hiện có",
+    "createNewAccount": "Tạo tài khoản mới",
+    "loading": "Đang tải...",
+    "continueWithPasskey": "Tiếp tục với khóa mật khẩu",
+    "usernameTaken": "Tên người dùng '{{username}}' đã được sử dụng",
+    "usernameRequired": "Vui lòng chọn tên người dùng",
+    "passkeyNotFound": "Không tìm thấy khóa mật khẩu. Bạn có muốn tạo tài khoản mới không?",
+    "passkeyLoginFailed": "Đăng nhập bằng khóa mật khẩu thất bại",
+    "passkeyCreationCancelled": "Đã hủy tạo khóa mật khẩu",
+    "registrationFailed": "Đăng ký thất bại. Vui lòng thử lại."
+  },
+  "common": {
+    "loading": "Đang tải...",
+    "user_not_found": "Không tìm thấy người dùng"
+  }
+}

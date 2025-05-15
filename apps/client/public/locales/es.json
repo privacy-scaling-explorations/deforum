@@ -13,7 +13,7 @@
     "new_post": "Nueva Publicación",
     "sign_out": "Cerrar Sesión",
     "edit_profile": "Editar Perfil",
-    "generate_recovery": "Generar código de recuperación",
+    "generate_recovery": "Generar Código de Recuperación",
     "save_draft": "Guardar como borrador",
     "post": "Publicar",
     "add_badge": "Agregar nueva insignia",
@@ -21,8 +21,8 @@
   },
   "auth": {
     "google_signin": {
-      "title": "Inicio de sesión privado con Google",
-      "description": "Utilizaremos el protocolo Stealth.notes como una forma de iniciar sesión y probar la propiedad de su dominio de correo electrónico de manera privada sin que nuestro servidor sepa quién es usted.",
+      "title": "Inicio de Sesión Privado con Google",
+      "description": "Usaremos el protocolo Stealth.notes como una forma de iniciar sesión y probar la propiedad de tu dominio de correo electrónico de manera privada sin que nuestro servidor sepa quién eres.",
       "read_more": "Leer más aquí",
       "button": "Iniciar sesión con Google"
     }
@@ -46,7 +46,7 @@
   "pages": {
     "settings": {
       "title": "Configuración",
-      "complete_profile": "¡Complete su perfil para mejorar su experiencia!",
+      "complete_profile": "¡Por favor completa tu perfil para mejorar tu experiencia!",
       "dark_mode": "Modo oscuro",
       "avatar": {
         "title": "Avatar",
@@ -57,18 +57,18 @@
         "description": "Ver y actualizar tus datos personales",
         "username": {
           "label": "Nombre de usuario",
-          "placeholder": "Tu nombre de usuario (ej., JohnDoe123)"
+          "placeholder": "Tu nombre de usuario (ej., Juan123)"
         },
-        "url": {
+        "website": {
           "label": "URL",
           "placeholder": "https://"
         },
-        "about": {
+        "bio": {
           "label": "Acerca de",
-          "placeholder": "Cuéntale algo sobre ti a la comunidad."
+          "placeholder": "Cuéntanos un poco sobre ti a la comunidad."
         },
         "home_page": {
-          "label": "Página de inicio predeterminada",
+          "label": "Página de Inicio Predeterminada",
           "options": {
             "home": "Inicio",
             "profile": "Perfil"
@@ -83,11 +83,19 @@
         }
       },
       "sessions": {
-        "title": "Sesiones abiertas",
-        "description": "Actualiza tu contraseña para mantener tu cuenta segura.",
+        "title": "Sesiones Abiertas",
+        "description": "Dispositivos que actualmente tienen sesiones.",
         "headers": {
           "session": "Sesión",
           "device": "Dispositivo"
+        }
+      },
+      "passkeys": {
+        "title": "Claves de Acceso",
+        "description": "Claves de acceso registradas en tu cuenta.",
+        "headers": {
+          "credential": "Clave de Acceso",
+          "last_used": "Último Uso"
         }
       }
     },
@@ -97,6 +105,16 @@
       "user_type": "Estándar",
       "uid_prefix": "uid:",
       "created_prefix": "Creado",
+      "no_bio": "Sin biografía",
+      "no_posts": "Aún no hay publicaciones",
+      "no_public_key": "Sin clave pública",
+      "posts": {
+        "title": "Publicaciones"
+      },
+      "badges": {
+        "title": "Insignias de {{username}}",
+        "empty": "Aún no hay insignias"
+      },
       "stats": {
         "following": "Siguiendo",
         "followers": "Seguidores",
@@ -104,16 +122,51 @@
         "solos": "Solos",
         "feeds": "Feeds",
         "comments": "Comentarios",
-        "communities": "Comunidades"
+        "communities": "Comunidades",
+        "badges": "Insignias"
       }
     },
     "notifications": {
       "title": "Notificaciones",
-      "empty": "No hay notificaciones en este momento"
+      "empty": "No hay notificaciones en este momento",
+      "not_implemented": "La función de notificaciones estará disponible pronto"
+    },
+    "communities": {
+      "title": "Explorar Comunidades",
+      "empty": "No se encontraron comunidades",
+      "not_found": "Comunidad no encontrada: {{slug}}",
+      "required_badges": "Insignias Requeridas",
+      "stats": {
+        "members": "Miembros",
+        "posts": "Publicaciones"
+      },
+      "actions": {
+        "join": "Unirse",
+        "new_post": "Nueva Publicación"
+      }
+    },
+    "post": {
+      "create": {
+        "select_community": "¿Dónde quieres publicar?",
+        "placeholder": "¿Qué tienes en mente?",
+        "anonymous": {
+          "label": "¿Publicar de forma anónima?",
+          "description_on": "Estás publicando de forma anónima usando Zero Knowledge",
+          "description_off": "Estás publicando como {{username}}"
+        },
+        "personal_page": "Mi Página",
+        "badges": "Insignias",
+        "add_badges": "Agregar insignias"
+      },
+      "loading": "Cargando publicación",
+      "not_found": "Publicación no encontrada",
+      "not_found_message": "No se pudo encontrar la publicación que buscas",
+      "drafts": "Borradores"
     },
     "badges": {
       "title": "Mis Insignias",
       "description": "Administra y personaliza tus insignias aquí. Puedes gestionar la visibilidad, agregar nuevas insignias, reverificar o eliminar las que ya no desees.",
+      "debug_title": "Mis Insignias",
       "headers": {
         "badge": "Insignia",
         "protocol": "Protocolo",
@@ -122,35 +175,67 @@
       },
       "add_new": {
         "title": "Agregar Nueva Insignia",
-        "success": "¡Proceso de verificación iniciado!"
-      }
-    },
-    "communities": {
-      "title": "Explorar Comunidades",
-      "empty": "No se encontraron comunidades"
-    },
-    "post": {
-      "create": {
-        "select_community": "Seleccionar una comunidad",
-        "placeholder": "¿Tienes algo en mente? ¡Escríbelo aquí!",
-        "anonymous": {
-          "label": "¿Publicar como anónimo?",
-          "description_on": "Tu nombre no se mostrará",
-          "description_off": "Estás publicando como {{username}}"
+        "success": "¡Proceso de verificación iniciado!",
+        "steps": {
+          "badge_type": {
+            "label": "Tipo de Insignia",
+            "description": "Selecciona la Insignia que deseas verificar"
+          },
+          "protocols": {
+            "label": "Protocolos",
+            "description": "Selecciona uno o más protocolos para verificar esta insignia"
+          },
+          "run": {
+            "label": "Ejecutar Verificación",
+            "description": "Verifica tu insignia con los protocolos seleccionados"
+          }
+        },
+        "selected_config": {
+          "title": "Configuración Seleccionada",
+          "badge": "Insignia:",
+          "protocols": "Protocolos:",
+          "verify": "Verificar Insignia",
+          "verifying": "Verificando..."
         }
       },
-      "loading": "Cargando publicación",
-      "not_found": "Publicación no encontrada",
-      "not_found_message": "La publicación que estás buscando no se pudo encontrar"
+      "visibility": {
+        "public": "Público",
+        "private": "Privado"
+      },
+      "actions": {
+        "delete": "Eliminar",
+        "add_new": "Agregar nueva insignia"
+      }
     }
   },
   "sidebar": {
     "joined_communities": "Mis comunidades",
+    "no_communities": "Aún no te has unido a ninguna comunidad",
     "theme": {
-      "light": "Claro",
-      "dark": "Oscuro",
+      "light": "Modo claro",
+      "dark": "Modo oscuro",
       "toggle": "Cambiar tema"
     }
   },
-  "welcome": "Bienvenido a Deforum"
-} 
+  "welcome": "Bienvenido a Deforum",
+  "login": {
+    "title": "Iniciar Sesión",
+    "description": "Elige tu método de inicio de sesión preferido",
+    "username": "Nombre de usuario",
+    "usernamePlaceholder": "Ingresa tu nombre de usuario",
+    "useExistingPasskey": "Usar Clave de Acceso Existente",
+    "createNewAccount": "Crear Nueva Cuenta",
+    "loading": "Cargando...",
+    "continueWithPasskey": "Continuar con Clave de Acceso",
+    "usernameTaken": "El nombre de usuario \"{{username}}\" ya está en uso",
+    "usernameRequired": "Por favor elige un nombre de usuario",
+    "passkeyNotFound": "Clave de acceso no encontrada. ¿Crear una nueva cuenta?",
+    "passkeyLoginFailed": "Error al iniciar sesión con clave de acceso",
+    "passkeyCreationCancelled": "Creación de clave de acceso cancelada",
+    "registrationFailed": "Error en el registro. Por favor intenta de nuevo."
+  },
+  "common": {
+    "loading": "Cargando...",
+    "user_not_found": "Usuario no encontrado"
+  }
+}

@@ -13,7 +13,7 @@
     "new_post": "New Post",
     "sign_out": "Sign Out",
     "edit_profile": "Edit Profile",
-    "generate_recovery": "Generate recovery code",
+    "generate_recovery": "Generate Recovery Code",
     "save_draft": "Save as draft",
     "post": "Post",
     "add_badge": "Add new badge",
@@ -59,11 +59,11 @@
           "label": "Username",
           "placeholder": "Your username (e.g., JohnDoe123)"
         },
-        "url": {
+        "website": {
           "label": "URL",
           "placeholder": "https://"
         },
-        "about": {
+        "bio": {
           "label": "About",
           "placeholder": "Tell us a little about yourself to the community."
         },
@@ -83,11 +83,19 @@
         }
       },
       "sessions": {
-        "title": "Open sessions",
-        "description": "Update your password to keep your account secure.",
+        "title": "Open Sessions",
+        "description": "Devices that currently have sessions.",
         "headers": {
           "session": "Session",
           "device": "Device"
+        }
+      },
+      "passkeys": {
+        "title": "Passkeys",
+        "description": "Passkeys registered to your account.",
+        "headers": {
+          "credential": "Passkey",
+          "last_used": "Last Used"
         }
       }
     },
@@ -97,6 +105,16 @@
       "user_type": "Standard",
       "uid_prefix": "uid:",
       "created_prefix": "Created",
+      "no_bio": "No bio provided",
+      "no_posts": "No posts yet",
+      "no_public_key": "No public key",
+      "posts": {
+        "title": "Posts"
+      },
+      "badges": {
+        "title": "{{username}}'s Badges",
+        "empty": "No badges yet"
+      },
       "stats": {
         "following": "Following",
         "followers": "Followers",
@@ -104,16 +122,51 @@
         "solos": "Solos",
         "feeds": "Feeds",
         "comments": "Comments",
-        "communities": "Communities"
+        "communities": "Communities",
+        "badges": "Badges"
       }
     },
     "notifications": {
       "title": "Notifications",
-      "empty": "No notifications at this time"
+      "empty": "No notifications at this time",
+      "not_implemented": "Notifications feature is coming soon"
+    },
+    "communities": {
+      "title": "Explore Communities",
+      "empty": "No communities found",
+      "not_found": "Community not found: {{slug}}",
+      "required_badges": "Required Badges",
+      "stats": {
+        "members": "Members",
+        "posts": "Posts"
+      },
+      "actions": {
+        "join": "Join",
+        "new_post": "New Post"
+      }
+    },
+    "post": {
+      "create": {
+        "select_community": "Where do you want to post?",
+        "placeholder": "What's on your mind?",
+        "anonymous": {
+          "label": "Post anonymously?",
+          "description_on": "You are posting anonymously using Zero Knowledge",
+          "description_off": "You are posting as {{username}}"
+        },
+        "personal_page": "My Page",
+        "badges": "Badges",
+        "add_badges": "Add badges"
+      },
+      "loading": "Loading post",
+      "not_found": "Post not found",
+      "not_found_message": "The post you are looking for could not be found",
+      "drafts": "Drafts"
     },
     "badges": {
       "title": "My Badges",
       "description": "Manage and customize your badges here. You can manage visibility, add new badges, reverify or remove ones you no longer want.",
+      "debug_title": "My Badges",
       "headers": {
         "badge": "Badge",
         "protocol": "Protocol",
@@ -122,36 +175,67 @@
       },
       "add_new": {
         "title": "Add New Badge",
-        "success": "Verification process initiated!"
-      }
-    },
-    "communities": {
-      "title": "Explore Communities",
-      "empty": "No communities found"
-    },
-    "post": {
-      "create": {
-        "select_community": "Select a community",
-        "placeholder": "Have something on your mind? Write it here!",
-        "anonymous": {
-          "label": "Post as anonymous?",
-          "description_on": "Your name will not be displayed",
-          "description_off": "You are posting as {{username}}"
+        "success": "Verification process initiated!",
+        "steps": {
+          "badge_type": {
+            "label": "Badge Type",
+            "description": "Select the Badge you want to verify"
+          },
+          "protocols": {
+            "label": "Protocols",
+            "description": "Select one or more protocols to verify this badge"
+          },
+          "run": {
+            "label": "Run Verification",
+            "description": "Verify your badge with selected protocols"
+          }
+        },
+        "selected_config": {
+          "title": "Selected Configuration",
+          "badge": "Badge:",
+          "protocols": "Protocols:",
+          "verify": "Verify Badge",
+          "verifying": "Verifying..."
         }
       },
-      "loading": "Loading post",
-      "not_found": "Post not found",
-      "not_found_message": "The post you are looking for could not be found"
+      "visibility": {
+        "public": "Public",
+        "private": "Private"
+      },
+      "actions": {
+        "delete": "Delete",
+        "add_new": "Add new badge"
+      }
     }
   },
   "sidebar": {
-    "joined_communities": "JOINED COMMUNITIES",
     "language": "Language",
+    "no_communities": "No Communities joined yet",
     "theme": {
       "light": "Light mode",
       "dark": "Dark mode",
       "toggle": "Toggle theme"
     }
   },
-  "welcome": "Welcome to Deforum"
-} 
+  "welcome": "Welcome to Deforum",
+  "login": {
+    "title": "Login",
+    "description": "Choose your preferred login method",
+    "username": "Username",
+    "usernamePlaceholder": "Enter your username",
+    "useExistingPasskey": "Use Existing Passkey",
+    "createNewAccount": "Create New Account",
+    "loading": "Loading...",
+    "continueWithPasskey": "Continue with Passkey",
+    "usernameTaken": "Username \"{{username}}\" is already taken",
+    "usernameRequired": "Please choose a username",
+    "passkeyNotFound": "Passkey not found. Create a new account?",
+    "passkeyLoginFailed": "Passkey login failed",
+    "passkeyCreationCancelled": "Passkey creation was cancelled",
+    "registrationFailed": "Registration failed. Please try again."
+  },
+  "common": {
+    "loading": "Loading...",
+    "user_not_found": "User not found"
+  }
+}

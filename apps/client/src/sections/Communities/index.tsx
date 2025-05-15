@@ -2,7 +2,7 @@ import { PageContent } from "@/components/PageContent";
 import { useGlobalContext } from "@/contexts/GlobalContext";
 import { CommunityCard } from "@/components/cards/CommunityCard";
 import { classed } from "@tw-classed/react";
-import { useGetCommunities } from "@/hooks/useCommunities";
+import { useGetAllCommunities } from "@/hooks/useCommunities";
 import { Button } from "@/components/ui/Button";
 import {
   Settings as SettingsIcon,
@@ -33,7 +33,7 @@ const getCommunityType = (community: any) => {
 export const CommunitiesPage = () => {
   const { isLoggedIn } = useGlobalContext();
 
-  const { data: communities = [] } = useGetCommunities();
+  const { data: communities = [] } = useGetAllCommunities();
 
   return (
     <PageContent

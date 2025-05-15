@@ -5,11 +5,14 @@ import EmptyState from "@/components/ui/EmptyState";
 import { cn } from "@/lib/utils";
 
 interface PageContentProps {
-  title?: string;
+  title?: ReactNode | string;
   description?: string;
   children?: ReactNode;
   showEmptyState?: boolean;
+  actions?: ReactNode;
   className?: string;
+  titleClassName?: string;
+  maxWidth?: number;
   emptyState?: {
     icon: LucideIcon;
     title: string;
@@ -24,19 +27,32 @@ export const PageContent = ({
   showEmptyState = false,
   emptyState,
   className,
+  titleClassName = "",
+  actions,
+  maxWidth = 1200,
 }: PageContentProps) => {
   return (
     <div
-      className={cn(
-        "flex flex-col gap-6 p-4 lg:p-6 lg:max-w-[1200px] mx-auto",
-        className,
-        {
-          "h-full": showEmptyState,
-        },
-      )}
+      style={{
+        maxWidth: `${maxWidth}px`,
+      }}
+      className={cn("flex flex-col gap-6 p-4 lg:p-6 mx-auto", className, {
+        "h-full": showEmptyState,
+      })}
     >
-      <div className="flex flex-col gap-2">
-        {title && <Labels.PageTitle className="">{title}</Labels.PageTitle>}
+      <div className={cn("flex flex-col gap-2", titleClassName)}>
+        {(title || actions) && (
+          <div className="flex items-center justify-between">
+            {typeof title === "string" ? (
+              <Labels.PageTitle className={titleClassName}>
+                {title}
+              </Labels.PageTitle>
+            ) : (
+              title
+            )}
+            {actions}
+          </div>
+        )}
         {description && (
           <Labels.PageDescription className="">
             {description}

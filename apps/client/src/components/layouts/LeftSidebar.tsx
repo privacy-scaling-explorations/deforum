@@ -1,3 +1,6 @@
+/// <reference types="react" />
+
+import React from "react";
 import { Link } from "@tanstack/react-router";
 import { useGetUser } from "@/hooks/useAuth";
 import { LucideIcon, SunIcon, MoonIcon, Users, LogOut } from "lucide-react";
@@ -6,13 +9,22 @@ import { cn } from "@/lib/utils";
 import { Avatar } from "@/components/Avatar";
 import { Badge } from "@/components/ui/Badge";
 import { useGlobalContext } from "@/contexts/GlobalContext";
-import { AuthWrapper } from "@/components/AuthWrapper";
 import { Switch } from "@/components/inputs/Switch";
 import { MAIN_NAV_ITEMS } from "@/settings";
 import { Accordion } from "@/components/Accordion";
 import { useSignout } from "@/hooks/useSignout";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import { trpc } from "@/lib/trpc";
+import type { MouseEvent } from "react";
+import { LanguageSwitcher } from "../LanguageSwitcher";
+
+// Define types for community object
+interface Community {
+  id: string;
+  name: string;
+  slug: string;
+  avatar?: string | null;
+}
 
 const renderNavItems = (
   _items: (typeof MAIN_NAV_ITEMS)[keyof typeof MAIN_NAV_ITEMS],
@@ -28,7 +40,6 @@ const renderNavItems = (
       isVisible && (
         <NavItem
           to={item.to}
-          key={item.title}
           title={t(item.title)}
           icon={item.icon}
           badge={item.badge}
@@ -61,8 +72,7 @@ export const NavItem = ({
   return (
     <Link
       to={to}
-      key={title}
-      onClick={(e) => {
+      onClick={(e: MouseEvent) => {
         onClick?.();
       }}
       className={cn(
@@ -79,7 +89,7 @@ export const NavItem = ({
       </div>
       {badge && (
         <div className="ml-auto">
-          <Badge rounded="full" className="!ml-auto">
+          <Badge variant="secondary" rounded="full">
             {badge}
           </Badge>
         </div>
@@ -109,22 +119,24 @@ const SidebarContent = () => {
         className="py-6"
         items={[
           {
-            label: t('sidebar.my_communities'),
+            label: t("sidebar.joined_communities"),
             children: (
               <div className="flex flex-col">
-                {communities?.map((community) => (
-                  <Link
-                    key={community.id}
-                    to="/communities/$slug"
-                    className="flex gap-2 items-center py-2 px-3"
-                    params={{ slug: community.slug }}
-                  >
-                    <Avatar className="!size-[32px] !rounded-lg" src={community.avatar || ""} />
-                    <span className="font-semibold font-inter text-sm text-sidebar-foreground line-clamp-1">
-                      {community.name}
-                    </span>
-                  </Link>
-                ))}
+                {user?.communities?.map(
+                  ([cid, name, slug]: [string, string, string]) => (
+                    <Link
+                      key={cid}
+                      to="/communities/$slug"
+                      className="flex gap-2 items-center py-2 px-3"
+                      params={{ slug }}
+                    >
+                      <Avatar className="!size-[32px] !rounded-lg" src={""} />
+                      <span className="font-semibold font-inter text-sm text-sidebar-foreground line-clamp-1">
+                        {name}
+                      </span>
+                    </Link>
+                  )
+                )}
               </div>
             ),
           },
@@ -135,29 +147,28 @@ const SidebarContent = () => {
         <div className="space-y-2 py-6">
           <div className="w-full justify-start flex items-center space-x-3 text-sm">
             <Users className="w-5 h-5" />
-            <span>{t('sidebar.my_communities')}</span>
+            <span>{t("sidebar.joined_communities")} 1</span>
           </div>
-          {user.communities.map(([cid, name, slug]) => (
-            <Link
-              key={cid}
-              to="/communities/$slug"
-              params={{ slug }}
-            >
-              <Button
-                className="w-full justify-start flex items-center space-x-2"
-                variant="ghost"
-              >
-                <span>{name}</span>
-              </Button>
-            </Link>
-          ))}
+
+          {user.communities.map(
+            ([cid, name, slug]: [string, string, string]) => (
+              <Link key={cid} to="/communities/$slug" params={{ slug }}>
+                <Button
+                  className="w-full justify-start flex items-center space-x-2"
+                  variant="ghost"
+                >
+                  <span>{name}</span>
+                </Button>
+              </Link>
+            )
+          )}
         </div>
       )}
 
       <div className="space-y-1 py-6">
         {renderEndItems(isLoggedIn)}
         <NavItem
-          title={t('actions.logout')}
+          title={t("actions.logout")}
           to="/"
           icon={LogOut}
           onClick={() => signout()}
@@ -186,19 +197,19 @@ const LeftSidebar = () => {
         <div className="divide-y-[1px] divide-sidebar-border">
           <div className="space-y-1 pb-6">{renderStartItems(isLoggedIn)}</div>
 
-          <AuthWrapper>
+          {isLoggedIn && user.communities && (
             <Accordion
               className="py-6"
               items={[
                 {
-                  label: t('sidebar.my_communities'),
+                  label: t("sidebar.joined_communities"),
                   children: (
                     <div className="flex flex-col">
-                      {communities?.map((community) => (
+                      {communities?.map((community: Community) => (
                         <Link
                           key={community.id}
                           to="/communities/$slug"
-                          className="flex gap-2 items-center py-2 px-3"
+                          className="flex gap-2 items-center p-2"
                           params={{ slug: community.slug }}
                         >
                           <Avatar
@@ -215,45 +226,24 @@ const LeftSidebar = () => {
                 },
               ]}
             />
-          </AuthWrapper>
-          {isLoggedIn && user.communities && (
-            <div className="space-y-2 py-6">
-              <div className="w-full justify-start flex items-center space-x-3 text-sm">
-                <Users className="w-5 h-5" />
-                <span>{t('sidebar.my_communities')}</span>
-              </div>
-              {user.communities.map(([cid, name, slug]) => (
-                <Link
-                  key={cid}
-                  to="/communities/$slug"
-                  params={{ slug }}
-                >
-                  <Button
-                    className="w-full justify-start flex items-center space-x-2"
-                    variant="ghost"
-                  >
-                    <span>{name}</span>
-                  </Button>
-                </Link>
-              ))}
-            </div>
           )}
         </div>
 
         <div className="space-y-1 mt-auto">
+          <LanguageSwitcher />
           <div className="flex gap-2.5 items-center px-2 h-5">
-            <SunIcon 
-              className="size-4 text-base-muted-foreground" 
-              aria-label={t('sidebar.theme.light')}
+            <SunIcon
+              className="size-4 text-base-muted-foreground"
+              aria-label={t("sidebar.theme.light")}
             />
             <Switch
               checked={isDarkMode}
               onChange={() => setIsDarkMode(!isDarkMode)}
-              aria-label={t('sidebar.theme.toggle')}
+              aria-label={t("sidebar.theme.toggle")}
             />
-            <MoonIcon 
-              className="size-4 text-base-muted-foreground" 
-              aria-label={t('sidebar.theme.dark')}
+            <MoonIcon
+              className="size-4 text-base-muted-foreground"
+              aria-label={t("sidebar.theme.dark")}
             />
           </div>
         </div>

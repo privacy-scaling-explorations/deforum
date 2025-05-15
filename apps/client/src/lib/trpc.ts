@@ -7,7 +7,7 @@ export const trpc = createTRPCReact<AppRouter>();
 export const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
-      url: 'http://localhost:5000/trpc',
+      url: 'http://localhost:5001/trpc',
       fetch(url, options) {
         console.log('🌈 Making tRPC request:', url);
         return fetch(url, options).then(async (response) => {

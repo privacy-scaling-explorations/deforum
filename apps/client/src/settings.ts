@@ -1,18 +1,24 @@
 import { Bell, Settings, LucideIcon, Users, Home } from "lucide-react";
 
-export const MAIN_NAV_ITEMS: Record<
-  "start" | "end",
-  Array<{
-    title: string;
-    to: string;
-    icon: LucideIcon;
-    requiresAuth: boolean;
-    badge?: string;
-  }>
-> = {
+interface MainNavItem {
+  title: string;
+  to: string;
+  icon: LucideIcon;
+  requiresAuth: boolean;
+  onClick?: () => void;
+  badge?: string;
+  items?: MainNavItem[];
+}
+
+export const MAIN_NAV_ITEMS: Record<"start" | "end", MainNavItem[]> = {
   start: [
     { title: "navigation.home", to: "/", icon: Home, requiresAuth: false },
-    { title: "pages.badges.title", to: "/badges", icon: Settings, requiresAuth: true },
+    {
+      title: "pages.badges.title",
+      to: "/badges",
+      icon: Settings,
+      requiresAuth: true,
+    },
     {
       title: "pages.notifications.title",
       to: "/notifications",
@@ -27,7 +33,12 @@ export const MAIN_NAV_ITEMS: Record<
     },
   ],
   end: [
-    { title: "navigation.settings", to: "/settings", icon: Settings, requiresAuth: true },
+    {
+      title: "navigation.settings",
+      to: "/settings",
+      icon: Settings,
+      requiresAuth: true,
+    },
   ],
 };
 

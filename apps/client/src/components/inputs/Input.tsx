@@ -98,16 +98,20 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       field,
       showCounter = false,
       maxLength,
+      error: propsError,
       ...props
     },
     ref,
   ) => {
     const Icon = icon;
 
-    const error =
+    const fieldError =
       field?.state.meta.isTouched && field?.state.meta.errors.length
         ? field?.state.meta.errors.join(", ")
         : "";
+        
+    // Use either the error from props or from the field
+    const error = propsError || fieldError;
 
     return (
       <InputWrapper
@@ -117,6 +121,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         error={error}
         showCounter={showCounter}
         maxLength={maxLength}
+        value={props.value}
       >
         <InputBase ref={ref} {...props} withIcon={!!icon} withError={!!error} />
         {Icon && (

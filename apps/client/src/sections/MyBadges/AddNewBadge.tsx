@@ -43,7 +43,7 @@ export const AddNewBadge = () => {
   const handleComplete = useCallback(async () => {
     if (!selectedBadge || selectedProtocols.length === 0) return;
 
-    const badge = badges?.find(b => b.slug === selectedBadge);
+    const badge = badges?.find((b: any) => b.slug === selectedBadge);
     if (!badge) return;
 
     try {
@@ -77,14 +77,14 @@ export const AddNewBadge = () => {
         return (
           <Stepper.Step>
             <div className="grid grid-cols-4 gap-3.5">
-              {badges?.map((badge) => {
+              {badges?.map((badge: any) => {
                 const isActive = selectedBadge === badge.slug;
                 return (
                   <Button
                     key={badge.slug}
                     variant="checkbox"
                     size="md"
-                    onClick={() => handleBadgeSelection(badge.slug, updateValidity)}
+                    onClick={() => handleBadgeSelection(badge.slug, updateValidity as any)}
                     active={isActive}
                     className="!justify-start"
                   >

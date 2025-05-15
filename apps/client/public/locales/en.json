@@ -145,7 +145,8 @@
     }
   },
   "sidebar": {
-    "my_communities": "MY COMMUNITIES",
+    "joined_communities": "JOINED COMMUNITIES",
+    "language": "Language",
     "theme": {
       "light": "Light mode",
       "dark": "Dark mode",

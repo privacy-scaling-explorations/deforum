@@ -145,7 +145,7 @@
     }
   },
   "sidebar": {
-    "my_communities": "Mis comunidades",
+    "joined_communities": "Mis comunidades",
     "theme": {
       "light": "Claro",
       "dark": "Oscuro",

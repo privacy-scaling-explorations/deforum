@@ -22,11 +22,13 @@ const ButtonComponent = classed.button(
         checkbox:
           "bg-base-background border border-base-border hover:bg-sidebar-background/80 disabled:bg-sidebar-background",
         ghost: "hover:bg-accent hover:text-accent-foreground",
+        transparent: "bg-transparent",
         link: "text-primary underline-offset-4 hover:underline",
         error:
           "bg-[#FEE2E2] text-[#DC2626] hover:bg-[#FEE2E2] border border-[#DC2626]",
       },
       size: {
+        xs: "h-8 rounded-md px-3 text-sm leading-5",
         sm: "h-9 rounded-md px-3 text-sm leading-5",
         md: "h-10 px-4 py-2",
         lg: "h-11 rounded-md px-8",

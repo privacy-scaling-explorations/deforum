@@ -16,6 +16,12 @@ export default {
         input: "0px 1px 2px 0px rgba(0, 0, 0, 0.05)",
       },
       colors: {
+        purple: {
+          DEFAULT: "#818CF8",
+        },
+        green: {
+          light: "#F0F9FF"
+        },
         black: {
           DEFAULT: "#18181B",
           secondary: "#71717A",

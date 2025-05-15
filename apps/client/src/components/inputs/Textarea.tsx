@@ -11,17 +11,21 @@ const TextareaBase = classed.textarea("!py-2 !px-3", InputBase);
 const Textarea = forwardRef<
   HTMLTextAreaElement,
   ComponentPropsWithoutRef<"textarea"> & InputWrapperProps
->(({ label, containerClassName, rows = 4, field, ...props }, ref) => {
-  const error =
+>(({ label, containerClassName, rows = 4, field, error: propsError, ...props }, ref) => {
+  const fieldError =
     field?.state.meta.isTouched && field?.state.meta.errors.length
       ? field?.state.meta.errors.join(", ")
       : "";
+      
+  // Use either the error from props or from the field
+  const error = propsError || fieldError;
 
   return (
     <InputWrapper
       label={label}
       containerClassName={containerClassName}
       error={error}
+      value={props.value}
     >
       <TextareaBase ref={ref} {...props} rows={rows} withError={!!error} />
     </InputWrapper>

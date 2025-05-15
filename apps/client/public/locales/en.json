@@ -209,7 +209,7 @@
     }
   },
   "sidebar": {
-    "my_communities": "MY COMMUNITIES",
+    "language": "Language",
     "no_communities": "No Communities joined yet",
     "theme": {
       "light": "Light mode",

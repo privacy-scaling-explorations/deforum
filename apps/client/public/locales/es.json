@@ -209,7 +209,7 @@
     }
   },
   "sidebar": {
-    "my_communities": "MIS COMUNIDADES",
+    "joined_communities": "Mis comunidades",
     "no_communities": "Aún no te has unido a ninguna comunidad",
     "theme": {
       "light": "Modo claro",

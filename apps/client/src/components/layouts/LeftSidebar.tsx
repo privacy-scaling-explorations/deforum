@@ -1,3 +1,12 @@
+/// <reference types="react" />
+
+// Define types for community object
+interface Community {
+  id: string;
+  name: string;
+  slug: string;
+  avatar?: string | null;
+}
 import { Link } from "@tanstack/react-router"
 import { useGetUser } from "@/hooks/useAuth"
 import { LucideIcon, SunIcon, MoonIcon, Users, LogOut, Award } from "lucide-react"
@@ -13,6 +22,7 @@ import { Accordion } from "@/components/Accordion"
 import { useSignout } from "@/hooks/useSignout"
 import { useTranslation } from 'react-i18next'
 import { useUserCommunities } from "@/hooks/useCommunities"
+import { LanguageSwitcher } from "../LanguageSwitcher";
 
 const renderNavItems = (
   _items: (typeof MAIN_NAV_ITEMS)[keyof typeof MAIN_NAV_ITEMS],
@@ -31,7 +41,6 @@ const renderNavItems = (
       isVisible && (
         <NavItem
           to={item.to}
-          key={item.title}
           title={t(item.title)}
           icon={item.icon}
           badge={item.badge}
@@ -82,7 +91,7 @@ export const NavItem = ({
       </div>
       {badge && (
         <div className="ml-auto">
-          <Badge rounded="full" className="!ml-auto">
+          <Badge variant="secondary" rounded="full">
             {badge}
           </Badge>
         </div>
@@ -119,7 +128,7 @@ const SidebarContent = () => {
       <div className="space-y-1 py-6">
         {renderEndItems(isLoggedIn)}
         <NavItem
-          title={t('actions.logout')}
+          title={t("actions.logout")}
           to="/"
           icon={LogOut}
           onClick={() => signout.signOut()}
@@ -149,12 +158,12 @@ const LeftSidebar = () => {
         <div className="divide-y-[1px] divide-sidebar-border">
           <div className="space-y-1 pb-6">{renderStartItems(isLoggedIn)}</div>
 
-          <AuthWrapper>
+          {isLoggedIn && user.communities && (
             <Accordion
               className="py-6"
               items={[
                 {
-                  label: t('sidebar.my_communities'),
+                  label: t("sidebar.joined_communities"),
                   children: (
                     <div className="flex flex-col">
                       {!joinedCommunities?.length ? (
@@ -162,7 +171,7 @@ const LeftSidebar = () => {
                           {t('sidebar.no_communities')}
                         </div>
                       ) : (
-                        joinedCommunities.map((data) => (
+                        joinedCommunities.map((data: any) => (
                           <Link
                             key={data.communityId}
                             to="/communities/$slug"
@@ -186,23 +195,24 @@ const LeftSidebar = () => {
                 },
               ]}
             />
-          </AuthWrapper>
+          )}
         </div>
 
         <div className="space-y-1 mt-auto">
+          <LanguageSwitcher />
           <div className="flex gap-2.5 items-center px-2 h-5">
             <SunIcon
               className="size-4 text-base-muted-foreground"
-              aria-label={t('sidebar.theme.light')}
+              aria-label={t("sidebar.theme.light")}
             />
             <Switch
               checked={isDarkMode}
               onChange={() => setIsDarkMode(!isDarkMode)}
-              aria-label={t('sidebar.theme.toggle')}
+              aria-label={t("sidebar.theme.toggle")}
             />
             <MoonIcon
               className="size-4 text-base-muted-foreground"
-              aria-label={t('sidebar.theme.dark')}
+              aria-label={t("sidebar.theme.dark")}
             />
           </div>
         </div>
